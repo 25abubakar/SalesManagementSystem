@@ -1,0 +1,41 @@
+@model SalesManagementSystem.Models.SaleCharge
+
+@{
+    ViewData["Title"] = "Create Charge";
+}
+
+<div class="container mt-4">
+    <h2>Create Charge</h2>
+
+    <form asp-action="Create" method="post">
+        @Html.AntiForgeryToken()
+
+        <div class="row">
+            <div class="col-md-6">
+                <label class="form-label">Sale</label>
+                <select asp-for="SaleId" class="form-select" asp-items="ViewBag.Sales"></select>
+            </div>
+
+            <div class="col-md-6">
+                <label class="form-label">Charge Type</label>
+                <select asp-for="ChargeTypeId" class="form-select" asp-items="ViewBag.ChargeTypes"></select>
+            </div>
+
+            <div class="col-md-3 mt-3">
+                <label class="form-label">Amount</label>
+                <input asp-for="Amount" class="form-control" />
+            </div>
+
+            <div class="col-md-9 mt-3">
+                <label class="form-label">Remarks</label>
+                <input asp-for="Remarks" class="form-control" />
+            </div>
+        </div>
+
+        <div class="mt-3">
+            <button type="submit" class="btn btn-success">Save</button>
+            <a asp-action="Index" asp-route-saleId="@Model.SaleId" class="btn btn-secondary">Back</a>
+        </div>
+    </form>
+</div>
+
