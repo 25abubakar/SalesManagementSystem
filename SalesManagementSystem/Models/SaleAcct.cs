@@ -1,44 +1,81 @@
-﻿namespace SalesManagementSystem.Models
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
+namespace SalesManagementSystem.Models
 {
-    using System.ComponentModel.DataAnnotations;
-    using System.ComponentModel.DataAnnotations.Schema;
+    [Table("SaleAcct")]
     public class SaleAcct
     {
         [Key]
         public long Id { get; set; }
 
         public int? CompanyId { get; set; }
-
         public int? PlatformId { get; set; }
-        public SalePlatform? Platform { get; set; }
-
         public int? ProductId { get; set; }
-        public SaleProduct? Product { get; set; }
-
+        [MaxLength(100)]
         public string? OrderID { get; set; }
 
+        [Column(TypeName = "decimal(18,2)")]
         public decimal? QtyHeld { get; set; }
+
+        [Column(TypeName = "decimal(18,2)")]
         public decimal? QtySold { get; set; }
 
         public int? TransactionId { get; set; }
-        public SaleTransactionType? Transaction { get; set; }
-
         public int? FromAccountId { get; set; }
         public int? ToAccountId { get; set; }
 
-        public decimal? SoldAmount { get; set; }
-        public decimal? CostAmount { get; set; }
-
+        [Column(TypeName = "decimal(18,2)")]
         public decimal? TotalProCharges { get; set; }
+
+        [Column(TypeName = "decimal(18,2)")]
         public decimal? AmazonFee { get; set; }
+
+        [Column(TypeName = "decimal(18,2)")]
         public decimal? OtherCharges { get; set; }
+
+        [Column(TypeName = "decimal(18,2)")]
         public decimal? TotalPromotion { get; set; }
+
+        [Column(TypeName = "decimal(18,2)")]
+        public decimal? SoldAmount { get; set; }
+
+        [Column(TypeName = "decimal(18,2)")]
         public decimal? TotalRroRebate { get; set; }
 
+        [Column(TypeName = "decimal(18,2)")]
+        public decimal? CostAmount { get; set; }
+
+        [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
+        [Column(TypeName = "decimal(18,2)")]
         public decimal? ProfitAmount { get; set; }
 
+        [MaxLength(200)]
+        public string? AmzProRef { get; set; }
+
+        [MaxLength(500)]
         public string? Status { get; set; }
 
+        public string? Discription { get; set; }
+        public int? StatusID { get; set; }
+
+        [MaxLength(100)]
+        public string? Action { get; set; }
+
         public DateTime? CreatedDate { get; set; }
+        public DateTime? TransDate { get; set; }
+        public DateTime? ProcessDate { get; set; }
+        public DateTime? OrderDate { get; set; }
+        public DateTime? SoldDate { get; set; }
+        public DateTime? PaymentDate { get; set; }
+
+        // Navigation Properties
+        public virtual SalePlatform? Platform { get; set; }
+        public virtual SaleProduct? Product { get; set; }
+        public virtual SaleTransactionType? TransactionType { get; set; }
+        public virtual SaleAccount? FromAccount { get; set; }
+        public virtual SaleAccount? ToAccount { get; set; }
+        public virtual SaleStatus? StatusMaster { get; set; }
+        public virtual List<SaleCharge> Charges { get; set; } = new();
     }
 }
