@@ -1,26 +1,4 @@
-﻿//using Microsoft.EntityFrameworkCore;
-//using SalesManagementSystem.Models;
-//namespace SalesManagementSystem.Data
-//{
-//    public class AppDbContext : DbContext
-//    {
-//        public AppDbContext(DbContextOptions<AppDbContext> options)
-//            : base(options)
-//        {
-//        }
-
-//        public DbSet<SaleAcct> SaleAccts { get; set; }
-//        public DbSet<SaleProduct> SaleProducts { get; set; }
-//        public DbSet<SalePlatform> SalePlatforms { get; set; }
-//        public DbSet<SaleTransactionType> SaleTransactionTypes { get; set; }
-//        public DbSet<SaleAccount> SaleAccounts { get; set; }
-//        public DbSet<SaleCharge> SaleCharges { get; set; }
-//        public DbSet<SaleChargeType> SaleChargeTypes { get; set; }
-//        public DbSet<SaleStatus> SaleStatuses { get; set; }
-//    }
-//}
-
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using SalesManagementSystem.Models;
 
 namespace SalesManagementSystem.Data
@@ -45,7 +23,6 @@ namespace SalesManagementSystem.Data
         {
             base.OnModelCreating(modelBuilder);
 
-            // Match existing SQL Server table names (dbo.*)
             modelBuilder.Entity<SaleAcct>().ToTable("SaleAcct");
             modelBuilder.Entity<SalePlatform>().ToTable("SalePlatform");
             modelBuilder.Entity<SaleProduct>().ToTable("SaleProduct");
@@ -55,14 +32,12 @@ namespace SalesManagementSystem.Data
             modelBuilder.Entity<SaleChargeType>().ToTable("SaleChargeType");
             modelBuilder.Entity<SaleCharge>().ToTable("SaleCharge");
 
-            // Computed column (PERSISTED)
             modelBuilder.Entity<SaleAcct>()
                 .Property(p => p.ProfitAmount)
                 .HasComputedColumnSql(
                     "ISNULL(SoldAmount,0) - ISNULL(CostAmount,0) - ISNULL(TotalProCharges,0) - ISNULL(AmazonFee,0) - ISNULL(OtherCharges,0) + ISNULL(TotalRroRebate,0)",
                     stored: true);
 
-            // Relationships
             modelBuilder.Entity<SaleProduct>()
                 .HasOne(p => p.Platform)
                 .WithMany(p => p.Products)
