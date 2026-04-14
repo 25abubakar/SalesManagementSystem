@@ -7,8 +7,10 @@
 <div class="container mt-4">
     <h2>Edit Sale</h2>
 
-    <form asp-action="Edit" asp-route-id="@Model.Id">
+    <form asp-action="Edit" asp-route-id="@Model.Id" method="post">
+        @Html.AntiForgeryToken()
         <input type="hidden" asp-for="Id" />
+        <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
 
         <div class="row">
 
@@ -32,6 +34,11 @@
             </div>
 
             <div class="col-md-4">
+                <label>Qty Held</label>
+                <input asp-for="QtyHeld" class="form-control" />
+            </div>
+
+            <div class="col-md-4">
                 <label>Sold Amount</label>
                 <input asp-for="SoldAmount" class="form-control" />
             </div>
@@ -39,6 +46,31 @@
             <div class="col-md-4 mt-3">
                 <label>Cost Amount</label>
                 <input asp-for="CostAmount" class="form-control" />
+            </div>
+
+            <div class="col-md-4 mt-3">
+                <label>Total Pro Charges</label>
+                <input asp-for="TotalProCharges" class="form-control" />
+            </div>
+
+            <div class="col-md-4 mt-3">
+                <label>Amazon Fee</label>
+                <input asp-for="AmazonFee" class="form-control" />
+            </div>
+
+            <div class="col-md-4 mt-3">
+                <label>Other Charges</label>
+                <input asp-for="OtherCharges" class="form-control" />
+            </div>
+
+            <div class="col-md-4 mt-3">
+                <label>Total Promotion</label>
+                <input asp-for="TotalPromotion" class="form-control" />
+            </div>
+
+            <div class="col-md-4 mt-3">
+                <label>Total RRO Rebate</label>
+                <input asp-for="TotalRroRebate" class="form-control" />
             </div>
 
             <div class="col-md-4 mt-3">
@@ -69,10 +101,65 @@
                 </select>
             </div>
 
+            <div class="col-md-4 mt-3">
+                <label>Amz Pro Ref</label>
+                <input asp-for="AmzProRef" class="form-control" />
+            </div>
+
+            <div class="col-md-8 mt-3">
+                <label>Description</label>
+                <input asp-for="Discription" class="form-control" />
+            </div>
+
+            <div class="col-md-4 mt-3">
+                <label>Action</label>
+                <input asp-for="Action" class="form-control" />
+            </div>
+
+            <div class="col-md-4 mt-3">
+                <label>Created Date</label>
+                <input asp-for="CreatedDate" type="datetime-local" class="form-control" />
+            </div>
+
+            <div class="col-md-4 mt-3">
+                <label>Transaction Date</label>
+                <input asp-for="TransDate" type="datetime-local" class="form-control" />
+            </div>
+
+            <div class="col-md-4 mt-3">
+                <label>Process Date</label>
+                <input asp-for="ProcessDate" type="datetime-local" class="form-control" />
+            </div>
+
+            <div class="col-md-4 mt-3">
+                <label>Order Date</label>
+                <input asp-for="OrderDate" type="datetime-local" class="form-control" />
+            </div>
+
+            <div class="col-md-4 mt-3">
+                <label>Sold Date</label>
+                <input asp-for="SoldDate" type="datetime-local" class="form-control" />
+            </div>
+
+            <div class="col-md-4 mt-3">
+                <label>Payment Date</label>
+                <input asp-for="PaymentDate" type="datetime-local" class="form-control" />
+            </div>
+
+            <div class="col-md-4 mt-3">
+                <label>Profit Amount</label>
+                <input asp-for="ProfitAmount" class="form-control" readonly />
+            </div>
+
         </div>
 
         <br />
         <button type="submit" class="btn btn-warning">Update</button>
+        <a asp-controller="SaleCharge" asp-action="Index" asp-route-saleId="@Model.Id" class="btn btn-dark">Manage Charges</a>
         <a asp-action="Index" class="btn btn-secondary">Back</a>
     </form>
 </div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
