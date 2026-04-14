@@ -1,0 +1,27 @@
+@model SalesManagementSystem.Models.SaleChargeType
+
+@{
+    ViewData["Title"] = "Delete Charge Type";
+}
+
+<div class="container mt-4">
+    <h2>Delete Charge Type</h2>
+
+    <div class="alert alert-warning">
+        Are you sure you want to delete <strong>@Model.ChargeTypeName</strong>?
+    </div>
+
+    <dl class="row">
+        <dt class="col-sm-3">Id</dt>
+        <dd class="col-sm-9">@Model.ChargeTypeId</dd>
+        <dt class="col-sm-3">Active</dt>
+        <dd class="col-sm-9">@Model.IsActive</dd>
+    </dl>
+
+    <form asp-action="Delete" asp-route-id="@Model.ChargeTypeId" method="post">
+        @Html.AntiForgeryToken()
+        <button type="submit" class="btn btn-danger">Delete</button>
+        <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+    </form>
+</div>
+
