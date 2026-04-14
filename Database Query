@@ -1,0 +1,123 @@
+-- 1 Main table
+CREATE TABLE dbo.SaleAcct
+(
+    Id BIGINT IDENTITY(1,1) PRIMARY KEY,
+    CompanyId INT NULL,
+    PlatformId INT NULL,
+    ProductId INT NULL,
+    OrderID NVARCHAR(100) NULL,
+
+    QtyHeld DECIMAL(18,2) NULL,
+    QtySold DECIMAL(18,2) NULL,
+
+    TransactionId INT NULL,
+    FromAccountId INT NULL,
+    ToAccountId INT NULL,
+
+    TotalProCharges DECIMAL(18,2) NULL,
+    AmazonFee DECIMAL(18,2) NULL,
+    OtherCharges DECIMAL(18,2) NULL,
+    TotalPromotion DECIMAL(18,2) NULL,
+    SoldAmount DECIMAL(18,2) NULL,
+    TotalRroRebate DECIMAL(18,2) NULL,
+    CostAmount DECIMAL(18,2) NULL,
+    ProfitAmount AS (
+        ISNULL(SoldAmount,0)
+        - ISNULL(CostAmount,0)
+        - ISNULL(TotalProCharges,0)
+        - ISNULL(AmazonFee,0)
+        - ISNULL(OtherCharges,0)
+        + ISNULL(TotalRroRebate,0)
+    ) PERSISTED,
+
+    AmzProRef NVARCHAR(200) NULL,
+    Discription NVARCHAR(500) NULL,
+
+    StatusID INT NULL,
+    Status NVARCHAR(100) NULL,
+
+    CreatedDate DATETIME NULL,
+    TransDate DATETIME NULL,
+    ProcessDate DATETIME NULL,
+    OrderDate DATETIME NULL,
+    SoldDate DATETIME NULL,
+    PaymentDate DATETIME NULL,
+
+    Action NVARCHAR(100) NULL
+);
+-- 2 Platform master
+
+CREATE TABLE dbo.SalePlatform
+(
+    PlatformId INT IDENTITY(1,1) PRIMARY KEY,
+    PlatformName NVARCHAR(150) NOT NULL,
+    CompanyId INT NULL,
+    IsActive BIT NOT NULL DEFAULT 1,
+);
+
+-- 3 Product master
+CREATE TABLE dbo.SaleProduct
+(
+    ProductId INT IDENTITY(1,1) PRIMARY KEY,
+    ProductName NVARCHAR(200) NOT NULL,
+    PlatformId INT NULL,
+    CompanyId INT NULL,
+    IsActive BIT NOT NULL DEFAULT 1,
+    CONSTRAINT FK_SaleProduct_Platform
+        FOREIGN KEY (PlatformId) REFERENCES dbo.SalePlatform(PlatformId),
+);
+
+-- 4 Transaction type master
+
+CREATE TABLE dbo.SaleTransactionType
+(
+    TransactionId INT IDENTITY(1,1) PRIMARY KEY,
+    TransactionName NVARCHAR(100) NOT NULL,
+    IsActive BIT NOT NULL DEFAULT 1
+);
+-- 5 Account master
+
+CREATE TABLE dbo.SaleAccount
+(
+    AccountId INT IDENTITY(1,1) PRIMARY KEY,
+    AccountName NVARCHAR(150) NOT NULL,
+    AccountType NVARCHAR(50) NULL, -- Cash, Card, Wallet, Bank, etc.
+    CompanyId INT NULL,
+    PlatformId INT NULL,
+    IsActive BIT NOT NULL DEFAULT 1,
+    CONSTRAINT FK_SaleAccount_Platform
+        FOREIGN KEY (PlatformId) REFERENCES dbo.SalePlatform(PlatformId)
+);
+
+-- 6 Charge type master
+
+CREATE TABLE dbo.SaleChargeType
+(
+    ChargeTypeId INT IDENTITY(1,1) PRIMARY KEY,
+    ChargeTypeName NVARCHAR(100) NOT NULL, -- Tax, Promotion, Fee, Tpt, Other, Amazon Fee
+    IsActive BIT NOT NULL DEFAULT 1
+);
+
+-- 7 Sale charge detail
+
+CREATE TABLE dbo.SaleCharge
+(
+    SaleChargeId BIGINT IDENTITY(1,1) PRIMARY KEY,
+    SaleId BIGINT NOT NULL,
+    ChargeTypeId INT NOT NULL,
+    Amount DECIMAL(18,2) NOT NULL DEFAULT 0,
+    Remarks NVARCHAR(250) NULL,
+    CONSTRAINT FK_SaleCharge_Sale
+        FOREIGN KEY (SaleId) REFERENCES dbo.SaleAcct(Id),
+    CONSTRAINT FK_SaleCharge_ChargeType
+        FOREIGN KEY (ChargeTypeId) REFERENCES dbo.SaleChargeType(ChargeTypeId)
+);
+
+-- 8 Status table
+
+CREATE TABLE dbo.SaleStatus
+(
+    StatusID INT IDENTITY(1,1) PRIMARY KEY,
+    StatusName NVARCHAR(100) NOT NULL,
+    IsActive BIT NOT NULL DEFAULT 1
+);
