@@ -1,0 +1,30 @@
+@model SalesManagementSystem.Models.SaleCharge
+
+@{
+    ViewData["Title"] = "Charge Details";
+}
+
+<div class="container mt-4">
+    <h2>Charge Details</h2>
+
+    <dl class="row">
+        <dt class="col-sm-3">Id</dt>
+        <dd class="col-sm-9">@Model.SaleChargeId</dd>
+
+        <dt class="col-sm-3">Sale</dt>
+        <dd class="col-sm-9">@((Model.Sale?.OrderID ?? ("Sale#" + Model.SaleId)))</dd>
+
+        <dt class="col-sm-3">Charge Type</dt>
+        <dd class="col-sm-9">@Model.ChargeType?.ChargeTypeName</dd>
+
+        <dt class="col-sm-3">Amount</dt>
+        <dd class="col-sm-9">@Model.Amount</dd>
+
+        <dt class="col-sm-3">Remarks</dt>
+        <dd class="col-sm-9">@Model.Remarks</dd>
+    </dl>
+
+    <a asp-action="Edit" asp-route-id="@Model.SaleChargeId" class="btn btn-warning">Edit</a>
+    <a asp-action="Index" asp-route-saleId="@Model.SaleId" class="btn btn-secondary">Back</a>
+</div>
+
