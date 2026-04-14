@@ -1,0 +1,35 @@
+@model SalesManagementSystem.Models.SaleTransactionType
+
+@{
+    ViewData["Title"] = "Create Transaction Type";
+}
+
+<div class="container mt-4">
+    <h2>Create Transaction Type</h2>
+
+    <form asp-action="Create" method="post">
+        @Html.AntiForgeryToken()
+
+        <div class="row">
+            <div class="col-md-6">
+                <label class="form-label">Name</label>
+                <input asp-for="TransactionName" class="form-control" />
+                <span asp-validation-for="TransactionName" class="text-danger"></span>
+            </div>
+
+            <div class="col-md-3">
+                <label class="form-label">Is Active</label>
+                <select asp-for="IsActive" class="form-select">
+                    <option value="true">Yes</option>
+                    <option value="false">No</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="mt-3">
+            <button type="submit" class="btn btn-success">Save</button>
+            <a asp-action="Index" class="btn btn-secondary">Back</a>
+        </div>
+    </form>
+</div>
+
