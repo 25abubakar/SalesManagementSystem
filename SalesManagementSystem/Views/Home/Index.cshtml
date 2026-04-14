@@ -2,7 +2,41 @@
     ViewData["Title"] = "Home Page";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div class="container mt-4">
+    <div class="text-center mb-4">
+        <h1 class="display-5">Sales Management Dashboard</h1>
+        <p class="text-muted">Manage sales entries, charges, and master tables from one place.</p>
+    </div>
+
+    <div class="row g-3">
+        <div class="col-md-4">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title">Sales</h5>
+                    <p class="card-text">Create and manage sale records with amounts, status, and dates.</p>
+                    <a asp-controller="SaleAcct" asp-action="Index" class="btn btn-primary">Open Sales</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title">Sale Charges</h5>
+                    <p class="card-text">Track charge lines such as tax, fee, promotion, and other adjustments.</p>
+                    <a asp-controller="SaleCharge" asp-action="Index" class="btn btn-primary">Open Charges</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title">Masters</h5>
+                    <p class="card-text">Maintain platforms, products, accounts, statuses, and transaction types.</p>
+                    <a asp-controller="SalePlatform" asp-action="Index" class="btn btn-primary">Open Masters</a>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
