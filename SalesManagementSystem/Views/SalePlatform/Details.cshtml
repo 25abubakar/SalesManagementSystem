@@ -1,0 +1,27 @@
+@model SalesManagementSystem.Models.SalePlatform
+
+@{
+    ViewData["Title"] = "Platform Details";
+}
+
+<div class="container mt-4">
+    <h2>Platform Details</h2>
+
+    <dl class="row">
+        <dt class="col-sm-3">Id</dt>
+        <dd class="col-sm-9">@Model.PlatformId</dd>
+
+        <dt class="col-sm-3">Name</dt>
+        <dd class="col-sm-9">@Model.PlatformName</dd>
+
+        <dt class="col-sm-3">CompanyId</dt>
+        <dd class="col-sm-9">@Model.CompanyId</dd>
+
+        <dt class="col-sm-3">Active</dt>
+        <dd class="col-sm-9">@Model.IsActive</dd>
+    </dl>
+
+    <a asp-action="Edit" asp-route-id="@Model.PlatformId" class="btn btn-warning">Edit</a>
+    <a asp-action="Index" class="btn btn-secondary">Back</a>
+</div>
+
