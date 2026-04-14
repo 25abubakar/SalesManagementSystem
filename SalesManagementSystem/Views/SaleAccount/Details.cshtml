@@ -1,0 +1,33 @@
+@model SalesManagementSystem.Models.SaleAccount
+
+@{
+    ViewData["Title"] = "Account Details";
+}
+
+<div class="container mt-4">
+    <h2>Account Details</h2>
+
+    <dl class="row">
+        <dt class="col-sm-3">Id</dt>
+        <dd class="col-sm-9">@Model.AccountId</dd>
+
+        <dt class="col-sm-3">Name</dt>
+        <dd class="col-sm-9">@Model.AccountName</dd>
+
+        <dt class="col-sm-3">Type</dt>
+        <dd class="col-sm-9">@Model.AccountType</dd>
+
+        <dt class="col-sm-3">Platform</dt>
+        <dd class="col-sm-9">@Model.Platform?.PlatformName</dd>
+
+        <dt class="col-sm-3">CompanyId</dt>
+        <dd class="col-sm-9">@Model.CompanyId</dd>
+
+        <dt class="col-sm-3">Active</dt>
+        <dd class="col-sm-9">@Model.IsActive</dd>
+    </dl>
+
+    <a asp-action="Edit" asp-route-id="@Model.AccountId" class="btn btn-warning">Edit</a>
+    <a asp-action="Index" class="btn btn-secondary">Back</a>
+</div>
+
