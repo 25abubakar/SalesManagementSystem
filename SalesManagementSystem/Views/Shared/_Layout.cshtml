@@ -26,14 +26,29 @@
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
                         </li>
-                        <li>
-                            <a class="nav-link text-dark" asp-area="" asp-controller="SaleAcct" asp-action="Index">Sales</a>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle text-dark" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                Sales
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" asp-area="" asp-controller="SaleAcct" asp-action="Index">Sales List</a></li>
+                                <li><a class="dropdown-item" asp-area="" asp-controller="SaleAcct" asp-action="Create">New Sale</a></li>
+                                <li><a class="dropdown-item" asp-area="" asp-controller="SaleCharge" asp-action="Index">Sale Charges</a></li>
+                            </ul>
                         </li>
-                        <li>
-                            <a class="nav-link text-dark" asp-area="" asp-controller="SaleAcct" asp-action="Index">Sales List</a>
-                        </li>
-                        <li>
-                            <a class="nav-link text-dark" asp-area="" asp-controller="SaleAcct" asp-action="Create">New Entry</a>
+
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle text-dark" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                Masters
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" asp-area="" asp-controller="SalePlatform" asp-action="Index">Platforms</a></li>
+                                <li><a class="dropdown-item" asp-area="" asp-controller="SaleProduct" asp-action="Index">Products</a></li>
+                                <li><a class="dropdown-item" asp-area="" asp-controller="SaleAccount" asp-action="Index">Accounts</a></li>
+                                <li><a class="dropdown-item" asp-area="" asp-controller="SaleTransactionType" asp-action="Index">Transaction Types</a></li>
+                                <li><a class="dropdown-item" asp-area="" asp-controller="SaleStatus" asp-action="Index">Statuses</a></li>
+                                <li><a class="dropdown-item" asp-area="" asp-controller="SaleChargeType" asp-action="Index">Charge Types</a></li>
+                            </ul>
                         </li>
                     </ul>
                 </div>
