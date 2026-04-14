@@ -1,0 +1,24 @@
+@model SalesManagementSystem.Models.SaleStatus
+
+@{
+    ViewData["Title"] = "Status Details";
+}
+
+<div class="container mt-4">
+    <h2>Status Details</h2>
+
+    <dl class="row">
+        <dt class="col-sm-3">Id</dt>
+        <dd class="col-sm-9">@Model.StatusID</dd>
+
+        <dt class="col-sm-3">Name</dt>
+        <dd class="col-sm-9">@Model.StatusName</dd>
+
+        <dt class="col-sm-3">Active</dt>
+        <dd class="col-sm-9">@Model.IsActive</dd>
+    </dl>
+
+    <a asp-action="Edit" asp-route-id="@Model.StatusID" class="btn btn-warning">Edit</a>
+    <a asp-action="Index" class="btn btn-secondary">Back</a>
+</div>
+
