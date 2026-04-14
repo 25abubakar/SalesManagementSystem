@@ -1,0 +1,78 @@
+﻿@model SalesManagementSystem.Models.SaleAcct
+
+@{
+    ViewData["Title"] = "Edit Sale";
+}
+
+<div class="container mt-4">
+    <h2>Edit Sale</h2>
+
+    <form asp-action="Edit" asp-route-id="@Model.Id">
+        <input type="hidden" asp-for="Id" />
+
+        <div class="row">
+
+            <div class="col-md-4">
+                <label>Platform</label>
+                <select asp-for="PlatformId" class="form-select" asp-items="ViewBag.Platforms">
+                    <option value="">-- Select Platform --</option>
+                </select>
+            </div>
+
+            <div class="col-md-4">
+                <label>Product</label>
+                <select asp-for="ProductId" class="form-select" asp-items="ViewBag.Products">
+                    <option value="">-- Select Product --</option>
+                </select>
+            </div>
+
+            <div class="col-md-4">
+                <label>Qty Sold</label>
+                <input asp-for="QtySold" class="form-control" />
+            </div>
+
+            <div class="col-md-4">
+                <label>Sold Amount</label>
+                <input asp-for="SoldAmount" class="form-control" />
+            </div>
+
+            <div class="col-md-4 mt-3">
+                <label>Cost Amount</label>
+                <input asp-for="CostAmount" class="form-control" />
+            </div>
+
+            <div class="col-md-4 mt-3">
+                <label>Transaction Type</label>
+                <select asp-for="TransactionId" class="form-select" asp-items="ViewBag.TransTypes">
+                    <option value="">-- Select Transaction Type --</option>
+                </select>
+            </div>
+
+            <div class="col-md-4 mt-3">
+                <label>From Account</label>
+                <select asp-for="FromAccountId" class="form-select" asp-items="ViewBag.FromAccounts">
+                    <option value="">-- Select From Account --</option>
+                </select>
+            </div>
+
+            <div class="col-md-4 mt-3">
+                <label>To Account</label>
+                <select asp-for="ToAccountId" class="form-select" asp-items="ViewBag.ToAccounts">
+                    <option value="">-- Select To Account --</option>
+                </select>
+            </div>
+
+            <div class="col-md-4 mt-3">
+                <label>Status</label>
+                <select asp-for="StatusID" class="form-select" asp-items="ViewBag.Statuses">
+                    <option value="">-- Select Status --</option>
+                </select>
+            </div>
+
+        </div>
+
+        <br />
+        <button type="submit" class="btn btn-warning">Update</button>
+        <a asp-action="Index" class="btn btn-secondary">Back</a>
+    </form>
+</div>

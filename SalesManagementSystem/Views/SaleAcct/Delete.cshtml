@@ -1,0 +1,36 @@
+@model SalesManagementSystem.Models.SaleAcct
+
+@{
+    ViewData["Title"] = "Delete Sale";
+}
+
+<div class="container mt-4">
+    <h2>Delete Sale</h2>
+
+    <div class="alert alert-warning">
+        Are you sure you want to delete this sale?
+    </div>
+
+    <dl class="row">
+        <dt class="col-sm-3">Platform</dt>
+        <dd class="col-sm-9">@Model.Platform?.PlatformName</dd>
+
+        <dt class="col-sm-3">Product</dt>
+        <dd class="col-sm-9">@Model.Product?.ProductName</dd>
+
+        <dt class="col-sm-3">Order ID</dt>
+        <dd class="col-sm-9">@Model.OrderID</dd>
+
+        <dt class="col-sm-3">Sold Amount</dt>
+        <dd class="col-sm-9">@Model.SoldAmount</dd>
+
+        <dt class="col-sm-3">Cost Amount</dt>
+        <dd class="col-sm-9">@Model.CostAmount</dd>
+    </dl>
+
+    <form asp-action="Delete" asp-route-id="@Model.Id" method="post">
+        @Html.AntiForgeryToken()
+        <button type="submit" class="btn btn-danger">Delete</button>
+        <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+    </form>
+</div>
