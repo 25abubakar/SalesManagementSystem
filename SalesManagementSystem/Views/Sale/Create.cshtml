@@ -1,0 +1,59 @@
+﻿@model SalesManagementSystem.Models.SaleAcct
+
+@{
+    ViewData["Title"] = "Create Sale";
+}
+
+<div class="container mt-4">
+    <h2>Add New Sale</h2>
+
+    <form asp-action="Create">
+        <div class="row">
+
+            <div class="col-md-4">
+                <label>Company Id</label>
+                <input asp-for="CompanyId" class="form-control" />
+            </div>
+
+            <div class="col-md-4">
+                <label>Platform Id</label>
+                <input asp-for="PlatformId" class="form-control" />
+            </div>
+
+            <div class="col-md-4">
+                <label>Product Id</label>
+                <input asp-for="ProductId" class="form-control" />
+            </div>
+
+            <div class="col-md-4 mt-3">
+                <label>Order ID</label>
+                <input asp-for="OrderID" class="form-control" />
+            </div>
+
+            <div class="col-md-4 mt-3">
+                <label>Qty Sold</label>
+                <input asp-for="QtySold" class="form-control" />
+            </div>
+
+            <div class="col-md-4 mt-3">
+                <label>Sold Amount</label>
+                <input asp-for="SoldAmount" class="form-control" />
+            </div>
+
+            <div class="col-md-4 mt-3">
+                <label>Cost Amount</label>
+                <input asp-for="CostAmount" class="form-control" />
+            </div>
+
+            <div class="col-md-4 mt-3">
+                <label>Status ID</label>
+                <input asp-for="Status" class="form-control" />
+            </div>
+
+        </div>
+
+        <br />
+        <button type="submit" class="btn btn-success">Save</button>
+        <a asp-action="Index" class="btn btn-secondary">Back</a>
+    </form>
+</div>
