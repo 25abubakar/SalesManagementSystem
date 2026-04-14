@@ -1,0 +1,156 @@
+@model SalesManagementSystem.Models.SaleAcct
+
+@{
+    ViewData["Title"] = "Sale Details";
+}
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2>Sale Details</h2>
+        <div>
+            <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning">Edit</a>
+            <a asp-controller="SaleCharge" asp-action="Index" asp-route-saleId="@Model.Id" class="btn btn-dark">Charges</a>
+            <a asp-action="Index" class="btn btn-secondary">Back</a>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6">
+            <dl class="row">
+                <dt class="col-sm-5">Id</dt>
+                <dd class="col-sm-7">@Model.Id</dd>
+
+                <dt class="col-sm-5">Company Id</dt>
+                <dd class="col-sm-7">@Model.CompanyId</dd>
+
+                <dt class="col-sm-5">Platform</dt>
+                <dd class="col-sm-7">@Model.Platform?.PlatformName</dd>
+
+                <dt class="col-sm-5">Product</dt>
+                <dd class="col-sm-7">@Model.Product?.ProductName</dd>
+
+                <dt class="col-sm-5">Order ID</dt>
+                <dd class="col-sm-7">@Model.OrderID</dd>
+
+                <dt class="col-sm-5">Qty Held</dt>
+                <dd class="col-sm-7">@Model.QtyHeld</dd>
+
+                <dt class="col-sm-5">Qty Sold</dt>
+                <dd class="col-sm-7">@Model.QtySold</dd>
+
+                <dt class="col-sm-5">Transaction Type</dt>
+                <dd class="col-sm-7">@Model.TransactionType?.TransactionName</dd>
+
+                <dt class="col-sm-5">From Account</dt>
+                <dd class="col-sm-7">@Model.FromAccount?.AccountName</dd>
+
+                <dt class="col-sm-5">To Account</dt>
+                <dd class="col-sm-7">@Model.ToAccount?.AccountName</dd>
+            </dl>
+        </div>
+
+        <div class="col-md-6">
+            <dl class="row">
+                <dt class="col-sm-5">Sold Amount</dt>
+                <dd class="col-sm-7">@Model.SoldAmount</dd>
+
+                <dt class="col-sm-5">Cost Amount</dt>
+                <dd class="col-sm-7">@Model.CostAmount</dd>
+
+                <dt class="col-sm-5">Total Pro Charges</dt>
+                <dd class="col-sm-7">@Model.TotalProCharges</dd>
+
+                <dt class="col-sm-5">Amazon Fee</dt>
+                <dd class="col-sm-7">@Model.AmazonFee</dd>
+
+                <dt class="col-sm-5">Other Charges</dt>
+                <dd class="col-sm-7">@Model.OtherCharges</dd>
+
+                <dt class="col-sm-5">Total Promotion</dt>
+                <dd class="col-sm-7">@Model.TotalPromotion</dd>
+
+                <dt class="col-sm-5">Total RRO Rebate</dt>
+                <dd class="col-sm-7">@Model.TotalRroRebate</dd>
+
+                <dt class="col-sm-5">Profit Amount</dt>
+                <dd class="col-sm-7 fw-bold text-success">@Model.ProfitAmount</dd>
+
+                <dt class="col-sm-5">Status</dt>
+                <dd class="col-sm-7">@((Model.StatusMaster?.StatusName ?? Model.Status))</dd>
+
+                <dt class="col-sm-5">Action</dt>
+                <dd class="col-sm-7">@Model.Action</dd>
+            </dl>
+        </div>
+    </div>
+
+    <div class="row mt-3">
+        <div class="col-md-6">
+            <dl class="row">
+                <dt class="col-sm-5">Created Date</dt>
+                <dd class="col-sm-7">@Model.CreatedDate</dd>
+
+                <dt class="col-sm-5">Transaction Date</dt>
+                <dd class="col-sm-7">@Model.TransDate</dd>
+
+                <dt class="col-sm-5">Process Date</dt>
+                <dd class="col-sm-7">@Model.ProcessDate</dd>
+            </dl>
+        </div>
+
+        <div class="col-md-6">
+            <dl class="row">
+                <dt class="col-sm-5">Order Date</dt>
+                <dd class="col-sm-7">@Model.OrderDate</dd>
+
+                <dt class="col-sm-5">Sold Date</dt>
+                <dd class="col-sm-7">@Model.SoldDate</dd>
+
+                <dt class="col-sm-5">Payment Date</dt>
+                <dd class="col-sm-7">@Model.PaymentDate</dd>
+            </dl>
+        </div>
+    </div>
+
+    <div class="mt-3">
+        <h4>Additional Info</h4>
+        <p><strong>Amz Pro Ref:</strong> @Model.AmzProRef</p>
+        <p><strong>Description:</strong> @Model.Discription</p>
+    </div>
+
+    <div class="mt-4">
+        <div class="d-flex justify-content-between align-items-center">
+            <h4>Charges</h4>
+            <a asp-controller="SaleCharge" asp-action="Create" asp-route-saleId="@Model.Id" class="btn btn-primary btn-sm">Add Charge</a>
+        </div>
+
+        <table class="table table-bordered table-striped mt-2">
+            <thead class="table-dark">
+                <tr>
+                    <th>Charge Type</th>
+                    <th>Amount</th>
+                    <th>Remarks</th>
+                </tr>
+            </thead>
+            <tbody>
+            @if (Model.Charges.Any())
+            {
+                @foreach (var charge in Model.Charges)
+                {
+                    <tr>
+                        <td>@charge.ChargeType?.ChargeTypeName</td>
+                        <td>@charge.Amount</td>
+                        <td>@charge.Remarks</td>
+                    </tr>
+                }
+            }
+            else
+            {
+                <tr>
+                    <td colspan="3" class="text-center">No charges added yet.</td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    </div>
+</div>
