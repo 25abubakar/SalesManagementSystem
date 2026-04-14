@@ -1,6 +1,110 @@
 ﻿@{
     ViewData["Title"] = "Privacy Policy";
 }
-<h1>@ViewData["Title"]</h1>
 
-<p>Use this page to detail your site's privacy policy.</p>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+
+<style>
+    .privacy-hero {
+        background: linear-gradient(120deg,#0d6efd,#4e73df);
+        color: white;
+        padding: 40px;
+        border-radius: 15px;
+        text-align: center;
+        margin-bottom: 30px;
+    }
+
+    .privacy-card {
+        border: none;
+        border-radius: 15px;
+        box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+        padding: 25px;
+        height: 100%;
+    }
+
+    .privacy-icon {
+        font-size: 32px;
+        color: #0d6efd;
+        margin-bottom: 10px;
+    }
+</style>
+
+<div class="container">
+
+    <!-- HERO -->
+    <div class="privacy-hero">
+        <h1 class="fw-bold">Privacy Policy</h1>
+        <p class="mb-0">Your data security and privacy are our top priorities.</p>
+    </div>
+
+    <!-- INTRO -->
+    <div class="card privacy-card mb-4">
+        <h4 class="fw-bold mb-3">Introduction</h4>
+        <p>
+            This Sales Management System is designed to securely manage sales records, charges,
+            accounts, and master data. We respect your privacy and are committed to protecting
+            the information stored within this application.
+        </p>
+    </div>
+
+    <!-- GRID SECTIONS -->
+    <div class="row g-4">
+
+        <div class="col-md-6">
+            <div class="privacy-card">
+                <i class="bi bi-database-lock privacy-icon"></i>
+                <h5 class="fw-bold">Data Collection</h5>
+                <p>
+                    We only collect the data necessary for managing sales transactions,
+                    accounts, products, and related business operations.
+                    No personal information is shared with third parties.
+                </p>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="privacy-card">
+                <i class="bi bi-shield-check privacy-icon"></i>
+                <h5 class="fw-bold">Data Security</h5>
+                <p>
+                    All data is stored securely using modern database technologies and
+                    protected through authentication and authorization mechanisms.
+                </p>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="privacy-card">
+                <i class="bi bi-person-lock privacy-icon"></i>
+                <h5 class="fw-bold">User Privacy</h5>
+                <p>
+                    User credentials and access permissions are handled securely.
+                    We ensure that only authorized users can access sensitive data.
+                </p>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="privacy-card">
+                <i class="bi bi-arrow-repeat privacy-icon"></i>
+                <h5 class="fw-bold">System Updates</h5>
+                <p>
+                    We continuously improve our system and security practices to ensure
+                    your business data remains protected and up to date.
+                </p>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- CONTACT -->
+    <div class="card privacy-card mt-4 text-center">
+        <h4 class="fw-bold">Contact</h4>
+        <p>
+            If you have any questions regarding this Privacy Policy,
+            please contact the system administrator.
+        </p>
+        <p class="fw-bold mb-0">Email: muhammadabubakarkhan1234@gmail.com</p>
+    </div>
+
+</div>

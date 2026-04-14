@@ -2,41 +2,133 @@
     ViewData["Title"] = "Home Page";
 }
 
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+
+<style>
+    body {
+        background:#f5f7fb;
+    }
+
+    .hero-section {
+        background: linear-gradient(120deg,#0d6efd,#4e73df);
+        color:white;
+        padding:40px;
+        border-radius:15px;
+        box-shadow:0 10px 25px rgba(0,0,0,0.1);
+    }
+
+    .dashboard-card {
+        border:none;
+        border-radius:15px;
+        transition:0.3s;
+        box-shadow:0 6px 18px rgba(0,0,0,0.08);
+    }
+
+    .dashboard-card:hover {
+        transform:translateY(-6px);
+        box-shadow:0 15px 30px rgba(0,0,0,0.15);
+    }
+
+    .icon-circle {
+        width:60px;
+        height:60px;
+        border-radius:50%;
+        display:flex;
+        align-items:center;
+        justify-content:center;
+        font-size:26px;
+        color:white;
+    }
+
+    .bg-sales { background:#0d6efd; }
+    .bg-charges { background:#20c997; }
+    .bg-master { background:#fd7e14; }
+
+    .btn-dashboard {
+        border-radius:30px;
+        padding:8px 20px;
+    }
+
+    .footer-note {
+        margin-top:40px;
+        text-align:center;
+        color:#888;
+    }
+</style>
+
 <div class="container mt-4">
-    <div class="text-center mb-4">
-        <h1 class="display-5">Sales Management Dashboard</h1>
-        <p class="text-muted">Manage sales entries, charges, and master tables from one place.</p>
+
+    <!-- HERO -->
+    <div class="hero-section text-center mb-4">
+        <h1 class="fw-bold">Sales Management Dashboard</h1>
+        <p class="mb-0">Manage sales, charges and master data from one powerful panel</p>
     </div>
 
-    <div class="row g-3">
+    <!-- CARDS -->
+    <div class="row g-4">
+
+        <!-- SALES -->
         <div class="col-md-4">
-            <div class="card h-100 shadow-sm">
-                <div class="card-body">
-                    <h5 class="card-title">Sales</h5>
-                    <p class="card-text">Create and manage sale records with amounts, status, and dates.</p>
-                    <a asp-controller="SaleAcct" asp-action="Index" class="btn btn-primary">Open Sales</a>
+            <div class="card dashboard-card h-100">
+                <div class="card-body text-center p-4">
+                    <div class="icon-circle bg-sales mx-auto mb-3">
+                        <i class="bi bi-cart-check"></i>
+                    </div>
+
+                    <h4 class="fw-bold">Sales</h4>
+                    <p class="text-muted">
+                        Create and manage sale records with amounts, status and transaction dates.
+                    </p>
+
+                    <a asp-controller="SaleAcct" asp-action="Index"
+                       class="btn btn-primary btn-dashboard">
+                        Open Sales
+                    </a>
                 </div>
             </div>
         </div>
 
+        <!-- CHARGES -->
         <div class="col-md-4">
-            <div class="card h-100 shadow-sm">
-                <div class="card-body">
-                    <h5 class="card-title">Sale Charges</h5>
-                    <p class="card-text">Track charge lines such as tax, fee, promotion, and other adjustments.</p>
-                    <a asp-controller="SaleCharge" asp-action="Index" class="btn btn-primary">Open Charges</a>
+            <div class="card dashboard-card h-100">
+                <div class="card-body text-center p-4">
+                    <div class="icon-circle bg-charges mx-auto mb-3">
+                        <i class="bi bi-receipt"></i>
+                    </div>
+
+                    <h4 class="fw-bold">Sale Charges</h4>
+                    <p class="text-muted">
+                        Track taxes, fees, promotions and adjustments for each sale.
+                    </p>
+
+                    <a asp-controller="SaleCharge" asp-action="Index"
+                       class="btn btn-success btn-dashboard">
+                        Open Charges
+                    </a>
                 </div>
             </div>
         </div>
 
+        <!-- MASTERS -->
         <div class="col-md-4">
-            <div class="card h-100 shadow-sm">
-                <div class="card-body">
-                    <h5 class="card-title">Masters</h5>
-                    <p class="card-text">Maintain platforms, products, accounts, statuses, and transaction types.</p>
-                    <a asp-controller="SalePlatform" asp-action="Index" class="btn btn-primary">Open Masters</a>
+            <div class="card dashboard-card h-100">
+                <div class="card-body text-center p-4">
+                    <div class="icon-circle bg-master mx-auto mb-3">
+                        <i class="bi bi-gear"></i>
+                    </div>
+
+                    <h4 class="fw-bold">Masters</h4>
+                    <p class="text-muted">
+                        Manage platforms, products, accounts, statuses and transaction types.
+                    </p>
+
+                    <a asp-controller="SalePlatform" asp-action="Index"
+                       class="btn btn-warning btn-dashboard text-white">
+                        Open Masters
+                    </a>
                 </div>
             </div>
         </div>
+
     </div>
 </div>
