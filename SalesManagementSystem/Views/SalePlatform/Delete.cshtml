@@ -1,0 +1,29 @@
+@model SalesManagementSystem.Models.SalePlatform
+
+@{
+    ViewData["Title"] = "Delete Platform";
+}
+
+<div class="container mt-4">
+    <h2>Delete Platform</h2>
+
+    <div class="alert alert-warning">
+        Are you sure you want to delete <strong>@Model.PlatformName</strong>?
+    </div>
+
+    <dl class="row">
+        <dt class="col-sm-3">Id</dt>
+        <dd class="col-sm-9">@Model.PlatformId</dd>
+        <dt class="col-sm-3">CompanyId</dt>
+        <dd class="col-sm-9">@Model.CompanyId</dd>
+        <dt class="col-sm-3">Active</dt>
+        <dd class="col-sm-9">@Model.IsActive</dd>
+    </dl>
+
+    <form asp-action="Delete" asp-route-id="@Model.PlatformId" method="post">
+        @Html.AntiForgeryToken()
+        <button type="submit" class="btn btn-danger">Delete</button>
+        <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+    </form>
+</div>
+
