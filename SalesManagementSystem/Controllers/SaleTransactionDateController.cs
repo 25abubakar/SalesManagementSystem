@@ -25,26 +25,26 @@ namespace SalesManagementSystem.Controllers
             return View(data);
         }
 
-        public IActionResult Create()
+       public IActionResult Create()
+{
+    var vm = new SaleTransactionVM();
+
+    vm.SaleDateList = _context.SaleDates
+        .Select(x => new SelectListItem
         {
-            var vm = new SaleTransactionVM();
+            Value = x.SaleDateId.ToString(),
+            Text = "SaleDate #" + x.SaleDateId
+        }).ToList();
 
-            vm.SaleDateList = _context.SaleDates
-                .Select(x => new SelectListItem
-                {
-                    Value = x.SaleDateId.ToString(),
-                    Text = "SaleDate #" + x.SaleDateId
-                }).ToList();
+    vm.SaleAcctList = _context.SaleAccts
+        .Select(x => new SelectListItem
+        {
+            Value = x.Id.ToString(),
+            Text = "Order: " + (x.OrderID ?? "No OrderID") + " (ID: " + x.Id + ")"
+        }).ToList();
 
-            vm.SaleAcctList = _context.SaleAccts
-                .Select(x => new SelectListItem
-                {
-                    Value = x.Id.ToString(),
-                    Text = "Order: " + (x.OrderID ?? "No OrderID") + " (ID: " + x.Id + ")"
-                }).ToList();
-
-            return View(vm);
-        }
+    return View(vm);
+}
 
         [HttpPost]
         public async Task<IActionResult> Create(SaleTransactionVM vm)

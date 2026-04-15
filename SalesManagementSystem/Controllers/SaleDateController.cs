@@ -50,5 +50,29 @@ namespace SalesManagementSystem.Controllers
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
+        public async Task<IActionResult> Delete(int id)
+        {
+            var data = await _context.SaleDates.FindAsync(id);
+
+            if (data == null)
+                return NotFound();
+
+            return View(data);
+        }
+
+        [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteConfirmed(int id)
+        {
+            var data = await _context.SaleDates.FindAsync(id);
+
+            if (data != null)
+            {
+                _context.SaleDates.Remove(data);
+                await _context.SaveChangesAsync();
+            }
+
+            return RedirectToAction(nameof(Index));
+        }
     }
 }

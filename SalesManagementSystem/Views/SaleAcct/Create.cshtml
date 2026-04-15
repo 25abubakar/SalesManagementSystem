@@ -4,86 +4,20 @@
 }
 
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
-
 <style>
-    body{
-        background:#f5f7fb;
-    }
-
-    .page-header{
-        background: linear-gradient(135deg,#0d6efd,#4e73df);
-        color:white;
-        padding:30px;
-        border-radius:16px;
-        margin-bottom:25px;
-        box-shadow:0 10px 25px rgba(0,0,0,0.1);
-    }
-
-    .card-section{
-        background:white;
-        border:none;
-        border-radius:16px;
-        box-shadow:0 8px 22px rgba(0,0,0,0.06);
-        padding:25px;
-        margin-bottom:20px;
-        transition:.2s;
-    }
-
-    .card-section:hover{
-        transform:translateY(-2px);
-    }
-
-    .section-title{
-        display:flex;
-        align-items:center;
-        gap:8px;
-        font-weight:700;
-        margin-bottom:18px;
-        color:#0d6efd;
-    }
-
-    .form-control,.form-select{
-        border-radius:10px;
-        padding:10px 12px;
-        border:1px solid #e5e7eb;
-        transition:.2s;
-    }
-
-    .form-control:focus,.form-select:focus{
-        border-color:#0d6efd;
-        box-shadow:0 0 0 .2rem rgba(13,110,253,.15);
-    }
-
-    label{
-        font-weight:600;
-        font-size:13px;
-        color:#555;
-        margin-bottom:5px;
-    }
-
-    .sticky-actions{
-        position:sticky;
-        bottom:20px;
-        background:rgba(255,255,255,0.95);
-        backdrop-filter: blur(10px);
-        padding:15px;
-        border-radius:14px;
-        box-shadow:0 10px 25px rgba(0,0,0,0.12);
-        display:flex;
-        justify-content:flex-end;
-        gap:10px;
-    }
-
-    .btn{
-        border-radius:10px;
-        padding:8px 18px;
-        font-weight:600;
-    }
+    body { background: #f5f7fb; }
+    .page-header { background: linear-gradient(135deg,#0d6efd,#4e73df); color: white; padding: 30px; border-radius: 16px; margin-bottom: 25px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
+    .card-section { background: white; border: none; border-radius: 16px; box-shadow: 0 8px 22px rgba(0,0,0,0.06); padding: 25px; margin-bottom: 20px; transition: .2s; }
+    .card-section:hover { transform: translateY(-2px); }
+    .section-title { display: flex; align-items: center; gap: 8px; font-weight: 700; margin-bottom: 18px; color: #0d6efd; }
+    .form-control, .form-select { border-radius: 10px; padding: 10px 12px; border: 1px solid #e5e7eb; transition: .2s; }
+    .form-control:focus, .form-select:focus { border-color: #0d6efd; box-shadow: 0 0 0 .2rem rgba(13,110,253,.15); }
+    label { font-weight: 600; font-size: 13px; color: #555; margin-bottom: 5px; }
+    .sticky-actions { position: sticky; bottom: 20px; background: rgba(255,255,255,0.95); backdrop-filter: blur(10px); padding: 15px; border-radius: 14px; box-shadow: 0 10px 25px rgba(0,0,0,0.12); display: flex; justify-content: flex-end; gap: 10px; z-index: 1000; }
+    .btn { border-radius: 10px; padding: 8px 18px; font-weight: 600; }
 </style>
 
 <div class="container mt-4">
-
-    <!-- HEADER -->
     <div class="page-header text-center">
         <h2><i class="bi bi-cart-plus"></i> Create New Sale</h2>
         <p class="mb-0">Fill all required fields to generate a new sales record</p>
@@ -93,45 +27,24 @@
         @Html.AntiForgeryToken()
         <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
 
-        <!-- BASIC -->
         <div class="card-section">
-            <div class="section-title">
-                <i class="bi bi-info-circle"></i> Basic Information
-            </div>
-
+            <div class="section-title"><i class="bi bi-info-circle"></i> Basic Information</div>
             <div class="row g-3">
-                <div class="col-md-3">
-                    <label>Company ID</label>
-                    <input asp-for="CompanyId" class="form-control" placeholder="Company Id" />
-                </div>
-
+                <div class="col-md-3"><label>Company ID</label><input asp-for="CompanyId" class="form-control" /></div>
                 <div class="col-md-3">
                     <label>Platform</label>
-                    <select asp-for="PlatformId" class="form-select" asp-items="ViewBag.Platforms">
-                        <option value="">Select Platform</option>
-                    </select>
+                    <select asp-for="PlatformId" class="form-select" asp-items="ViewBag.Platforms"><option value="">Select Platform</option></select>
                 </div>
-
                 <div class="col-md-3">
                     <label>Product</label>
-                    <select asp-for="ProductId" class="form-select" asp-items="ViewBag.Products">
-                        <option value="">Select Product</option>
-                    </select>
+                    <select asp-for="ProductId" class="form-select" asp-items="ViewBag.Products"><option value="">Select Product</option></select>
                 </div>
-
-                <div class="col-md-3">
-                    <label>Order ID</label>
-                    <input asp-for="OrderID" class="form-control" placeholder="Order ID" />
-                </div>
+                <div class="col-md-3"><label>Order ID</label><input asp-for="OrderID" class="form-control" /></div>
             </div>
         </div>
 
-        <!-- AMOUNTS -->
         <div class="card-section">
-            <div class="section-title">
-                <i class="bi bi-cash-coin"></i> Quantity & Amounts
-            </div>
-
+            <div class="section-title"><i class="bi bi-cash-coin"></i> Quantity & Amounts</div>
             <div class="row g-3">
                 <div class="col-md-3"><label>Qty Sold</label><input asp-for="QtySold" class="form-control" /></div>
                 <div class="col-md-3"><label>Qty Held</label><input asp-for="QtyHeld" class="form-control" /></div>
@@ -140,83 +53,52 @@
             </div>
         </div>
 
-        <!-- CHARGES -->
         <div class="card-section">
-            <div class="section-title">
-                <i class="bi bi-receipt"></i> Charges
-            </div>
-
+            <div class="section-title"><i class="bi bi-receipt"></i> Charges & Rebates</div>
             <div class="row g-3">
                 <div class="col-md-3"><label>Pro Charges</label><input asp-for="TotalProCharges" class="form-control" /></div>
-                <div class="col-md-3"><label>Amazon Fee</label><input asp-for="AmazonFee" class="form-control" /></div>
-                <div class="col-md-3"><label>Other</label><input asp-for="OtherCharges" class="form-control" /></div>
-                <div class="col-md-3"><label>Promotion</label><input asp-for="TotalPromotion" class="form-control" /></div>
+                <div class="col-md-2"><label>Amazon Fee</label><input asp-for="AmazonFee" class="form-control" /></div>
+                <div class="col-md-2"><label>Other</label><input asp-for="OtherCharges" class="form-control" /></div>
+                <div class="col-md-2"><label>Promotion</label><input asp-for="TotalPromotion" class="form-control" /></div>
+                <div class="col-md-3"><label>RRO Rebate</label><input asp-for="TotalRroRebate" class="form-control" /></div>
             </div>
         </div>
 
-        <!-- ACCOUNTS -->
         <div class="card-section">
-            <div class="section-title">
-                <i class="bi bi-diagram-3"></i> Accounts & Status
-            </div>
-
+            <div class="section-title"><i class="bi bi-diagram-3"></i> Accounts & Status</div>
             <div class="row g-3">
-
                 <div class="col-md-3">
                     <label>Transaction Type</label>
-                    <select asp-for="TransactionId" class="form-select" asp-items="ViewBag.TransTypes">
-                        <option value="">-- Select Transaction Type --</option>
-                    </select>
+                    <select asp-for="TransactionId" class="form-select" asp-items="ViewBag.TransTypes"><option value="">-- Select --</option></select>
                 </div>
-
                 <div class="col-md-3">
                     <label>From Account</label>
-                    <select asp-for="FromAccountId" class="form-select" asp-items="ViewBag.FromAccounts">
-                        <option value="">-- Select From Account --</option>
-                    </select>
+                    <select asp-for="FromAccountId" class="form-select" asp-items="ViewBag.FromAccounts"><option value="">-- Select --</option></select>
                 </div>
-
                 <div class="col-md-3">
                     <label>To Account</label>
-                    <select asp-for="ToAccountId" class="form-select" asp-items="ViewBag.ToAccounts">
-                        <option value="">-- Select To Account --</option>
-                    </select>
+                    <select asp-for="ToAccountId" class="form-select" asp-items="ViewBag.ToAccounts"><option value="">-- Select --</option></select>
                 </div>
-
                 <div class="col-md-3">
                     <label>Status</label>
-                    <select asp-for="StatusID" class="form-select" asp-items="ViewBag.Statuses">
-                        <option value="">-- Select Status --</option>
-                    </select>
+                    <select asp-for="StatusID" class="form-select" asp-items="ViewBag.Statuses"><option value="">-- Select --</option></select>
                 </div>
-
             </div>
         </div>
 
-        <!-- DATES -->
         <div class="card-section">
-            <div class="section-title">
-                <i class="bi bi-calendar-event"></i> Dates
-            </div>
-
-             <div class="row g-3">
-                <div class="col-md-3"><label>Created</label><input asp-for="CreatedDate" type="datetime-local" class="form-control" /></div>
+            <div class="section-title"><i class="bi bi-list-stars"></i> Additional Details</div>
+            <div class="row g-3">
+                <div class="col-md-3"><label>Amz Pro Ref</label><input asp-for="AmzProRef" class="form-control" /></div>
+                <div class="col-md-3"><label>Action</label><input asp-for="Action" class="form-control" /></div>
+                <div class="col-md-3"><label>Created Date</label><input asp-for="CreatedDate" type="datetime-local" class="form-control" /></div>
+                <div class="col-md-12"><label>Description</label><input asp-for="Discription" class="form-control" /></div>
             </div>
         </div>
 
-        <!-- ACTIONS -->
         <div class="sticky-actions">
-            <a asp-action="Index" class="btn btn-outline-secondary">
-                <i class="bi bi-arrow-left"></i> Back
-            </a>
-            <button type="submit" class="btn btn-success">
-                <i class="bi bi-check-circle"></i> Save Sale
-            </button>
+            <a asp-action="Index" class="btn btn-outline-secondary"><i class="bi bi-arrow-left"></i> Back</a>
+            <button type="submit" class="btn btn-success"><i class="bi bi-check-circle"></i> Save Sale</button>
         </div>
-
     </form>
 </div>
-
-@section Scripts {
-    <partial name="_ValidationScriptsPartial" />
-}

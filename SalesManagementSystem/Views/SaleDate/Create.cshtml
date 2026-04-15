@@ -5,6 +5,8 @@
 }
 
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 
 <style>
     body {
@@ -95,27 +97,27 @@
 
                 <div class="col-md-4">
                     <label>Transaction Date</label>
-                    <input asp-for="TransDate" type="datetime-local" class="form-control" />
+                    <input asp-for="TransDate" type="datetime" class="form-control" />
                 </div>
 
                 <div class="col-md-4">
                     <label>Process Date</label>
-                    <input asp-for="ProcessDate" type="datetime-local" class="form-control" />
+                    <input asp-for="ProcessDate" type="datetime" class="form-control" />
                 </div>
 
                 <div class="col-md-4">
                     <label>Order Date</label>
-                    <input asp-for="OrderDate" type="datetime-local" class="form-control" />
+                    <input asp-for="OrderDate" type="datetime" class="form-control" />
                 </div>
 
                 <div class="col-md-6 mt-3">
                     <label>Sold Date</label>
-                    <input asp-for="SoldDate" type="datetime-local" class="form-control" />
+                    <input asp-for="SoldDate" type="datetime" class="form-control" />
                 </div>
 
                 <div class="col-md-6 mt-3">
                     <label>Payment Date</label>
-                    <input asp-for="PaymentDate" type="datetime-local" class="form-control" />
+                    <input asp-for="PaymentDate" type="datetime" class="form-control" />
                 </div>
 
             </div>
@@ -138,3 +140,23 @@
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
 }
+
+<script>
+    document.querySelectorAll('input[type="datetime"]').forEach(x => {
+        x.addEventListener('change', function () {
+            if (this.value) {
+                let date = new Date(this.value);
+
+                date.setHours(date.getHours());
+
+                this.value = date.toISOString().slice(0,16);
+            }
+        });
+    });
+</script>
+<script>
+    flatpickr("input[type=datetime]", {
+    enableTime: false, 
+    dateFormat: "Y-m-d"
+    });
+</script>

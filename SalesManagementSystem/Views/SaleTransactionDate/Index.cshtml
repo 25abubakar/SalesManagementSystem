@@ -1,0 +1,30 @@
+﻿@model IEnumerable<SalesManagementSystem.Models.SaleTransactionDate>
+
+<h2>Sale Transaction Dates</h2>
+
+<p>
+    <a asp-action="Create" class="btn btn-primary">Assign New Date</a>
+</p>
+
+<table class="table table-bordered table-striped">
+    <thead>
+        <tr>
+            <th>SaleTransId</th>
+            <th>SaleAcct</th>
+            <th>SaleDateId</th>
+            <th>Date</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.SaleTransId</td>
+                <td>@item.SaleAcctId</td>
+                <td>@item.SaleDateId</td>
+                <td>@item.Date?.ToString("yyyy-MM-dd HH:mm")</td>
+            </tr>
+        }
+    </tbody>
+</table>
