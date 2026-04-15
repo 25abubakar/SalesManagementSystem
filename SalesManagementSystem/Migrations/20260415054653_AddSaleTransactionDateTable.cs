@@ -5,7 +5,7 @@
 namespace SalesManagementSystem.Migrations
 {
     /// <inheritdoc />
-    public partial class updatesaledates : Migration
+    public partial class AddSaleTransactionDateTable : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)

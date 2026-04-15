@@ -19,6 +19,7 @@ namespace SalesManagementSystem.Data
         public DbSet<SaleChargeType> SaleChargeTypes { get; set; }
         public DbSet<SaleCharge> SaleCharges { get; set; }
         public DbSet<SaleDate> SaleDates { get; set; }
+        public DbSet<SaleTransactionDate> SaleTransactionDates { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

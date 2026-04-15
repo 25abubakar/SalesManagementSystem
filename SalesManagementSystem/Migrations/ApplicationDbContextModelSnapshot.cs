@@ -89,9 +89,6 @@ namespace SalesManagementSystem.Migrations
                     b.Property<int?>("FromAccountId")
                         .HasColumnType("int");
 
-                    b.Property<DateTime?>("OrderDate")
-                        .HasColumnType("datetime2");
-
                     b.Property<string>("OrderID")
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
@@ -99,14 +96,8 @@ namespace SalesManagementSystem.Migrations
                     b.Property<decimal?>("OtherCharges")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<DateTime?>("PaymentDate")
-                        .HasColumnType("datetime2");
-
                     b.Property<int?>("PlatformId")
                         .HasColumnType("int");
-
-                    b.Property<DateTime?>("ProcessDate")
-                        .HasColumnType("datetime2");
 
                     b.Property<int?>("ProductId")
                         .HasColumnType("int");
@@ -124,9 +115,6 @@ namespace SalesManagementSystem.Migrations
 
                     b.Property<decimal?>("SoldAmount")
                         .HasColumnType("decimal(18,2)");
-
-                    b.Property<DateTime?>("SoldDate")
-                        .HasColumnType("datetime2");
 
                     b.Property<string>("Status")
                         .HasMaxLength(500)
@@ -146,9 +134,6 @@ namespace SalesManagementSystem.Migrations
 
                     b.Property<decimal?>("TotalRroRebate")
                         .HasColumnType("decimal(18,2)");
-
-                    b.Property<DateTime?>("TransDate")
-                        .HasColumnType("datetime2");
 
                     b.Property<int?>("TransactionId")
                         .HasColumnType("int");
@@ -223,30 +208,30 @@ namespace SalesManagementSystem.Migrations
 
             modelBuilder.Entity("SalesManagementSystem.Models.SaleDate", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<int>("SaleDateId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("SaleDateId"));
 
-                    b.Property<DateTime>("OrderDate")
+                    b.Property<DateTime?>("OrderDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<DateTime>("PaymentDate")
+                    b.Property<DateTime?>("PaymentDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<DateTime>("ProcessDate")
+                    b.Property<DateTime?>("ProcessDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<DateTime>("SoldDate")
+                    b.Property<DateTime?>("SoldDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<DateTime>("TransDate")
+                    b.Property<DateTime?>("TransDate")
                         .HasColumnType("datetime2");
 
-                    b.HasKey("Id");
+                    b.HasKey("SaleDateId");
 
-                    b.ToTable("SaleDates");
+                    b.ToTable("SaleDate");
                 });
 
             modelBuilder.Entity("SalesManagementSystem.Models.SalePlatform", b =>
@@ -321,6 +306,32 @@ namespace SalesManagementSystem.Migrations
                     b.HasKey("StatusID");
 
                     b.ToTable("SaleStatus", (string)null);
+                });
+
+            modelBuilder.Entity("SalesManagementSystem.Models.SaleTransactionDate", b =>
+                {
+                    b.Property<int>("SaleTransId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("SaleTransId"));
+
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("datetime2");
+
+                    b.Property<long>("SaleAcctId")
+                        .HasColumnType("bigint");
+
+                    b.Property<int>("SaleDateId")
+                        .HasColumnType("int");
+
+                    b.HasKey("SaleTransId");
+
+                    b.HasIndex("SaleAcctId");
+
+                    b.HasIndex("SaleDateId");
+
+                    b.ToTable("SaleTransactionDates");
                 });
 
             modelBuilder.Entity("SalesManagementSystem.Models.SaleTransactionType", b =>
@@ -422,9 +433,33 @@ namespace SalesManagementSystem.Migrations
                     b.Navigation("Platform");
                 });
 
+            modelBuilder.Entity("SalesManagementSystem.Models.SaleTransactionDate", b =>
+                {
+                    b.HasOne("SalesManagementSystem.Models.SaleAcct", "SaleAcct")
+                        .WithMany()
+                        .HasForeignKey("SaleAcctId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("SalesManagementSystem.Models.SaleDate", "SaleDate")
+                        .WithMany("SaleTransactionDates")
+                        .HasForeignKey("SaleDateId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("SaleAcct");
+
+                    b.Navigation("SaleDate");
+                });
+
             modelBuilder.Entity("SalesManagementSystem.Models.SaleAcct", b =>
                 {
                     b.Navigation("Charges");
+                });
+
+            modelBuilder.Entity("SalesManagementSystem.Models.SaleDate", b =>
+                {
+                    b.Navigation("SaleTransactionDates");
                 });
 
             modelBuilder.Entity("SalesManagementSystem.Models.SalePlatform", b =>

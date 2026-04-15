@@ -95,6 +95,17 @@
                             </a>
                         </li>
 
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
+                                <i class="bi bi-cart"></i> Sale Date
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end">
+                                <li><a class="dropdown-item" asp-controller="SaleDate" asp-action="Index"> Sale Dates List</a></li>
+                                <li><a class="dropdown-item" asp-controller="SaleDate" asp-action="Create"> Sale Dates</a></li>
+                                <li><a class="dropdown-item" asp-controller="SaleTransactionDate" asp-action="Create">Transaction Date</a></li>
+                            </ul>
+                        </li>
+
                         <li class="nav-item">
                             <a class="nav-link" asp-controller="SaleDate" asp-action="Index"> Sale Dates</a>
                         </li>

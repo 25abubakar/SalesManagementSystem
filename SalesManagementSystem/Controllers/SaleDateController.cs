@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using SalesManagementSystem.Data;
 using SalesManagementSystem.Models;
 
@@ -13,10 +14,9 @@ namespace SalesManagementSystem.Controllers
             _context = context;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            var data = _context.SaleDates.ToList();
-            return View(data);
+            return View(await _context.SaleDates.ToListAsync());
         }
 
         public IActionResult Create()
@@ -26,75 +26,28 @@ namespace SalesManagementSystem.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Create(SaleDate saleDate)
+        public async Task<IActionResult> Create(SaleDate saleDate)
         {
             if (ModelState.IsValid)
             {
-                var currentDate = DateTime.Now;
-
-                saleDate.TransDate = currentDate;
-                saleDate.ProcessDate = currentDate;
-                saleDate.OrderDate = currentDate;
-                saleDate.SoldDate = currentDate;
-                saleDate.PaymentDate = currentDate;
-
-                _context.SaleDates.Add(saleDate);
-                _context.SaveChanges();
-
+                _context.Add(saleDate);
+                await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-
             return View(saleDate);
         }
 
-        public IActionResult Edit(int id)
+        public async Task<IActionResult> Edit(int id)
         {
-            var data = _context.SaleDates.Find(id);
-
-            if (data == null)
-                return NotFound();
-
+            var data = await _context.SaleDates.FindAsync(id);
             return View(data);
         }
 
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public IActionResult Edit(SaleDate saleDate)
+        public async Task<IActionResult> Edit(SaleDate saleDate)
         {
-            if (ModelState.IsValid)
-            {
-                _context.SaleDates.Update(saleDate);
-                _context.SaveChanges();
-
-                return RedirectToAction(nameof(Index));
-            }
-
-            return View(saleDate);
-        }
-
-        public IActionResult Delete(int id)
-        {
-            var data = _context.SaleDates.Find(id);
-
-            if (data == null)
-                return NotFound();
-
-            return View(data);
-        }
-
- 
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public IActionResult DeleteConfirmed(int id)
-        {
-            var data = _context.SaleDates.Find(id);
-
-            if (data != null)
-            {
-                _context.SaleDates.Remove(data);
-                _context.SaveChanges();
-            }
-
+            _context.Update(saleDate);
+            await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
     }

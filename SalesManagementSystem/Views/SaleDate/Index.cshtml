@@ -38,21 +38,21 @@
                         foreach (var item in Model)
                         {
                             <tr>
-                                <td>@item.Id</td>
-                                <td>@item.TransDate.ToString("yyyy-MM-dd HH:mm")</td>
-                                <td>@item.ProcessDate.ToString("yyyy-MM-dd HH:mm")</td>
-                                <td>@item.OrderDate.ToString("yyyy-MM-dd HH:mm")</td>
-                                <td>@item.SoldDate.ToString("yyyy-MM-dd HH:mm")</td>
-                                <td>@item.PaymentDate.ToString("yyyy-MM-dd HH:mm")</td>
+                                <td>@item.SaleDateId</td>
+                                <td>@item.TransDate?.ToString("yyyy-MM-dd HH:mm")</td>
+                                <td>@item.ProcessDate?.ToString("yyyy-MM-dd HH:mm")</td>
+                                <td>@item.OrderDate?.ToString("yyyy-MM-dd HH:mm")</td>
+                                <td>@item.SoldDate?.ToString("yyyy-MM-dd HH:mm")</td>
+                                <td>@item.PaymentDate?.ToString("yyyy-MM-dd HH:mm")</td>
 
                                 <td class="text-center">
 
-                                    <a asp-action="Edit" asp-route-id="@item.Id"
+                                    <a asp-action="Edit" asp-route-id="@item.SaleDateId"
                                            class="btn btn-sm btn-warning">
                                         <i class="bi bi-pencil"></i> Edit
                                     </a>
 
-                                    <a asp-action="Delete" asp-route-id="@item.Id"
+                                    <a asp-action="Delete" asp-route-id="@item.SaleDateId"
                                            class="btn btn-sm btn-danger">
                                         <i class="bi bi-trash"></i> Delete
                                     </a>

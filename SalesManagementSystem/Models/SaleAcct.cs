@@ -63,11 +63,6 @@ namespace SalesManagementSystem.Models
         public string? Action { get; set; }
 
         public DateTime? CreatedDate { get; set; }
-        public DateTime? TransDate { get; set; }
-        public DateTime? ProcessDate { get; set; }
-        public DateTime? OrderDate { get; set; }
-        public DateTime? SoldDate { get; set; }
-        public DateTime? PaymentDate { get; set; }
 
         // Navigation Properties
         public virtual SalePlatform? Platform { get; set; }
