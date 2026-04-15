@@ -101,6 +101,7 @@
                             </a>
                             <ul class="dropdown-menu dropdown-menu-end">
                                 <li><a class="dropdown-item" asp-controller="SaleDate" asp-action="Index"> Sale Dates List</a></li>
+                                <li><a class="dropdown-item" asp-controller="SaleTransactionDate" asp-action="Index">Transaction Date List</a></li>
                                 <li><a class="dropdown-item" asp-controller="SaleDate" asp-action="Create"> Sale Dates</a></li>
                                 <li><a class="dropdown-item" asp-controller="SaleTransactionDate" asp-action="Create">Transaction Date</a></li>
                             </ul>
@@ -134,6 +135,12 @@
                         <li class="nav-item">
                             <a class="nav-link" asp-controller="Home" asp-action="Privacy">
                                 <i class="bi bi-shield-lock"></i> Privacy
+                            </a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a class="nav-link text-danger" asp-controller="Auth" asp-action="Logout">
+                                Logout
                             </a>
                         </li>
 

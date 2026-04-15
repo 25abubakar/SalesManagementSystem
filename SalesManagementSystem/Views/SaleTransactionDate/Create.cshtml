@@ -2,45 +2,44 @@
 
 <style>
     body {
-        background: #f5f7fb;
+        background: #eef2f7;
     }
 
     .page-wrapper {
-        max-width: 900px;
+        max-width: 950px;
         margin: auto;
     }
 
     .header-card {
-        background: linear-gradient(135deg,#0d6efd,#4e73df);
+        background: linear-gradient(135deg, #0d6efd, #4e73df);
         color: white;
-        padding: 25px;
-        border-radius: 16px;
+        padding: 30px;
+        border-radius: 18px;
         text-align: center;
-        margin-bottom: 20px;
-        box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        margin-bottom: 25px;
+        box-shadow: 0 12px 30px rgba(0,0,0,0.12);
     }
 
     .form-card {
         background: white;
-        border-radius: 16px;
-        padding: 25px;
-        box-shadow: 0 8px 22px rgba(0,0,0,0.08);
+        border-radius: 18px;
+        padding: 30px;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+        transition: 0.3s ease;
     }
+
+        .form-card:hover {
+            transform: translateY(-2px);
+        }
 
     .form-group label {
         font-weight: 600;
-        margin-bottom: 5px;
+        margin-bottom: 6px;
     }
 
     .form-control {
         border-radius: 10px;
         padding: 10px;
-    }
-
-    .btn-primary {
-        border-radius: 10px;
-        padding: 10px 20px;
-        font-weight: 600;
     }
 
     .side-image {
@@ -52,18 +51,24 @@
 
     .row-flex {
         display: flex;
-        gap: 20px;
+        gap: 25px;
         flex-wrap: wrap;
     }
 
     .left {
         flex: 1;
-        min-width: 250px;
+        min-width: 260px;
     }
 
     .right {
         flex: 2;
-        min-width: 300px;
+        min-width: 320px;
+    }
+
+    .btn-custom {
+        border-radius: 10px;
+        padding: 10px 18px;
+        font-weight: 600;
     }
 </style>
 
@@ -75,50 +80,68 @@
         <p class="mb-0">Link sales with transaction timeline</p>
     </div>
 
-    <div class="row-flex">
+    @* <div class="row-flex">
 
-        <!-- IMAGE SIDE -->
+        <!-- LEFT SIDE -->
         <div class="left">
             <img src="https://cdn-icons-png.flaticon.com/512/2838/2838912.png"
                  class="side-image" alt="Transaction">
 
             <img src="https://cdn-icons-png.flaticon.com/512/2920/2920277.png"
                  class="side-image" alt="Calendar">
-        </div>
+        </div> *@
 
-        <!-- FORM SIDE -->
+        <!-- RIGHT SIDE -->
         <div class="right">
 
             <div class="form-card">
 
-                <form asp-action="Create">
+                <form asp-action="Create" method="post">
+                    @Html.AntiForgeryToken()
 
+                    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                    <!-- Sale Account -->
                     <div class="form-group mb-3">
                         <label>Sale Account</label>
-                        <select asp-for="SaleAcctId" asp-items="Model.SaleAcctList" class="form-control">
+                        <select asp-for="SaleAcctId"
+                                asp-items="Model.SaleAcctList"
+                                class="form-control">
                             <option value="">-- Select Sale Account --</option>
                         </select>
+                        <span asp-validation-for="SaleAcctId" class="text-danger"></span>
                     </div>
 
+                    <!-- Sale Date -->
                     <div class="form-group mb-3">
                         <label>Sale Date Record</label>
-                        <select asp-for="SaleDateId" asp-items="Model.SaleDateList" class="form-control">
+                        <select asp-for="SaleDateId"
+                                asp-items="Model.SaleDateList"
+                                class="form-control">
                             <option value="">-- Select Date Record --</option>
                         </select>
+                        <span asp-validation-for="SaleDateId" class="text-danger"></span>
                     </div>
 
+                    <!-- Transaction Date -->
                     <div class="form-group mb-3">
                         <label>Transaction Date</label>
-                        <input asp-for="Date" type="datetime-local" class="form-control" />
+                        <input asp-for="Date"
+                               type="datetime-local"
+                               class="form-control" />
+                        <span asp-validation-for="Date" class="text-danger"></span>
                     </div>
 
+                    <!-- Buttons -->
                     <div class="d-flex justify-content-between mt-4">
 
-                        <a asp-action="Index" class="btn btn-outline-secondary">
+                        <a asp-action="Index"
+                               class="btn btn-outline-secondary btn-custom">
                             ⬅ Back
                         </a>
 
-                        <button type="submit" class="btn btn-primary">
+                        <button type="submit"
+                                class="btn btn-primary btn-custom">
                             💾 Save Transaction
                         </button>
 
@@ -131,3 +154,7 @@
 
     </div>
 </div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

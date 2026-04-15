@@ -91,6 +91,12 @@ namespace SalesManagementSystem.Data
                 .HasOne(c => c.ChargeType)
                 .WithMany()
                 .HasForeignKey(c => c.ChargeTypeId);
+
+            modelBuilder.Entity<SaleTransactionDate>()
+                .HasOne(x => x.SaleDate)
+                .WithMany(x => x.SaleTransactionDates)
+                .HasForeignKey(x => x.SaleDateId)
+                .OnDelete(DeleteBehavior.Cascade);
         }
 
     }

@@ -8,6 +8,7 @@ var connectionString = builder.Configuration.GetConnectionString("DefaultConnect
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(connectionString));
 
+builder.Services.AddSession();
 builder.Services.AddControllersWithViews();
 builder.Services.AddSingleton<DapperContext>();
 builder.Services.AddScoped<ISaleRepository, SaleRepository>();
@@ -23,9 +24,8 @@ if (!app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();
-
+app.UseSession();
 app.UseAuthorization();
-
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");

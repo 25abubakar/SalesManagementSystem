@@ -13,6 +13,7 @@
             <th>SaleAcct</th>
             <th>SaleDateId</th>
             <th>Date</th>
+            <th class="text-center">Actions</th>
         </tr>
     </thead>
 
@@ -24,6 +25,19 @@
                 <td>@item.SaleAcctId</td>
                 <td>@item.SaleDateId</td>
                 <td>@item.Date?.ToString("yyyy-MM-dd HH:mm")</td>
+                <td class="text-center">
+
+                    <a asp-action="Edit" asp-route-id="@item.SaleTransId"
+                           class="btn btn-sm btn-warning">
+                        <i class="bi bi-pencil"></i> Edit
+                    </a>
+
+                    <a asp-action="Delete" asp-route-id="@item.SaleTransId"
+                           class="btn btn-sm btn-danger">
+                        <i class="bi bi-trash"></i> Delete
+                    </a>
+
+                </td>
             </tr>
         }
     </tbody>
