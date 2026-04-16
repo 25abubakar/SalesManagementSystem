@@ -1,51 +1,32 @@
 ﻿@model SalesManagementSystem.Models.SaleDate
-
 @{
-    ViewData["Title"] = "Delete Sale Date";
+    ViewData["Title"] = "Delete Date Label";
 }
-
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
 
 <div class="container mt-5">
 
     <div class="card border-danger shadow-sm">
-
         <div class="card-header bg-danger text-white">
-            <h4><i class="bi bi-exclamation-triangle"></i> Confirm Delete</h4>
+            Confirm Delete
         </div>
 
         <div class="card-body">
+            <h5>Are you sure you want to delete this label?</h5>
 
-            <p class="text-danger">
-                Are you sure you want to delete this record?
-            </p>
-
-            <ul class="list-group mb-3">
-                <li class="list-group-item">Trans: @Model.TransDate</li>
-                <li class="list-group-item">Process: @Model.ProcessDate</li>
-                <li class="list-group-item">Order: @Model.OrderDate</li>
-                <li class="list-group-item">Sold: @Model.SoldDate</li>
-                <li class="list-group-item">Payment: @Model.PaymentDate</li>
-            </ul>
+            <div class="alert alert-warning mt-3">
+                <strong>@Model.DateLabel</strong>
+            </div>
 
             <form asp-action="Delete" method="post">
-
-                <input type="hidden" asp-for="SaleDateId" />
+                <input type="hidden" asp-for="Id" />
 
                 <div class="d-flex justify-content-end gap-2">
-
-                    <a asp-action="Index" class="btn btn-secondary">
-                        Cancel
-                    </a>
-
-                    <button type="submit" class="btn btn-danger">
-                        Yes, Delete
-                    </button>
-
+                    <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+                    <button type="submit" class="btn btn-danger">Delete</button>
                 </div>
-
             </form>
 
         </div>
     </div>
+
 </div>

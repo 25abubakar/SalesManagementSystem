@@ -28,8 +28,7 @@ namespace SalesManagementSystem.Data
             modelBuilder.Entity<SaleAcct>().ToTable("SaleAcct");
             modelBuilder.Entity<SalePlatform>().ToTable("SalePlatform");
             modelBuilder.Entity<SaleProduct>().ToTable("SaleProduct");
-            modelBuilder.Entity<SaleTransactionType>().ToTable("SaleTransactionType");
-            modelBuilder.Entity<SaleAccount>().ToTable("SaleAccount");
+            modelBuilder.Entity<SaleTransactionType>().ToTable("SaleTransactionType");;
             modelBuilder.Entity<SaleStatus>().ToTable("SaleStatus");
             modelBuilder.Entity<SaleChargeType>().ToTable("SaleChargeType");
             modelBuilder.Entity<SaleCharge>().ToTable("SaleCharge");
@@ -95,8 +94,16 @@ namespace SalesManagementSystem.Data
             modelBuilder.Entity<SaleTransactionDate>()
                 .HasOne(x => x.SaleDate)
                 .WithMany(x => x.SaleTransactionDates)
-                .HasForeignKey(x => x.SaleDateId)
-                .OnDelete(DeleteBehavior.Cascade);
+                .HasForeignKey(x => x.DateLabelId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<SaleDate>()
+                .HasData(new SaleDate { Id = 1, DateLabel = "TransactionDate" },
+                 new SaleDate { Id = 2, DateLabel = "PaymentDate" },
+                 new SaleDate { Id = 3, DateLabel = "OrderDate" },
+                 new SaleDate { Id = 4, DateLabel = "ProcessDate" },
+                 new SaleDate { Id = 5, DateLabel = "SoldDate" }
+);
         }
 
     }

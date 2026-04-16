@@ -1,11 +1,11 @@
 using Microsoft.AspNetCore.Mvc;
-using SalesManagementSystem.Filters;
+//using SalesManagementSystem.Filters;
 using SalesManagementSystem.Models;
 using System.Diagnostics;
 
 namespace SalesManagementSystem.Controllers
 {
-    [SessionAuthorize]
+    //[SessionAuthorize]
     public class HomeController : Controller
     {
         public IActionResult Index()

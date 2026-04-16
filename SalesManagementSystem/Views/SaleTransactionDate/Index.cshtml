@@ -1,44 +1,50 @@
 ﻿@model IEnumerable<SalesManagementSystem.Models.SaleTransactionDate>
 
-<h2>Sale Transaction Dates</h2>
+<div class="container mt-4">
 
-<p>
-    <a asp-action="Create" class="btn btn-primary">Assign New Date</a>
-</p>
+    <h3 class="mb-3">📅 Sale Transaction Dates</h3>
 
-<table class="table table-bordered table-striped">
-    <thead>
-        <tr>
-            <th>SaleTransId</th>
-            <th>SaleAcct</th>
-            <th>SaleDateId</th>
-            <th>Date</th>
-            <th class="text-center">Actions</th>
-        </tr>
-    </thead>
+    <a asp-action="Create" class="btn btn-primary mb-3">
+        Assign New Date
+    </a>
 
-    <tbody>
-        @foreach (var item in Model)
-        {
-            <tr>
-                <td>@item.SaleTransId</td>
-                <td>@item.SaleAcctId</td>
-                <td>@item.SaleDateId</td>
-                <td>@item.Date?.ToString("yyyy-MM-dd HH:mm")</td>
-                <td class="text-center">
+    <div class="card shadow-sm">
+        <div class="card-body">
 
-                    <a asp-action="Edit" asp-route-id="@item.SaleTransId"
-                           class="btn btn-sm btn-warning">
-                        <i class="bi bi-pencil"></i> Edit
-                    </a>
+            <table class="table table-bordered table-hover">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Id</th>
+                        <th>Sale Transaction</th>
+                        <th>Date Label</th>
+                        <th>Date</th>
+                        <th style="width:200px">Actions</th>
+                    </tr>
+                </thead>
 
-                    <a asp-action="Delete" asp-route-id="@item.SaleTransId"
-                           class="btn btn-sm btn-danger">
-                        <i class="bi bi-trash"></i> Delete
-                    </a>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>@item.Id</td>
+                            <td>@item.Id</td>
+                            <td><strong>@item.SaleDate?.DateLabel</strong></td>
+                            <td>@item.Date.ToString("yyyy-MM-dd")</td>
 
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
+                            <td>
+                                <a asp-action="Edit" asp-route-id="@item.Id"
+                                   class="btn btn-sm btn-warning">Edit</a>
+
+                                <a asp-action="Delete" asp-route-id="@item.Id"
+                                   class="btn btn-sm btn-danger">Delete</a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+
+            </table>
+
+        </div>
+    </div>
+
+</div>

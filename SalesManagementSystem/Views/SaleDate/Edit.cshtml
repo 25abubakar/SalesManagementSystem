@@ -1,63 +1,26 @@
 ﻿@model SalesManagementSystem.Models.SaleDate
-
 @{
-    ViewData["Title"] = "Edit Sale Date";
+    ViewData["Title"] = "Edit Date Label";
 }
 
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
-
-<div class="container mt-4">
+<div class="container mt-5">
 
     <div class="card shadow-sm p-4">
-
-        <h3 class="mb-3">
-            <i class="bi bi-pencil-square"></i> Edit Sale Date
-        </h3>
+        <h3 class="mb-3 text-warning">Edit Date Label</h3>
 
         <form asp-action="Edit" method="post">
             @Html.AntiForgeryToken()
+            <input type="hidden" asp-for="Id" />
 
-            <input type="hidden" asp-for="SaleDateId" />
-
-            <div class="row g-3">
-
-                <div class="col-md-4">
-                    <label>Trans Date</label>
-                    <input asp-for="TransDate" type="datetime" class="form-control" />
-                </div>
-
-                <div class="col-md-4">
-                    <label>Process Date</label>
-                    <input asp-for="ProcessDate" type="datetime" class="form-control" />
-                </div>
-
-                <div class="col-md-4">
-                    <label>Order Date</label>
-                    <input asp-for="OrderDate" type="datetime" class="form-control" />
-                </div>
-
-                <div class="col-md-6 mt-3">
-                    <label>Sold Date</label>
-                    <input asp-for="SoldDate" type="datetime" class="form-control" />
-                </div>
-
-                <div class="col-md-6 mt-3">
-                    <label>Payment Date</label>
-                    <input asp-for="PaymentDate" type="datetime" class="form-control" />
-                </div>
-
+            <div class="mb-3">
+                <label asp-for="DateLabel" class="form-label"></label>
+                <input asp-for="DateLabel" class="form-control" />
+                <span asp-validation-for="DateLabel" class="text-danger"></span>
             </div>
 
-            <div class="mt-4 d-flex justify-content-end gap-2">
-
-                <a asp-action="Index" class="btn btn-secondary">
-                    Back
-                </a>
-
-                <button type="submit" class="btn btn-success">
-                    Update
-                </button>
-
+            <div class="d-flex justify-content-end gap-2">
+                <a asp-action="Index" class="btn btn-secondary">Back</a>
+                <button type="submit" class="btn btn-success">Update</button>
             </div>
         </form>
 

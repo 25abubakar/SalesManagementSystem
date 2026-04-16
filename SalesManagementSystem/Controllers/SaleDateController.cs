@@ -14,48 +14,67 @@ namespace SalesManagementSystem.Controllers
             _context = context;
         }
 
+        // 🔹 LIST
         public async Task<IActionResult> Index()
         {
-            return View(await _context.SaleDates.ToListAsync());
+            var list = await _context.SaleDates.ToListAsync();
+            return View(list);
         }
 
         public IActionResult Create()
         {
-            return View();
+            TempData["Error"] = "Date labels are system defined and cannot be created.";
+            return RedirectToAction(nameof(Index));
         }
 
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(SaleDate saleDate)
+        public IActionResult Create(SaleDate saleDate)
         {
-            if (ModelState.IsValid)
-            {
-                _context.Add(saleDate);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
-            }
-            return View(saleDate);
+            return RedirectToAction(nameof(Index));
         }
 
         public async Task<IActionResult> Edit(int id)
         {
             var data = await _context.SaleDates.FindAsync(id);
+
+            if (data == null)
+                return NotFound();
+
             return View(data);
         }
 
         [HttpPost]
-        public async Task<IActionResult> Edit(SaleDate saleDate)
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(int id, SaleDate saleDate)
         {
-            _context.Update(saleDate);
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            if (id != saleDate.Id)
+                return NotFound();
+
+            if (ModelState.IsValid)
+            {
+                _context.Update(saleDate);
+                await _context.SaveChangesAsync();
+                return RedirectToAction(nameof(Index));
+            }
+
+            return View(saleDate);
         }
+
         public async Task<IActionResult> Delete(int id)
         {
             var data = await _context.SaleDates.FindAsync(id);
 
             if (data == null)
                 return NotFound();
+
+            bool isUsed = await _context.SaleTransactionDates
+                .AnyAsync(x => x.DateLabelId == id);
+
+            if (isUsed)
+            {
+                TempData["Error"] = "This Date Label is used in transactions and cannot be deleted.";
+                return RedirectToAction(nameof(Index));
+            }
 
             return View(data);
         }

@@ -64,7 +64,6 @@ namespace SalesManagementSystem.Models
 
         public DateTime? CreatedDate { get; set; }
 
-        // Navigation Properties
         public virtual SalePlatform? Platform { get; set; }
         public virtual SaleProduct? Product { get; set; }
         public virtual SaleTransactionType? TransactionType { get; set; }
@@ -72,5 +71,7 @@ namespace SalesManagementSystem.Models
         public virtual SaleAccount? ToAccount { get; set; }
         public virtual SaleStatus? StatusMaster { get; set; }
         public virtual List<SaleCharge> Charges { get; set; } = new();
+
+        public ICollection<SaleTransactionDate>? SaleTransactionDates { get; set; }
     }
 }

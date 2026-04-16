@@ -12,8 +12,8 @@ using SalesManagementSystem.Data;
 namespace SalesManagementSystem.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20260414071945_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20260416053545_CleanAgain")]
+    partial class CleanAgain
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -35,10 +35,15 @@ namespace SalesManagementSystem.Migrations
 
                     b.Property<string>("AccountName")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(150)
+                        .HasColumnType("nvarchar(150)");
 
                     b.Property<string>("AccountType")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<int?>("CompanyId")
+                        .HasColumnType("int");
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
@@ -62,10 +67,15 @@ namespace SalesManagementSystem.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
                     b.Property<string>("Action")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<decimal?>("AmazonFee")
                         .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("AmzProRef")
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
 
                     b.Property<int?>("CompanyId")
                         .HasColumnType("int");
@@ -82,11 +92,9 @@ namespace SalesManagementSystem.Migrations
                     b.Property<int?>("FromAccountId")
                         .HasColumnType("int");
 
-                    b.Property<DateTime?>("OrderDate")
-                        .HasColumnType("datetime2");
-
                     b.Property<string>("OrderID")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<decimal?>("OtherCharges")
                         .HasColumnType("decimal(18,2)");
@@ -111,11 +119,12 @@ namespace SalesManagementSystem.Migrations
                     b.Property<decimal?>("SoldAmount")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<DateTime?>("SoldDate")
-                        .HasColumnType("datetime2");
-
                     b.Property<string>("Status")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<int?>("StatusID")
+                        .HasColumnType("int");
 
                     b.Property<int?>("ToAccountId")
                         .HasColumnType("int");
@@ -134,11 +143,19 @@ namespace SalesManagementSystem.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("FromAccountId");
+
                     b.HasIndex("PlatformId");
 
                     b.HasIndex("ProductId");
 
-                    b.ToTable("SaleAcct");
+                    b.HasIndex("StatusID");
+
+                    b.HasIndex("ToAccountId");
+
+                    b.HasIndex("TransactionId");
+
+                    b.ToTable("SaleAcct", (string)null);
                 });
 
             modelBuilder.Entity("SalesManagementSystem.Models.SaleCharge", b =>
@@ -155,14 +172,20 @@ namespace SalesManagementSystem.Migrations
                     b.Property<int>("ChargeTypeId")
                         .HasColumnType("int");
 
+                    b.Property<string>("Remarks")
+                        .HasMaxLength(250)
+                        .HasColumnType("nvarchar(250)");
+
                     b.Property<long>("SaleId")
                         .HasColumnType("bigint");
 
                     b.HasKey("SaleChargeId");
 
+                    b.HasIndex("ChargeTypeId");
+
                     b.HasIndex("SaleId");
 
-                    b.ToTable("SaleCharge");
+                    b.ToTable("SaleCharge", (string)null);
                 });
 
             modelBuilder.Entity("SalesManagementSystem.Models.SaleChargeType", b =>
@@ -175,14 +198,59 @@ namespace SalesManagementSystem.Migrations
 
                     b.Property<string>("ChargeTypeName")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
 
                     b.HasKey("ChargeTypeId");
 
-                    b.ToTable("SaleChargeType");
+                    b.ToTable("SaleChargeType", (string)null);
+                });
+
+            modelBuilder.Entity("SalesManagementSystem.Models.SaleDate", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("DateLabel")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("SaleDates");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            DateLabel = "TransactionDate"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            DateLabel = "PaymentDate"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            DateLabel = "OrderDate"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            DateLabel = "ProcessDate"
+                        },
+                        new
+                        {
+                            Id = 5,
+                            DateLabel = "SoldDate"
+                        });
                 });
 
             modelBuilder.Entity("SalesManagementSystem.Models.SalePlatform", b =>
@@ -193,16 +261,20 @@ namespace SalesManagementSystem.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("PlatformId"));
 
+                    b.Property<int?>("CompanyId")
+                        .HasColumnType("int");
+
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
 
                     b.Property<string>("PlatformName")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(150)
+                        .HasColumnType("nvarchar(150)");
 
                     b.HasKey("PlatformId");
 
-                    b.ToTable("SalePlatforms");
+                    b.ToTable("SalePlatform", (string)null);
                 });
 
             modelBuilder.Entity("SalesManagementSystem.Models.SaleProduct", b =>
@@ -213,6 +285,9 @@ namespace SalesManagementSystem.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ProductId"));
 
+                    b.Property<int?>("CompanyId")
+                        .HasColumnType("int");
+
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
 
@@ -220,13 +295,15 @@ namespace SalesManagementSystem.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("ProductName")
-                        .HasColumnType("nvarchar(max)");
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
 
                     b.HasKey("ProductId");
 
                     b.HasIndex("PlatformId");
 
-                    b.ToTable("SaleProducts");
+                    b.ToTable("SaleProduct", (string)null);
                 });
 
             modelBuilder.Entity("SalesManagementSystem.Models.SaleStatus", b =>
@@ -242,11 +319,38 @@ namespace SalesManagementSystem.Migrations
 
                     b.Property<string>("StatusName")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.HasKey("StatusID");
 
-                    b.ToTable("SaleStatuses");
+                    b.ToTable("SaleStatus", (string)null);
+                });
+
+            modelBuilder.Entity("SalesManagementSystem.Models.SaleTransactionDate", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("DateLabelId")
+                        .HasColumnType("int");
+
+                    b.Property<long>("SaleAcctId")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DateLabelId");
+
+                    b.HasIndex("SaleAcctId");
+
+                    b.ToTable("SaleTransactionDates");
                 });
 
             modelBuilder.Entity("SalesManagementSystem.Models.SaleTransactionType", b =>
@@ -262,11 +366,12 @@ namespace SalesManagementSystem.Migrations
 
                     b.Property<string>("TransactionName")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.HasKey("TransactionId");
 
-                    b.ToTable("SaleTransactionTypes");
+                    b.ToTable("SaleTransactionType", (string)null);
                 });
 
             modelBuilder.Entity("SalesManagementSystem.Models.SaleAccount", b =>
@@ -280,6 +385,11 @@ namespace SalesManagementSystem.Migrations
 
             modelBuilder.Entity("SalesManagementSystem.Models.SaleAcct", b =>
                 {
+                    b.HasOne("SalesManagementSystem.Models.SaleAccount", "FromAccount")
+                        .WithMany()
+                        .HasForeignKey("FromAccountId")
+                        .OnDelete(DeleteBehavior.NoAction);
+
                     b.HasOne("SalesManagementSystem.Models.SalePlatform", "Platform")
                         .WithMany()
                         .HasForeignKey("PlatformId");
@@ -288,18 +398,47 @@ namespace SalesManagementSystem.Migrations
                         .WithMany()
                         .HasForeignKey("ProductId");
 
+                    b.HasOne("SalesManagementSystem.Models.SaleStatus", "StatusMaster")
+                        .WithMany()
+                        .HasForeignKey("StatusID");
+
+                    b.HasOne("SalesManagementSystem.Models.SaleAccount", "ToAccount")
+                        .WithMany()
+                        .HasForeignKey("ToAccountId")
+                        .OnDelete(DeleteBehavior.NoAction);
+
+                    b.HasOne("SalesManagementSystem.Models.SaleTransactionType", "TransactionType")
+                        .WithMany()
+                        .HasForeignKey("TransactionId");
+
+                    b.Navigation("FromAccount");
+
                     b.Navigation("Platform");
 
                     b.Navigation("Product");
+
+                    b.Navigation("StatusMaster");
+
+                    b.Navigation("ToAccount");
+
+                    b.Navigation("TransactionType");
                 });
 
             modelBuilder.Entity("SalesManagementSystem.Models.SaleCharge", b =>
                 {
-                    b.HasOne("SalesManagementSystem.Models.SaleAcct", "Sale")
+                    b.HasOne("SalesManagementSystem.Models.SaleChargeType", "ChargeType")
                         .WithMany()
+                        .HasForeignKey("ChargeTypeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("SalesManagementSystem.Models.SaleAcct", "Sale")
+                        .WithMany("Charges")
                         .HasForeignKey("SaleId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("ChargeType");
 
                     b.Navigation("Sale");
                 });
@@ -311,6 +450,37 @@ namespace SalesManagementSystem.Migrations
                         .HasForeignKey("PlatformId");
 
                     b.Navigation("Platform");
+                });
+
+            modelBuilder.Entity("SalesManagementSystem.Models.SaleTransactionDate", b =>
+                {
+                    b.HasOne("SalesManagementSystem.Models.SaleDate", "SaleDate")
+                        .WithMany("SaleTransactionDates")
+                        .HasForeignKey("DateLabelId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("SalesManagementSystem.Models.SaleAcct", "SaleAcct")
+                        .WithMany("SaleTransactionDates")
+                        .HasForeignKey("SaleAcctId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("SaleAcct");
+
+                    b.Navigation("SaleDate");
+                });
+
+            modelBuilder.Entity("SalesManagementSystem.Models.SaleAcct", b =>
+                {
+                    b.Navigation("Charges");
+
+                    b.Navigation("SaleTransactionDates");
+                });
+
+            modelBuilder.Entity("SalesManagementSystem.Models.SaleDate", b =>
+                {
+                    b.Navigation("SaleTransactionDates");
                 });
 
             modelBuilder.Entity("SalesManagementSystem.Models.SalePlatform", b =>

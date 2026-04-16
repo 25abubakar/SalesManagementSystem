@@ -15,109 +15,107 @@ namespace SalesManagementSystem.Controllers
             _context = context;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            var data = _context.SaleTransactionDates
-                .Include(x => x.SaleDate)
+            var data = await _context.SaleTransactionDates
                 .Include(x => x.SaleAcct)
-                .ToList();
+                .Include(x => x.SaleDate)
+                .ToListAsync();
 
             return View(data);
         }
 
-       public IActionResult Create()
-{
-    var vm = new SaleTransactionVM();
-
-    vm.SaleDateList = _context.SaleDates
-        .Select(x => new SelectListItem
+        public IActionResult Create()
         {
-            Value = x.SaleDateId.ToString(),
-            Text = "SaleDate #" + x.SaleDateId
-        }).ToList();
+            ViewBag.SaleTransactions = new SelectList(
+                _context.SaleAccts, "Id", "OrderID");
 
-    vm.SaleAcctList = _context.SaleAccts
-        .Select(x => new SelectListItem
-        {
-            Value = x.Id.ToString(),
-            Text = "Order: " + (x.OrderID ?? "No OrderID") + " (ID: " + x.Id + ")"
-        }).ToList();
+            ViewBag.DateLabels = new SelectList(
+                _context.SaleDates, "Id", "DateLabel");
 
-    return View(vm);
-}
+            return View();
+        }
 
         [HttpPost]
-        public async Task<IActionResult> Create(SaleTransactionVM vm)
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Create(SaleTransactionDate model)
         {
-            var entity = new SaleTransactionDate
+            if (ModelState.IsValid)
             {
-                SaleDateId = vm.SaleDateId,
-                SaleAcctId = vm.SaleAcctId,
-                Date = vm.Date
-            };
+                model.Id = 0;
 
-            _context.Add(entity);
-            await _context.SaveChangesAsync();
+                _context.Add(model);
+                await _context.SaveChangesAsync();
+                return RedirectToAction(nameof(Index));
+            }
 
-            return RedirectToAction(nameof(Index));
+            ViewBag.SaleTransactions = new SelectList(
+                _context.SaleAccts, "Id", "OrderID", model.SaleAcctId);
+
+            ViewBag.DateLabels = new SelectList(
+                _context.SaleDates, "Id", "DateLabel", model.DateLabelId);
+
+            return View(model);
         }
-        public IActionResult Edit(int id)
+
+        public async Task<IActionResult> Edit(int id)
         {
-            var entity = _context.SaleTransactionDates.Find(id);
+            var entity = await _context.SaleTransactionDates.FindAsync(id);
             if (entity == null) return NotFound();
 
-            var vm = new SaleTransactionVM
-            {
-                SaleDateId = entity.SaleDateId,
-                SaleAcctId = entity.SaleAcctId,
+            ViewBag.SaleTransactions = new SelectList(
+                _context.SaleAccts, "Id", "OrderID", entity.SaleAcctId);
 
-                SaleDateList = _context.SaleDates.Select(x => new SelectListItem
-                {
-                    Value = x.SaleDateId.ToString(),
-                    Text = "SaleDate #" + x.SaleDateId
-                }).ToList(),
+            ViewBag.DateLabels = new SelectList(
+                _context.SaleDates, "Id", "DateLabel", entity.DateLabelId);
 
-                SaleAcctList = _context.SaleAccts.Select(x => new SelectListItem
-                {
-                    Value = x.Id.ToString(),
-                    Text = "Order: " + (x.OrderID ?? "No OrderID") + " (ID: " + x.Id + ")"
-                }).ToList()
-            };
-
-            return View(vm);
+            return View(entity);
         }
+
         [HttpPost]
-        public async Task<IActionResult> Edit(SaleTransactionVM vm)
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(int id, SaleTransactionDate model)
         {
-            var entity = await _context.SaleTransactionDates.FindAsync(vm.SaleDateId);
-            if (entity == null) return NotFound();
+            if (id != model.Id) return NotFound();
 
-            entity.SaleDateId = vm.SaleDateId;
-            entity.SaleAcctId = vm.SaleAcctId;
-            entity.Date = vm.Date;
+            if (ModelState.IsValid)
+            {
+                _context.Update(model);
+                await _context.SaveChangesAsync();
+                return RedirectToAction(nameof(Index));
+            }
 
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            ViewBag.SaleTransactions = new SelectList(
+                _context.SaleAccts, "Id", "OrderID", model.SaleAcctId);
+
+            ViewBag.DateLabels = new SelectList(
+                _context.SaleDates, "Id", "DateLabel", model.DateLabelId);
+
+            return View(model);
         }
-        public IActionResult Delete(int id)
+
+        public async Task<IActionResult> Delete(int id)
         {
-            var data = _context.SaleTransactionDates
-                .Include(x => x.SaleDate)
+            var data = await _context.SaleTransactionDates
                 .Include(x => x.SaleAcct)
-                .FirstOrDefault(x => x.SaleTransId == id);
+                .Include(x => x.SaleDate)
+                .FirstOrDefaultAsync(x => x.Id == id);
 
             if (data == null) return NotFound();
 
             return View(data);
         }
+
         [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var entity = await _context.SaleTransactionDates.FindAsync(id);
-            if (entity == null) return NotFound();
-
-            _context.SaleTransactionDates.Remove(entity);
-            await _context.SaveChangesAsync();
+            if (entity != null)
+            {
+                _context.SaleTransactionDates.Remove(entity);
+                await _context.SaveChangesAsync();
+            }
 
             return RedirectToAction(nameof(Index));
         }

@@ -52,7 +52,7 @@ namespace SalesManagementSystem.Migrations
 
                     b.HasIndex("PlatformId");
 
-                    b.ToTable("SaleAccount", (string)null);
+                    b.ToTable("SaleAccount");
                 });
 
             modelBuilder.Entity("SalesManagementSystem.Models.SaleAcct", b =>
@@ -208,30 +208,46 @@ namespace SalesManagementSystem.Migrations
 
             modelBuilder.Entity("SalesManagementSystem.Models.SaleDate", b =>
                 {
-                    b.Property<int>("SaleDateId")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("SaleDateId"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<DateTime?>("OrderDate")
-                        .HasColumnType("datetime2");
+                    b.Property<string>("DateLabel")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime?>("PaymentDate")
-                        .HasColumnType("datetime2");
+                    b.HasKey("Id");
 
-                    b.Property<DateTime?>("ProcessDate")
-                        .HasColumnType("datetime2");
+                    b.ToTable("SaleDates");
 
-                    b.Property<DateTime?>("SoldDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime?>("TransDate")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("SaleDateId");
-
-                    b.ToTable("SaleDate");
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            DateLabel = "TransactionDate"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            DateLabel = "PaymentDate"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            DateLabel = "OrderDate"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            DateLabel = "ProcessDate"
+                        },
+                        new
+                        {
+                            Id = 5,
+                            DateLabel = "SoldDate"
+                        });
                 });
 
             modelBuilder.Entity("SalesManagementSystem.Models.SalePlatform", b =>
@@ -310,26 +326,26 @@ namespace SalesManagementSystem.Migrations
 
             modelBuilder.Entity("SalesManagementSystem.Models.SaleTransactionDate", b =>
                 {
-                    b.Property<int>("SaleTransId")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("SaleTransId"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime>("Date")
                         .HasColumnType("datetime2");
 
+                    b.Property<int>("DateLabelId")
+                        .HasColumnType("int");
+
                     b.Property<long>("SaleAcctId")
                         .HasColumnType("bigint");
 
-                    b.Property<int>("SaleDateId")
-                        .HasColumnType("int");
+                    b.HasKey("Id");
 
-                    b.HasKey("SaleTransId");
+                    b.HasIndex("DateLabelId");
 
                     b.HasIndex("SaleAcctId");
-
-                    b.HasIndex("SaleDateId");
 
                     b.ToTable("SaleTransactionDates");
                 });
@@ -435,15 +451,15 @@ namespace SalesManagementSystem.Migrations
 
             modelBuilder.Entity("SalesManagementSystem.Models.SaleTransactionDate", b =>
                 {
-                    b.HasOne("SalesManagementSystem.Models.SaleAcct", "SaleAcct")
-                        .WithMany()
-                        .HasForeignKey("SaleAcctId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("SalesManagementSystem.Models.SaleDate", "SaleDate")
                         .WithMany("SaleTransactionDates")
-                        .HasForeignKey("SaleDateId")
+                        .HasForeignKey("DateLabelId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("SalesManagementSystem.Models.SaleAcct", "SaleAcct")
+                        .WithMany("SaleTransactionDates")
+                        .HasForeignKey("SaleAcctId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -455,6 +471,8 @@ namespace SalesManagementSystem.Migrations
             modelBuilder.Entity("SalesManagementSystem.Models.SaleAcct", b =>
                 {
                     b.Navigation("Charges");
+
+                    b.Navigation("SaleTransactionDates");
                 });
 
             modelBuilder.Entity("SalesManagementSystem.Models.SaleDate", b =>
