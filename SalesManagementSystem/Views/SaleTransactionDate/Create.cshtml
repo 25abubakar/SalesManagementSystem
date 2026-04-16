@@ -11,17 +11,15 @@
 
             <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
 
-            <!-- Sale Transaction -->
             <div class="mb-3">
                 <label class="form-label">Sale Transaction</label>
-                <select asp-for="Id"
+                <select asp-for="SaleAcctId"
                         asp-items="ViewBag.SaleTransactions"
                         class="form-select">
                     <option value="">-- Select Transaction --</option>
                 </select>
             </div>
 
-            <!-- Date Label -->
             <div class="mb-3">
                 <label class="form-label">Date Label</label>
                 <select asp-for="DateLabelId"
@@ -31,7 +29,6 @@
                 </select>
             </div>
 
-            <!-- Actual Date -->
             <div class="mb-3">
                 <label class="form-label">Date</label>
                 <input asp-for="Date" type="date" class="form-control" />

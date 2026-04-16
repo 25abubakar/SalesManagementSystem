@@ -15,7 +15,6 @@
                 <thead class="table-dark">
                     <tr>
                         <th>Id</th>
-                        <th>Sale Transaction</th>
                         <th>Date Label</th>
                         <th>Date</th>
                         <th style="width:200px">Actions</th>
@@ -26,7 +25,6 @@
                     @foreach (var item in Model)
                     {
                         <tr>
-                            <td>@item.Id</td>
                             <td>@item.Id</td>
                             <td><strong>@item.SaleDate?.DateLabel</strong></td>
                             <td>@item.Date.ToString("yyyy-MM-dd")</td>
