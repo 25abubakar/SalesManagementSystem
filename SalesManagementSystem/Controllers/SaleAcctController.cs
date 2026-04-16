@@ -146,7 +146,7 @@ namespace SalesManagementSystem.Controllers
                 .Include(s => s.StatusMaster)
                 .Include(s => s.Charges)
                 .ThenInclude(c => c.ChargeType)
-                .Include(s => s.SaleTransactionDates)
+                .Include(s => s.SaleTransactionDates!)
                 .ThenInclude(d => d.SaleDate)
                 .FirstOrDefaultAsync(s => s.Id == id);
 
