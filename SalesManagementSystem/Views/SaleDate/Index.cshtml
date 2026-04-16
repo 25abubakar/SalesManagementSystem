@@ -20,7 +20,7 @@
                     <tr>
                         <th style="width:100px">Id</th>
                         <th>Date Label</th>
-                        <th style="width:200px">Actions</th>
+                        @* <th style="width:200px">Actions</th> *@
                     </tr>
                 </thead>
 
@@ -31,13 +31,13 @@
                             <td>@item.Id</td>
                             <td><strong>@item.DateLabel</strong></td>
 
-                            <td>
+                            @* <td>
                                 <a asp-action="Edit" asp-route-id="@item.Id"
                                    class="btn btn-sm btn-warning">Edit</a>
 
                                 <a asp-action="Delete" asp-route-id="@item.Id"
                                    class="btn btn-sm btn-danger">Delete</a>
-                            </td>
+                            </td> *@
                         </tr>
                     }
                 </tbody>

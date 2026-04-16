@@ -135,8 +135,13 @@
         </table>
     </div>
 
+
     <div class="mt-4">
-        <h4>Transaction Dates</h4>
+        <div class="d-flex justify-content-between align-items-center">
+            <h4>Transaction Dates</h4>
+            <a asp-controller="SaleTransactionDate" asp-action="Create" asp-route-saleId="@Model.Id" class="btn btn-primary btn-sm">Add Date Label</a>
+        </div>
+    <div class="mt-4">
         <table class="table table-bordered table-striped mt-2">
             <thead class="table-dark">
                 <tr>
