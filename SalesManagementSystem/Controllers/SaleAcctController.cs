@@ -33,18 +33,67 @@ namespace SalesManagementSystem.Controllers
         public async Task<IActionResult> Create()
         {
             await PopulateDropDowns();
-            return View();
+            return View(new SaleAcctCreateVM());
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(SaleAcct sale)
+        public async Task<IActionResult> Create(SaleAcctCreateVM model)
         {
+            var transactionDates = (model.SaleTransactionDates ?? new List<SaleTransactionDateEntryVM>())
+                .Where(x => x.DateLabelId.HasValue || x.Date.HasValue)
+                .ToList();
+
+            foreach (var item in transactionDates)
+            {
+                if (!item.DateLabelId.HasValue)
+                {
+                    ModelState.AddModelError("", "Please select a date label for each sale transaction date row.");
+                }
+
+                if (!item.Date.HasValue)
+                {
+                    ModelState.AddModelError("", "Please enter a date for each sale transaction date row.");
+                }
+            }
+
             if (ModelState.IsValid)
             {
                 try
                 {
-                    sale.CreatedDate ??= DateTime.Now;
+                    var sale = new SaleAcct
+                    {
+                        CompanyId = model.CompanyId,
+                        PlatformId = model.PlatformId,
+                        ProductId = model.ProductId,
+                        OrderID = model.OrderID,
+                        QtyHeld = model.QtyHeld,
+                        QtySold = model.QtySold,
+                        TransactionId = model.TransactionId,
+                        FromAccountId = model.FromAccountId,
+                        ToAccountId = model.ToAccountId,
+                        TotalProCharges = model.TotalProCharges,
+                        AmazonFee = model.AmazonFee,
+                        OtherCharges = model.OtherCharges,
+                        TotalPromotion = model.TotalPromotion,
+                        SoldAmount = model.SoldAmount,
+                        TotalRroRebate = model.TotalRroRebate,
+                        CostAmount = model.CostAmount,
+                        AmzProRef = model.AmzProRef,
+                        Status = model.Status,
+                        Discription = model.Discription,
+                        StatusID = model.StatusID,
+                        Action = model.Action,
+                        CreatedDate = model.CreatedDate ?? DateTime.Now,
+                        SaleTransactionDates = transactionDates
+                            .Where(x => x.DateLabelId.HasValue && x.Date.HasValue)
+                            .Select(x => new SaleTransactionDate
+                            {
+                                DateLabelId = x.DateLabelId!.Value,
+                                Date = x.Date!.Value
+                            })
+                            .ToList()
+                    };
 
                     _context.Add(sale);
                     await _context.SaveChangesAsync();
@@ -58,8 +107,9 @@ namespace SalesManagementSystem.Controllers
                 }
             }
 
-            await PopulateDropDowns(sale);
-            return View(sale);
+            model.SaleTransactionDates = transactionDates;
+            await PopulateDropDowns();
+            return View(model);
         }
 
         private async Task PopulateDropDowns(SaleAcct? sale = null)
@@ -73,6 +123,7 @@ namespace SalesManagementSystem.Controllers
             ViewBag.ToAccounts = new SelectList(accounts, "AccountId", "AccountName", sale?.ToAccountId);
 
             ViewBag.Statuses = new SelectList(await _context.SaleStatuses.ToListAsync(), "StatusID", "StatusName", sale?.StatusID);
+            ViewBag.DateLabels = new SelectList(await _context.SaleDates.ToListAsync(), "Id", "DateLabel");
         }
 
         public async Task<IActionResult> Edit(long id)
@@ -95,6 +146,8 @@ namespace SalesManagementSystem.Controllers
                 .Include(s => s.StatusMaster)
                 .Include(s => s.Charges)
                 .ThenInclude(c => c.ChargeType)
+                .Include(s => s.SaleTransactionDates)
+                .ThenInclude(d => d.SaleDate)
                 .FirstOrDefaultAsync(s => s.Id == id);
 
             if (sale == null) return NotFound();
