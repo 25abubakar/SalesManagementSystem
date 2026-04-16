@@ -134,4 +134,34 @@
             </tbody>
         </table>
     </div>
+
+    <div class="mt-4">
+        <h4>Transaction Dates</h4>
+        <table class="table table-bordered table-striped mt-2">
+            <thead class="table-dark">
+                <tr>
+                    <th>Date Label</th>
+                    <th>Date</th>
+                </tr>
+            </thead>
+            <tbody>
+            @if (Model.SaleTransactionDates != null && Model.SaleTransactionDates.Any())
+            {
+                @foreach (var transactionDate in Model.SaleTransactionDates)
+                {
+                    <tr>
+                        <td>@transactionDate.SaleDate?.DateLabel</td>
+                        <td>@transactionDate.Date.ToString("yyyy-MM-dd")</td>
+                    </tr>
+                }
+            }
+            else
+            {
+                <tr>
+                    <td colspan="2" class="text-center">No transaction dates added yet.</td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    </div>
 </div>
