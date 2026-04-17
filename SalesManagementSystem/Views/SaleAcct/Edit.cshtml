@@ -130,9 +130,74 @@
 
         <br />
         <button type="submit" class="btn btn-warning">Update</button>
-        <a asp-controller="SaleCharge" asp-action="Index" asp-route-saleId="@Model.Id" class="btn btn-dark">Manage Charges</a>
+        <a asp-controller="SaleCharge" asp-action="Create" asp-route-saleId="@Model.Id" class="btn btn-dark">Add Charge</a>
+        <a asp-controller="SaleTransactionDate" asp-action="Create" asp-route-saleId="@Model.Id" class="btn btn-primary">Add Transaction Date</a>
+        <a asp-controller="SaleCharge" asp-action="Index" asp-route-saleId="@Model.Id" class="btn btn-outline-dark">View Charges</a>
+        <a asp-controller="SaleTransactionDate" asp-action="Index" asp-route-saleId="@Model.Id" class="btn btn-outline-primary">View Transactions</a>
         <a asp-action="Index" class="btn btn-secondary">Back</a>
     </form>
+
+    <div class="mt-4">
+        <h4>Charges</h4>
+        <table class="table table-bordered table-striped">
+            <thead class="table-dark">
+                <tr>
+                    <th>Charge Type</th>
+                    <th>Amount</th>
+                    <th>Remarks</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model.Charges != null && Model.Charges.Any())
+                {
+                    @foreach (var charge in Model.Charges)
+                    {
+                        <tr>
+                            <td>@charge.ChargeType?.ChargeTypeName</td>
+                            <td>@charge.Amount</td>
+                            <td>@charge.Remarks</td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="3" class="text-center">No charges added yet.</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <div class="mt-4">
+        <h4>Transaction Dates</h4>
+        <table class="table table-bordered table-striped">
+            <thead class="table-dark">
+                <tr>
+                    <th>Date Label</th>
+                    <th>Date</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model.SaleTransactionDates != null && Model.SaleTransactionDates.Any())
+                {
+                    @foreach (var item in Model.SaleTransactionDates)
+                    {
+                        <tr>
+                            <td>@item.SaleDate?.DateLabel</td>
+                            <td>@item.Date.ToString("yyyy-MM-dd")</td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="2" class="text-center">No transaction dates added yet.</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
 </div>
 
 @section Scripts {

@@ -1,4 +1,7 @@
 ﻿@model SalesManagementSystem.Models.SaleTransactionDate
+@{
+    long? saleId = Model.SaleAcctId > 0 ? Model.SaleAcctId : null;
+}
 
 <div class="container mt-4">
 
@@ -35,7 +38,7 @@
             </div>
 
             <div class="d-flex justify-content-between">
-                <a asp-action="Index" class="btn btn-secondary">Back</a>
+                <a asp-action="Index" asp-route-saleId="@saleId" class="btn btn-secondary">Back</a>
                 <button type="submit" class="btn btn-success">Save</button>
             </div>
 

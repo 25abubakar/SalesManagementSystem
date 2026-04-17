@@ -15,25 +15,38 @@ namespace SalesManagementSystem.Controllers
             _context = context;
         }
 
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(long? saleId = null)
         {
-            var data = await _context.SaleTransactionDates
+            var query = _context.SaleTransactionDates
                 .Include(x => x.SaleAcct)
                 .Include(x => x.SaleDate)
+                .AsQueryable();
+
+            if (saleId.HasValue)
+            {
+                query = query.Where(x => x.SaleAcctId == saleId.Value);
+            }
+
+            var data = await query
+                .OrderByDescending(x => x.Id)
                 .ToListAsync();
 
+            ViewBag.SaleId = saleId;
             return View(data);
         }
 
-        public IActionResult Create()
+        public IActionResult Create(long? saleId = null)
         {
             ViewBag.SaleTransactions = new SelectList(
-                _context.SaleAccts, "Id", "OrderID");
+                _context.SaleAccts, "Id", "OrderID", saleId);
 
             ViewBag.DateLabels = new SelectList(
                 _context.SaleDates, "Id", "DateLabel");
 
-            return View();
+            return View(new SaleTransactionDate
+            {
+                SaleAcctId = saleId ?? 0
+            });
         }
 
         [HttpPost]
@@ -46,7 +59,7 @@ namespace SalesManagementSystem.Controllers
 
                 _context.Add(model);
                 await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(Index), new { saleId = model.SaleAcctId });
             }
 
             ViewBag.SaleTransactions = new SelectList(

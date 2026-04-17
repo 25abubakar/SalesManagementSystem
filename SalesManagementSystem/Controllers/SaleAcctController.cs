@@ -24,6 +24,9 @@ namespace SalesManagementSystem.Controllers
                 .Include(s => s.FromAccount)
                 .Include(s => s.ToAccount)
                 .Include(s => s.StatusMaster)
+                .Include(s => s.Charges)
+                .Include(s => s.SaleTransactionDates!)
+                .ThenInclude(d => d.SaleDate)
                 .OrderByDescending(s => s.CreatedDate)
                 .ToListAsync();
 
@@ -128,7 +131,12 @@ namespace SalesManagementSystem.Controllers
 
         public async Task<IActionResult> Edit(long id)
         {
-            var sale = await _context.SaleAccts.FindAsync(id);
+            var sale = await _context.SaleAccts
+                .Include(s => s.Charges)
+                .ThenInclude(c => c.ChargeType)
+                .Include(s => s.SaleTransactionDates!)
+                .ThenInclude(d => d.SaleDate)
+                .FirstOrDefaultAsync(s => s.Id == id);
             if (sale == null) return NotFound();
 
             await PopulateDropDowns(sale);

@@ -1,12 +1,23 @@
 ﻿@model IEnumerable<SalesManagementSystem.Models.SaleTransactionDate>
+@{
+    long? saleId = ViewBag.SaleId;
+}
 
 <div class="container mt-4">
 
     <h3 class="mb-3">📅 Sale Transaction Dates</h3>
 
-    <a asp-action="Create" class="btn btn-primary mb-3">
+    <a asp-action="Create" asp-route-saleId="@saleId" class="btn btn-primary mb-3">
         Assign New Date
     </a>
+
+    @if (saleId != null)
+    {
+        <div class="alert alert-info">
+            Showing transaction dates for SaleId: <strong>@saleId</strong>
+            <a asp-action="Index" class="ms-2">Show all</a>
+        </div>
+    }
 
     <div class="card shadow-sm">
         <div class="card-body">
@@ -15,6 +26,7 @@
                 <thead class="table-dark">
                     <tr>
                         <th>Id</th>
+                        <th>Sale</th>
                         <th>Date Label</th>
                         <th>Date</th>
                         <th style="width:200px">Actions</th>
@@ -26,6 +38,7 @@
                     {
                         <tr>
                             <td>@item.Id</td>
+                            <td>@(item.SaleAcct?.OrderID ?? ("Sale#" + item.SaleAcctId))</td>
                             <td><strong>@item.SaleDate?.DateLabel</strong></td>
                             <td>@item.Date.ToString("yyyy-MM-dd")</td>
 
