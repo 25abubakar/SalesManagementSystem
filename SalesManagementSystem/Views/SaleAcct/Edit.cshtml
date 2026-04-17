@@ -138,13 +138,17 @@
     </form>
 
     <div class="mt-4">
-        <h4>Charges</h4>
+        <div class="d-flex justify-content-between align-items-center mb-2">
+            <h4 class="mb-0">Charges</h4>
+            <a asp-controller="SaleCharge" asp-action="Create" asp-route-saleId="@Model.Id" class="btn btn-sm btn-success">Add Row</a>
+        </div>
         <table class="table table-bordered table-striped">
             <thead class="table-dark">
                 <tr>
                     <th>Charge Type</th>
                     <th>Amount</th>
                     <th>Remarks</th>
+                    <th style="width:170px;">Action</th>
                 </tr>
             </thead>
             <tbody>
@@ -156,13 +160,17 @@
                             <td>@charge.ChargeType?.ChargeTypeName</td>
                             <td>@charge.Amount</td>
                             <td>@charge.Remarks</td>
+                            <td>
+                                <a asp-controller="SaleCharge" asp-action="Edit" asp-route-id="@charge.SaleChargeId" class="btn btn-sm btn-warning">Edit</a>
+                                <a asp-controller="SaleCharge" asp-action="Delete" asp-route-id="@charge.SaleChargeId" class="btn btn-sm btn-danger">Delete</a>
+                            </td>
                         </tr>
                     }
                 }
                 else
                 {
                     <tr>
-                        <td colspan="3" class="text-center">No charges added yet.</td>
+                        <td colspan="4" class="text-center">No charges added yet.</td>
                     </tr>
                 }
             </tbody>
