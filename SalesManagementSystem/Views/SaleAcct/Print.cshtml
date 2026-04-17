@@ -23,7 +23,7 @@
         .meta-title { font-weight: 700; }
         .table th, .table td { vertical-align: middle; }
         .print-actions { display: flex; gap: 8px; justify-content: flex-end; margin-bottom: 16px; }
-        @media print {
+        @@media print {
             body { background: #fff; }
             .print-container { box-shadow: none; margin: 0; max-width: 100%; border-radius: 0; padding: 0; }
             .print-actions { display: none !important; }
@@ -62,12 +62,6 @@
                         <tr><th>From Account</th><td>@Model.FromAccount?.AccountName</td></tr>
                         <tr><th>To Account</th><td>@Model.ToAccount?.AccountName</td></tr>
                         <tr><th>Status</th><td>@(Model.StatusMaster?.StatusName ?? Model.Status)</td></tr>
-                    </tbody>
-                </table>
-            </div>
-            <div class="col-md-6">
-                <table class="table table-sm table-bordered">
-                    <tbody>
                         <tr><th>Qty Sold</th><td>@Model.QtySold</td></tr>
                         <tr><th>Qty Held</th><td>@Model.QtyHeld</td></tr>
                         <tr><th>Sold Amount</th><td>@Model.SoldAmount</td></tr>
