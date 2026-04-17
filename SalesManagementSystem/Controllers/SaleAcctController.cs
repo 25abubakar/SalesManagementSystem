@@ -172,7 +172,32 @@ namespace SalesManagementSystem.Controllers
             {
                 try
                 {
-                    _context.Update(sale);
+                    var existingSale = await _context.SaleAccts.FirstOrDefaultAsync(x => x.Id == id);
+                    if (existingSale == null) return NotFound();
+
+                    existingSale.CompanyId = sale.CompanyId;
+                    existingSale.PlatformId = sale.PlatformId;
+                    existingSale.ProductId = sale.ProductId;
+                    existingSale.OrderID = sale.OrderID;
+                    existingSale.QtyHeld = sale.QtyHeld;
+                    existingSale.QtySold = sale.QtySold;
+                    existingSale.TransactionId = sale.TransactionId;
+                    existingSale.FromAccountId = sale.FromAccountId;
+                    existingSale.ToAccountId = sale.ToAccountId;
+                    existingSale.TotalProCharges = sale.TotalProCharges;
+                    existingSale.AmazonFee = sale.AmazonFee;
+                    existingSale.OtherCharges = sale.OtherCharges;
+                    existingSale.TotalPromotion = sale.TotalPromotion;
+                    existingSale.SoldAmount = sale.SoldAmount;
+                    existingSale.TotalRroRebate = sale.TotalRroRebate;
+                    existingSale.CostAmount = sale.CostAmount;
+                    existingSale.AmzProRef = sale.AmzProRef;
+                    existingSale.Status = sale.Status;
+                    existingSale.Discription = sale.Discription;
+                    existingSale.StatusID = sale.StatusID;
+                    existingSale.Action = sale.Action;
+                    existingSale.CreatedDate = sale.CreatedDate;
+
                     await _context.SaveChangesAsync();
                     TempData["Success"] = "Sale record updated successfully!";
                     return RedirectToAction(nameof(Index));
@@ -181,6 +206,10 @@ namespace SalesManagementSystem.Controllers
                 {
                     if (!await _context.SaleAccts.AnyAsync(x => x.Id == id)) return NotFound();
                     throw;
+                }
+                catch (Exception ex)
+                {
+                    ModelState.AddModelError("", "Unable to update record. Error: " + ex.Message);
                 }
             }
 
