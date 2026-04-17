@@ -25,9 +25,10 @@
 
             <form asp-action="Delete" method="post">
                 <input type="hidden" asp-for="Id" />
+                <input type="hidden" asp-for="SaleAcctId" />
 
                 <button class="btn btn-danger">Delete</button>
-                <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+                <a asp-controller="SaleAcct" asp-action="Edit" asp-route-id="@Model.SaleAcctId" class="btn btn-secondary">Cancel</a>
             </form>
 
         </div>

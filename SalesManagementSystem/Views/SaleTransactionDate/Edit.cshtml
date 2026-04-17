@@ -9,10 +9,11 @@
         <form asp-action="Edit" method="post">
             @Html.AntiForgeryToken()
             <input type="hidden" asp-for="Id" />
+            <input type="hidden" asp-for="SaleAcctId" />
 
             <div class="mb-3">
                 <label class="form-label">Sale Transaction</label>
-                <select asp-for="Id"
+                <select asp-for="SaleAcctId"
                         asp-items="ViewBag.SaleTransactions"
                         class="form-select"></select>
             </div>
@@ -30,7 +31,7 @@
             </div>
 
             <div class="d-flex justify-content-between">
-                <a asp-action="Index" class="btn btn-secondary">Back</a>
+                <a asp-controller="SaleAcct" asp-action="Edit" asp-route-id="@Model.SaleAcctId" class="btn btn-secondary">Back</a>
                 <button type="submit" class="btn btn-warning">Update</button>
             </div>
 
