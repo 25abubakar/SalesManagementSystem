@@ -66,7 +66,7 @@ SaleProduct → SalePlatform
 ⚙️ Setup Instructions:
 
 1. Clone Repository:
-git clone https://github.com/yourusername/sales-management-system.git
+git clone https://github.com/25abubakar/salesmanagementsystem.git
 
 2. Open Project:
 SalesManagementSystem.sln
