@@ -17,6 +17,8 @@
                 <th>Order ID</th>
                 <th>Qty Sold</th>
                 <th>Sold Amount</th>
+                <th>From Account</th>
+                <th>To Account</th>
                 <th>Cost</th>
                 <th>Profit</th>
                 <th>Status</th>
@@ -34,6 +36,8 @@
                     <td>@item.OrderID</td>
                     <td>@item.QtySold</td>
                     <td>@item.SoldAmount</td>
+                    <td>@item.FromAccountId</td>
+                    <td>@item.ToAccountId</td>
                     <td>@item.CostAmount</td>
                     <td class="text-success fw-bold">@item.ProfitAmount</td>
                     <td>@(item.StatusMaster?.StatusName ?? item.Status)</td>

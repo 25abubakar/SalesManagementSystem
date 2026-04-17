@@ -1,7 +1,10 @@
-﻿@model SalesManagementSystem.Models.SaleAcct
-
+﻿@model SalesManagementSystem.Models.SaleAcctCreateVM
 @{
     ViewData["Title"] = "Edit Sale";
+    var dateLabelOptions = ViewBag.DateLabels as IEnumerable<Microsoft.AspNetCore.Mvc.Rendering.SelectListItem>
+        ?? Enumerable.Empty<Microsoft.AspNetCore.Mvc.Rendering.SelectListItem>();
+    var chargeTypeOptions = ViewBag.ChargeTypes as IEnumerable<Microsoft.AspNetCore.Mvc.Rendering.SelectListItem>
+        ?? Enumerable.Empty<Microsoft.AspNetCore.Mvc.Rendering.SelectListItem>();
 }
 
 <div class="container mt-4">
@@ -13,209 +16,323 @@
         <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
 
         <div class="row">
-
+            <div class="col-md-4">
+                <label>Company ID</label>
+                <input asp-for="CompanyId" class="form-control" />
+            </div>
             <div class="col-md-4">
                 <label>Platform</label>
                 <select asp-for="PlatformId" class="form-select" asp-items="ViewBag.Platforms">
                     <option value="">-- Select Platform --</option>
                 </select>
             </div>
-
             <div class="col-md-4">
                 <label>Product</label>
                 <select asp-for="ProductId" class="form-select" asp-items="ViewBag.Products">
                     <option value="">-- Select Product --</option>
                 </select>
             </div>
-
+            <div class="col-md-4">
+                <label>Order ID</label>
+                <input asp-for="OrderID" class="form-control" />
+            </div>
             <div class="col-md-4">
                 <label>Qty Sold</label>
                 <input asp-for="QtySold" class="form-control" />
             </div>
-
             <div class="col-md-4">
                 <label>Qty Held</label>
                 <input asp-for="QtyHeld" class="form-control" />
             </div>
-
             <div class="col-md-4">
                 <label>Sold Amount</label>
                 <input asp-for="SoldAmount" class="form-control" />
             </div>
-
             <div class="col-md-4 mt-3">
                 <label>Cost Amount</label>
                 <input asp-for="CostAmount" class="form-control" />
             </div>
-
             <div class="col-md-4 mt-3">
                 <label>Total Pro Charges</label>
                 <input asp-for="TotalProCharges" class="form-control" />
             </div>
-
             <div class="col-md-4 mt-3">
                 <label>Amazon Fee</label>
                 <input asp-for="AmazonFee" class="form-control" />
             </div>
-
             <div class="col-md-4 mt-3">
                 <label>Other Charges</label>
                 <input asp-for="OtherCharges" class="form-control" />
             </div>
-
             <div class="col-md-4 mt-3">
                 <label>Total Promotion</label>
                 <input asp-for="TotalPromotion" class="form-control" />
             </div>
-
             <div class="col-md-4 mt-3">
                 <label>Total RRO Rebate</label>
                 <input asp-for="TotalRroRebate" class="form-control" />
             </div>
-
             <div class="col-md-4 mt-3">
                 <label>Transaction Type</label>
                 <select asp-for="TransactionId" class="form-select" asp-items="ViewBag.TransTypes">
                     <option value="">-- Select Transaction Type --</option>
                 </select>
             </div>
-
             <div class="col-md-4 mt-3">
                 <label>From Account</label>
                 <select asp-for="FromAccountId" class="form-select" asp-items="ViewBag.FromAccounts">
                     <option value="">-- Select From Account --</option>
                 </select>
             </div>
-
             <div class="col-md-4 mt-3">
                 <label>To Account</label>
                 <select asp-for="ToAccountId" class="form-select" asp-items="ViewBag.ToAccounts">
                     <option value="">-- Select To Account --</option>
                 </select>
             </div>
-
             <div class="col-md-4 mt-3">
                 <label>Status</label>
                 <select asp-for="StatusID" class="form-select" asp-items="ViewBag.Statuses">
                     <option value="">-- Select Status --</option>
                 </select>
             </div>
-
             <div class="col-md-4 mt-3">
                 <label>Amz Pro Ref</label>
                 <input asp-for="AmzProRef" class="form-control" />
             </div>
-
             <div class="col-md-8 mt-3">
                 <label>Description</label>
                 <input asp-for="Discription" class="form-control" />
             </div>
-
             <div class="col-md-4 mt-3">
                 <label>Action</label>
                 <input asp-for="Action" class="form-control" />
             </div>
-
             <div class="col-md-4 mt-3">
                 <label>Created Date</label>
                 <input asp-for="CreatedDate" type="datetime-local" class="form-control" />
             </div>
-
             <div class="col-md-4 mt-3">
                 <label>Profit Amount</label>
                 <input asp-for="ProfitAmount" class="form-control" readonly />
             </div>
-
         </div>
 
-        <br />
-        <button type="submit" class="btn btn-warning">Update</button>
-        <a asp-controller="SaleCharge" asp-action="Create" asp-route-saleId="@Model.Id" class="btn btn-dark">Add Charge</a>
-        <a asp-controller="SaleTransactionDate" asp-action="Create" asp-route-saleId="@Model.Id" class="btn btn-primary">Add Transaction Date</a>
-        <a asp-controller="SaleCharge" asp-action="Index" asp-route-saleId="@Model.Id" class="btn btn-outline-dark">View Charges</a>
-        <a asp-controller="SaleTransactionDate" asp-action="Index" asp-route-saleId="@Model.Id" class="btn btn-outline-primary">View Transactions</a>
-        <a asp-action="Index" class="btn btn-secondary">Back</a>
+        <div class="mt-4">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+                <h4 class="mb-0">Charges</h4>
+                <button type="button" id="addChargeRow" class="btn btn-sm btn-success">Add Row</button>
+            </div>
+            <div id="chargeRows" class="d-grid gap-2">
+                @if (Model.Charges.Any())
+                {
+                    for (var i = 0; i < Model.Charges.Count; i++)
+                    {
+                        <div class="row g-2 border rounded p-2 charge-row">
+                            <input type="hidden" name="Charges[@i].SaleChargeId" value="@Model.Charges[i].SaleChargeId" />
+                            <div class="col-md-4">
+                                <label>Charge Type</label>
+                                <select name="Charges[@i].ChargeTypeId" class="form-select">
+                                    <option value="">-- Select --</option>
+                                    @foreach (var option in chargeTypeOptions)
+                                    {
+                                        if (option.Value == Model.Charges[i].ChargeTypeId?.ToString())
+                                        {
+                                            <option value="@option.Value" selected>@option.Text</option>
+                                        }
+                                        else
+                                        {
+                                            <option value="@option.Value">@option.Text</option>
+                                        }
+                                    }
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <label>Amount</label>
+                                <input name="Charges[@i].Amount" class="form-control" value="@Model.Charges[i].Amount" />
+                            </div>
+                            <div class="col-md-4">
+                                <label>Remarks</label>
+                                <input name="Charges[@i].Remarks" class="form-control" value="@Model.Charges[i].Remarks" />
+                            </div>
+                            <div class="col-md-1 d-flex align-items-end">
+                                <button type="button" class="btn btn-sm btn-danger remove-charge-row">Delete</button>
+                            </div>
+                        </div>
+                    }
+                }
+                else
+                {
+                    <div class="text-muted small" id="chargeEmptyState">No charges added yet.</div>
+                }
+            </div>
+        </div>
+
+        <div class="mt-4">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+                <h4 class="mb-0">Transaction Dates</h4>
+                <button type="button" id="addTransactionDateRow" class="btn btn-sm btn-success">Add Row</button>
+            </div>
+            <div id="transactionDateRows" class="d-grid gap-2">
+                @if (Model.SaleTransactionDates.Any())
+                {
+                    for (var i = 0; i < Model.SaleTransactionDates.Count; i++)
+                    {
+                        <div class="row g-2 border rounded p-2 transaction-row">
+                            <div class="col-md-5">
+                                <label>Date Label</label>
+                                <select name="SaleTransactionDates[@i].DateLabelId" class="form-select">
+                                    <option value="">-- Select --</option>
+                                    @foreach (var option in dateLabelOptions)
+                                    {
+                                        if (option.Value == Model.SaleTransactionDates[i].DateLabelId?.ToString())
+                                        {
+                                            <option value="@option.Value" selected>@option.Text</option>
+                                        }
+                                        else
+                                        {
+                                            <option value="@option.Value">@option.Text</option>
+                                        }
+                                    }
+                                </select>
+                            </div>
+                            <div class="col-md-5">
+                                <label>Date</label>
+                                <input type="date" name="SaleTransactionDates[@i].Date" class="form-control" value="@(Model.SaleTransactionDates[i].Date?.ToString("yyyy-MM-dd"))" />
+                            </div>
+                            <div class="col-md-2 d-flex align-items-end">
+                                <button type="button" class="btn btn-sm btn-danger remove-transaction-row">Delete</button>
+                            </div>
+                        </div>
+                    }
+                }
+                else
+                {
+                    <div class="text-muted small" id="transactionEmptyState">No transaction dates added yet.</div>
+                }
+            </div>
+        </div>
+
+        <div class="mt-4">
+            <button type="submit" class="btn btn-warning">Update</button>
+            <a asp-action="Index" class="btn btn-secondary">Back</a>
+        </div>
     </form>
-
-    <div class="mt-4">
-        <div class="d-flex justify-content-between align-items-center mb-2">
-            <h4 class="mb-0">Charges</h4>
-            <a asp-controller="SaleCharge" asp-action="Create" asp-route-saleId="@Model.Id" class="btn btn-sm btn-success">Add Row</a>
-        </div>
-        <table class="table table-bordered table-striped">
-            <thead class="table-dark">
-                <tr>
-                    <th>Charge Type</th>
-                    <th>Amount</th>
-                    <th>Remarks</th>
-                    <th style="width:170px;">Action</th>
-                </tr>
-            </thead>
-            <tbody>
-                @if (Model.Charges != null && Model.Charges.Any())
-                {
-                    @foreach (var charge in Model.Charges)
-                    {
-                        <tr>
-                            <td>@charge.ChargeType?.ChargeTypeName</td>
-                            <td>@charge.Amount</td>
-                            <td>@charge.Remarks</td>
-                            <td>
-                                <a asp-controller="SaleCharge" asp-action="Edit" asp-route-id="@charge.SaleChargeId" class="btn btn-sm btn-warning">Edit</a>
-                                <a asp-controller="SaleCharge" asp-action="Delete" asp-route-id="@charge.SaleChargeId" class="btn btn-sm btn-danger">Delete</a>
-                            </td>
-                        </tr>
-                    }
-                }
-                else
-                {
-                    <tr>
-                        <td colspan="4" class="text-center">No charges added yet.</td>
-                    </tr>
-                }
-            </tbody>
-        </table>
-    </div>
-
-    <div class="mt-4">
-        <div class="d-flex justify-content-between align-items-center mb-2">
-            <h4 class="mb-0">Transaction Dates</h4>
-            <a asp-controller="SaleTransactionDate" asp-action="Create" asp-route-saleId="@Model.Id" class="btn btn-sm btn-success">Add Row</a>
-        </div>
-        <table class="table table-bordered table-striped">
-            <thead class="table-dark">
-                <tr>
-                    <th>Date Label</th>
-                    <th>Date</th>
-                    <th style="width:170px;">Action</th>
-                </tr>
-            </thead>
-            <tbody>
-                @if (Model.SaleTransactionDates != null && Model.SaleTransactionDates.Any())
-                {
-                    @foreach (var item in Model.SaleTransactionDates)
-                    {
-                        <tr>
-                            <td>@item.SaleDate?.DateLabel</td>
-                            <td>@item.Date.ToString("yyyy-MM-dd")</td>
-                            <td>
-                                <a asp-controller="SaleTransactionDate" asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-warning">Edit</a>
-                                <a asp-controller="SaleTransactionDate" asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-danger">Delete</a>
-                            </td>
-                        </tr>
-                    }
-                }
-                else
-                {
-                    <tr>
-                        <td colspan="3" class="text-center">No transaction dates added yet.</td>
-                    </tr>
-                }
-            </tbody>
-        </table>
-    </div>
 </div>
+
+<template id="chargeRowTemplate">
+    <div class="row g-2 border rounded p-2 charge-row">
+        <input type="hidden" data-name="SaleChargeId" value="" />
+        <div class="col-md-4">
+            <label>Charge Type</label>
+            <select data-name="ChargeTypeId" class="form-select">
+                <option value="">-- Select --</option>
+                @foreach (var option in chargeTypeOptions)
+                {
+                    <option value="@option.Value">@option.Text</option>
+                }
+            </select>
+        </div>
+        <div class="col-md-3">
+            <label>Amount</label>
+            <input data-name="Amount" class="form-control" />
+        </div>
+        <div class="col-md-4">
+            <label>Remarks</label>
+            <input data-name="Remarks" class="form-control" />
+        </div>
+        <div class="col-md-1 d-flex align-items-end">
+            <button type="button" class="btn btn-sm btn-danger remove-charge-row">Delete</button>
+        </div>
+    </div>
+</template>
+
+<template id="transactionRowTemplate">
+    <div class="row g-2 border rounded p-2 transaction-row">
+        <div class="col-md-5">
+            <label>Date Label</label>
+            <select data-name="DateLabelId" class="form-select">
+                <option value="">-- Select --</option>
+                @foreach (var option in dateLabelOptions)
+                {
+                    <option value="@option.Value">@option.Text</option>
+                }
+            </select>
+        </div>
+        <div class="col-md-5">
+            <label>Date</label>
+            <input type="date" data-name="Date" class="form-control" />
+        </div>
+        <div class="col-md-2 d-flex align-items-end">
+            <button type="button" class="btn btn-sm btn-danger remove-transaction-row">Delete</button>
+        </div>
+    </div>
+</template>
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
+    <script>
+        (() => {
+            const chargeRows = document.getElementById('chargeRows');
+            const transactionRows = document.getElementById('transactionDateRows');
+            const chargeTemplate = document.getElementById('chargeRowTemplate');
+            const transactionTemplate = document.getElementById('transactionRowTemplate');
+
+            function reindex(container, rowClass, prefix) {
+                const rows = container.querySelectorAll(`.${rowClass}`);
+                rows.forEach((row, index) => {
+                    row.querySelectorAll('[data-name], [name]').forEach((field) => {
+                        const prop = field.dataset.name || field.name.split('.').pop();
+                        field.name = `${prefix}[${index}].${prop}`;
+                    });
+                });
+            }
+
+            function updateEmpty(container, rowClass, id, text) {
+                const hasRows = container.querySelectorAll(`.${rowClass}`).length > 0;
+                const empty = document.getElementById(id);
+                if (hasRows && empty) empty.remove();
+                if (!hasRows && !empty) {
+                    const div = document.createElement('div');
+                    div.id = id;
+                    div.className = 'text-muted small';
+                    div.textContent = text;
+                    container.appendChild(div);
+                }
+            }
+
+            document.getElementById('addChargeRow').addEventListener('click', () => {
+                chargeRows.appendChild(chargeTemplate.content.firstElementChild.cloneNode(true));
+                reindex(chargeRows, 'charge-row', 'Charges');
+                updateEmpty(chargeRows, 'charge-row', 'chargeEmptyState', 'No charges added yet.');
+            });
+
+            document.getElementById('addTransactionDateRow').addEventListener('click', () => {
+                transactionRows.appendChild(transactionTemplate.content.firstElementChild.cloneNode(true));
+                reindex(transactionRows, 'transaction-row', 'SaleTransactionDates');
+                updateEmpty(transactionRows, 'transaction-row', 'transactionEmptyState', 'No transaction dates added yet.');
+            });
+
+            chargeRows.addEventListener('click', (e) => {
+                if (e.target.closest('.remove-charge-row')) {
+                    e.target.closest('.charge-row')?.remove();
+                    reindex(chargeRows, 'charge-row', 'Charges');
+                    updateEmpty(chargeRows, 'charge-row', 'chargeEmptyState', 'No charges added yet.');
+                }
+            });
+
+            transactionRows.addEventListener('click', (e) => {
+                if (e.target.closest('.remove-transaction-row')) {
+                    e.target.closest('.transaction-row')?.remove();
+                    reindex(transactionRows, 'transaction-row', 'SaleTransactionDates');
+                    updateEmpty(transactionRows, 'transaction-row', 'transactionEmptyState', 'No transaction dates added yet.');
+                }
+            });
+
+            reindex(chargeRows, 'charge-row', 'Charges');
+            reindex(transactionRows, 'transaction-row', 'SaleTransactionDates');
+            updateEmpty(chargeRows, 'charge-row', 'chargeEmptyState', 'No charges added yet.');
+            updateEmpty(transactionRows, 'transaction-row', 'transactionEmptyState', 'No transaction dates added yet.');
+        })();
+    </script>
 }
