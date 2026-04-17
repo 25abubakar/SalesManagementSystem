@@ -1,0 +1,154 @@
+@model SalesManagementSystem.Models.SaleAcct
+@{
+    Layout = null;
+    var printableTitle = $"Sale Print - #{Model.Id}";
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>@printableTitle</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <style>
+        body { background: #f6f8fb; }
+        .print-container {
+            max-width: 1100px;
+            margin: 20px auto;
+            background: #fff;
+            border-radius: 10px;
+            box-shadow: 0 4px 18px rgba(0,0,0,.08);
+            padding: 24px;
+        }
+        .meta-title { font-weight: 700; }
+        .table th, .table td { vertical-align: middle; }
+        .print-actions { display: flex; gap: 8px; justify-content: flex-end; margin-bottom: 16px; }
+        @media print {
+            body { background: #fff; }
+            .print-container { box-shadow: none; margin: 0; max-width: 100%; border-radius: 0; padding: 0; }
+            .print-actions { display: none !important; }
+            .table-dark { background: #eee !important; color: #000 !important; }
+            .table-dark th { color: #000 !important; }
+            a { text-decoration: none !important; color: inherit !important; }
+        }
+    </style>
+</head>
+<body>
+    <div class="print-container">
+        <div class="print-actions">
+            <button class="btn btn-primary" onclick="window.print()">Print</button>
+            <button class="btn btn-outline-secondary" onclick="window.close()">Close</button>
+        </div>
+
+        <div class="d-flex justify-content-between align-items-start mb-3">
+            <div>
+                <h3 class="mb-1">Sale Details</h3>
+                <div class="text-muted">Order: @(Model.OrderID ?? ("Sale#" + Model.Id))</div>
+            </div>
+            <div class="text-end">
+                <div><span class="meta-title">Sale ID:</span> @Model.Id</div>
+                <div><span class="meta-title">Printed:</span> @DateTime.Now.ToString("yyyy-MM-dd HH:mm")</div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6">
+                <table class="table table-sm table-bordered">
+                    <tbody>
+                        <tr><th>Company ID</th><td>@Model.CompanyId</td></tr>
+                        <tr><th>Platform</th><td>@Model.Platform?.PlatformName</td></tr>
+                        <tr><th>Product</th><td>@Model.Product?.ProductName</td></tr>
+                        <tr><th>Transaction Type</th><td>@Model.TransactionType?.TransactionName</td></tr>
+                        <tr><th>From Account</th><td>@Model.FromAccount?.AccountName</td></tr>
+                        <tr><th>To Account</th><td>@Model.ToAccount?.AccountName</td></tr>
+                        <tr><th>Status</th><td>@(Model.StatusMaster?.StatusName ?? Model.Status)</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="col-md-6">
+                <table class="table table-sm table-bordered">
+                    <tbody>
+                        <tr><th>Qty Sold</th><td>@Model.QtySold</td></tr>
+                        <tr><th>Qty Held</th><td>@Model.QtyHeld</td></tr>
+                        <tr><th>Sold Amount</th><td>@Model.SoldAmount</td></tr>
+                        <tr><th>Cost Amount</th><td>@Model.CostAmount</td></tr>
+                        <tr><th>Total Charges</th><td>@Model.TotalProCharges</td></tr>
+                        <tr><th>Total Promotion</th><td>@Model.TotalPromotion</td></tr>
+                        <tr><th>Profit Amount</th><td class="fw-bold">@Model.ProfitAmount</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="mb-3">
+            <div><strong>Amz Pro Ref:</strong> @Model.AmzProRef</div>
+            <div><strong>Action:</strong> @Model.Action</div>
+            <div><strong>Created Date:</strong> @Model.CreatedDate</div>
+            <div><strong>Description:</strong> @Model.Discription</div>
+        </div>
+
+        <h5 class="mt-4">Charges</h5>
+        <table class="table table-bordered table-striped">
+            <thead class="table-dark">
+                <tr>
+                    <th>Charge Type</th>
+                    <th>Amount</th>
+                    <th>Remarks</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model.Charges != null && Model.Charges.Any())
+                {
+                    @foreach (var charge in Model.Charges)
+                    {
+                        <tr>
+                            <td>@charge.ChargeType?.ChargeTypeName</td>
+                            <td>@charge.Amount</td>
+                            <td>@charge.Remarks</td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr><td colspan="3" class="text-center">No charges added</td></tr>
+                }
+            </tbody>
+        </table>
+
+        <h5 class="mt-4">Transaction Dates</h5>
+        <table class="table table-bordered table-striped">
+            <thead class="table-dark">
+                <tr>
+                    <th>Date Label</th>
+                    <th>Date</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model.SaleTransactionDates != null && Model.SaleTransactionDates.Any())
+                {
+                    @foreach (var row in Model.SaleTransactionDates)
+                    {
+                        <tr>
+                            <td>@row.SaleDate?.DateLabel</td>
+                            <td>@row.Date.ToString("yyyy-MM-dd")</td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr><td colspan="2" class="text-center">No transaction dates added</td></tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        window.addEventListener('load', () => {
+            const params = new URLSearchParams(window.location.search);
+            if (params.get('autoprint') === '1') {
+                window.print();
+            }
+        });
+    </script>
+</body>
+</html>
