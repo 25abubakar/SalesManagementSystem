@@ -127,6 +127,7 @@ namespace SalesManagementSystem.Controllers
 
             ViewBag.Statuses = new SelectList(await _context.SaleStatuses.ToListAsync(), "StatusID", "StatusName", sale?.StatusID);
             ViewBag.DateLabels = new SelectList(await _context.SaleDates.ToListAsync(), "Id", "DateLabel");
+            ViewBag.ChargeTypes = new SelectList(await _context.SaleChargeTypes.ToListAsync(), "ChargeTypeId", "ChargeTypeName");
         }
 
         public async Task<IActionResult> Edit(long id)
@@ -140,7 +141,47 @@ namespace SalesManagementSystem.Controllers
             if (sale == null) return NotFound();
 
             await PopulateDropDowns(sale);
-            return View(sale);
+            var model = new SaleAcctCreateVM
+            {
+                Id = sale.Id,
+                CompanyId = sale.CompanyId,
+                PlatformId = sale.PlatformId,
+                ProductId = sale.ProductId,
+                OrderID = sale.OrderID,
+                QtyHeld = sale.QtyHeld,
+                QtySold = sale.QtySold,
+                TransactionId = sale.TransactionId,
+                FromAccountId = sale.FromAccountId,
+                ToAccountId = sale.ToAccountId,
+                TotalProCharges = sale.TotalProCharges,
+                AmazonFee = sale.AmazonFee,
+                OtherCharges = sale.OtherCharges,
+                TotalPromotion = sale.TotalPromotion,
+                SoldAmount = sale.SoldAmount,
+                TotalRroRebate = sale.TotalRroRebate,
+                CostAmount = sale.CostAmount,
+                ProfitAmount = sale.ProfitAmount,
+                AmzProRef = sale.AmzProRef,
+                Status = sale.Status,
+                Discription = sale.Discription,
+                StatusID = sale.StatusID,
+                Action = sale.Action,
+                CreatedDate = sale.CreatedDate,
+                Charges = sale.Charges.Select(c => new SaleChargeEntryVM
+                {
+                    SaleChargeId = c.SaleChargeId,
+                    ChargeTypeId = c.ChargeTypeId,
+                    Amount = c.Amount,
+                    Remarks = c.Remarks
+                }).ToList(),
+                SaleTransactionDates = sale.SaleTransactionDates?
+                    .Select(d => new SaleTransactionDateEntryVM
+                    {
+                        DateLabelId = d.DateLabelId,
+                        Date = d.Date
+                    }).ToList() ?? new List<SaleTransactionDateEntryVM>()
+            };
+            return View(model);
         }
 
         public async Task<IActionResult> Details(long id)
@@ -164,39 +205,113 @@ namespace SalesManagementSystem.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(long id, SaleAcct sale)
+        public async Task<IActionResult> Edit(long id, SaleAcctCreateVM model)
         {
-            if (id != sale.Id) return BadRequest();
+            if (id != model.Id) return BadRequest();
+
+            var chargeRows = (model.Charges ?? new List<SaleChargeEntryVM>())
+                .Where(x => x.ChargeTypeId.HasValue || x.Amount.HasValue || !string.IsNullOrWhiteSpace(x.Remarks))
+                .ToList();
+            var transactionDateRows = (model.SaleTransactionDates ?? new List<SaleTransactionDateEntryVM>())
+                .Where(x => x.DateLabelId.HasValue || x.Date.HasValue)
+                .ToList();
+
+            foreach (var row in chargeRows)
+            {
+                if (!row.ChargeTypeId.HasValue)
+                {
+                    ModelState.AddModelError("", "Please select charge type for each charge row.");
+                }
+
+                if (!row.Amount.HasValue)
+                {
+                    ModelState.AddModelError("", "Please enter amount for each charge row.");
+                }
+            }
+
+            foreach (var row in transactionDateRows)
+            {
+                if (!row.DateLabelId.HasValue)
+                {
+                    ModelState.AddModelError("", "Please select a date label for each transaction row.");
+                }
+
+                if (!row.Date.HasValue)
+                {
+                    ModelState.AddModelError("", "Please enter date for each transaction row.");
+                }
+            }
 
             if (ModelState.IsValid)
             {
                 try
                 {
-                    var existingSale = await _context.SaleAccts.FirstOrDefaultAsync(x => x.Id == id);
+                    var existingSale = await _context.SaleAccts
+                        .Include(x => x.Charges)
+                        .Include(x => x.SaleTransactionDates)
+                        .FirstOrDefaultAsync(x => x.Id == id);
                     if (existingSale == null) return NotFound();
 
-                    existingSale.CompanyId = sale.CompanyId;
-                    existingSale.PlatformId = sale.PlatformId;
-                    existingSale.ProductId = sale.ProductId;
-                    existingSale.OrderID = sale.OrderID;
-                    existingSale.QtyHeld = sale.QtyHeld;
-                    existingSale.QtySold = sale.QtySold;
-                    existingSale.TransactionId = sale.TransactionId;
-                    existingSale.FromAccountId = sale.FromAccountId;
-                    existingSale.ToAccountId = sale.ToAccountId;
-                    existingSale.TotalProCharges = sale.TotalProCharges;
-                    existingSale.AmazonFee = sale.AmazonFee;
-                    existingSale.OtherCharges = sale.OtherCharges;
-                    existingSale.TotalPromotion = sale.TotalPromotion;
-                    existingSale.SoldAmount = sale.SoldAmount;
-                    existingSale.TotalRroRebate = sale.TotalRroRebate;
-                    existingSale.CostAmount = sale.CostAmount;
-                    existingSale.AmzProRef = sale.AmzProRef;
-                    existingSale.Status = sale.Status;
-                    existingSale.Discription = sale.Discription;
-                    existingSale.StatusID = sale.StatusID;
-                    existingSale.Action = sale.Action;
-                    existingSale.CreatedDate = sale.CreatedDate;
+                    existingSale.CompanyId = model.CompanyId;
+                    existingSale.PlatformId = model.PlatformId;
+                    existingSale.ProductId = model.ProductId;
+                    existingSale.OrderID = model.OrderID;
+                    existingSale.QtyHeld = model.QtyHeld;
+                    existingSale.QtySold = model.QtySold;
+                    existingSale.TransactionId = model.TransactionId;
+                    existingSale.FromAccountId = model.FromAccountId;
+                    existingSale.ToAccountId = model.ToAccountId;
+                    existingSale.TotalProCharges = model.TotalProCharges;
+                    existingSale.AmazonFee = model.AmazonFee;
+                    existingSale.OtherCharges = model.OtherCharges;
+                    existingSale.TotalPromotion = model.TotalPromotion;
+                    existingSale.SoldAmount = model.SoldAmount;
+                    existingSale.TotalRroRebate = model.TotalRroRebate;
+                    existingSale.CostAmount = model.CostAmount;
+                    existingSale.AmzProRef = model.AmzProRef;
+                    existingSale.Status = model.Status;
+                    existingSale.Discription = model.Discription;
+                    existingSale.StatusID = model.StatusID;
+                    existingSale.Action = model.Action;
+                    existingSale.CreatedDate = model.CreatedDate;
+
+                    var currentCharges = existingSale.Charges.ToDictionary(c => c.SaleChargeId, c => c);
+                    var incomingChargeIds = chargeRows.Where(c => c.SaleChargeId.HasValue).Select(c => c.SaleChargeId!.Value).ToHashSet();
+                    var chargeIdsToDelete = currentCharges.Keys.Where(existingId => !incomingChargeIds.Contains(existingId)).ToList();
+                    foreach (var chargeId in chargeIdsToDelete)
+                    {
+                        _context.SaleCharges.Remove(currentCharges[chargeId]);
+                    }
+
+                    foreach (var row in chargeRows)
+                    {
+                        if (row.SaleChargeId.HasValue && currentCharges.TryGetValue(row.SaleChargeId.Value, out var existingCharge))
+                        {
+                            existingCharge.ChargeTypeId = row.ChargeTypeId!.Value;
+                            existingCharge.Amount = row.Amount!.Value;
+                            existingCharge.Remarks = row.Remarks;
+                        }
+                        else
+                        {
+                            existingSale.Charges.Add(new SaleCharge
+                            {
+                                ChargeTypeId = row.ChargeTypeId!.Value,
+                                Amount = row.Amount!.Value,
+                                Remarks = row.Remarks
+                            });
+                        }
+                    }
+
+                    var currentDates = existingSale.SaleTransactionDates?.ToList() ?? new List<SaleTransactionDate>();
+                    _context.SaleTransactionDates.RemoveRange(currentDates);
+                    existingSale.SaleTransactionDates = transactionDateRows
+                        .Where(x => x.DateLabelId.HasValue && x.Date.HasValue)
+                        .Select(x => new SaleTransactionDate
+                        {
+                            SaleAcctId = existingSale.Id,
+                            DateLabelId = x.DateLabelId!.Value,
+                            Date = x.Date!.Value
+                        }).ToList();
 
                     await _context.SaveChangesAsync();
                     TempData["Success"] = "Sale record updated successfully!";
@@ -213,8 +328,10 @@ namespace SalesManagementSystem.Controllers
                 }
             }
 
-            await PopulateDropDowns(sale);
-            return View(sale);
+            model.Charges = chargeRows;
+            model.SaleTransactionDates = transactionDateRows;
+            await PopulateDropDowns();
+            return View(model);
         }
 
         public async Task<IActionResult> Delete(long id)

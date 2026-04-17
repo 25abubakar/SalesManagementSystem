@@ -27,6 +27,9 @@ namespace SalesManagementSystem.Models
         public string? Action { get; set; }
         public DateTime? CreatedDate { get; set; }
         public List<SaleTransactionDateEntryVM> SaleTransactionDates { get; set; } = new();
+    public List<SaleChargeEntryVM> Charges { get; set; } = new();
+    public long? Id { get; set; }
+    public decimal? ProfitAmount { get; set; }
     }
 
     public class SaleTransactionDateEntryVM
@@ -37,4 +40,17 @@ namespace SalesManagementSystem.Models
         [DataType(DataType.Date)]
         public DateTime? Date { get; set; }
     }
+
+public class SaleChargeEntryVM
+{
+    public long? SaleChargeId { get; set; }
+
+    [Display(Name = "Charge Type")]
+    public int? ChargeTypeId { get; set; }
+
+    public decimal? Amount { get; set; }
+
+    [MaxLength(250)]
+    public string? Remarks { get; set; }
+}
 }
