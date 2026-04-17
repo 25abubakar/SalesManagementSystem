@@ -203,6 +203,25 @@ namespace SalesManagementSystem.Controllers
             return View(sale);
         }
 
+        public async Task<IActionResult> Print(long id)
+        {
+            var sale = await _context.SaleAccts
+                .Include(s => s.Platform)
+                .Include(s => s.Product)
+                .Include(s => s.TransactionType)
+                .Include(s => s.FromAccount)
+                .Include(s => s.ToAccount)
+                .Include(s => s.StatusMaster)
+                .Include(s => s.Charges)
+                .ThenInclude(c => c.ChargeType)
+                .Include(s => s.SaleTransactionDates!)
+                .ThenInclude(d => d.SaleDate)
+                .FirstOrDefaultAsync(s => s.Id == id);
+
+            if (sale == null) return NotFound();
+            return View(sale);
+        }
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(long id, SaleAcctCreateVM model)
