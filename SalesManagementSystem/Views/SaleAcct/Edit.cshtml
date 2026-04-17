@@ -178,12 +178,16 @@
     </div>
 
     <div class="mt-4">
-        <h4>Transaction Dates</h4>
+        <div class="d-flex justify-content-between align-items-center mb-2">
+            <h4 class="mb-0">Transaction Dates</h4>
+            <a asp-controller="SaleTransactionDate" asp-action="Create" asp-route-saleId="@Model.Id" class="btn btn-sm btn-success">Add Row</a>
+        </div>
         <table class="table table-bordered table-striped">
             <thead class="table-dark">
                 <tr>
                     <th>Date Label</th>
                     <th>Date</th>
+                    <th style="width:170px;">Action</th>
                 </tr>
             </thead>
             <tbody>
@@ -194,13 +198,17 @@
                         <tr>
                             <td>@item.SaleDate?.DateLabel</td>
                             <td>@item.Date.ToString("yyyy-MM-dd")</td>
+                            <td>
+                                <a asp-controller="SaleTransactionDate" asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-warning">Edit</a>
+                                <a asp-controller="SaleTransactionDate" asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-danger">Delete</a>
+                            </td>
                         </tr>
                     }
                 }
                 else
                 {
                     <tr>
-                        <td colspan="2" class="text-center">No transaction dates added yet.</td>
+                        <td colspan="3" class="text-center">No transaction dates added yet.</td>
                     </tr>
                 }
             </tbody>
