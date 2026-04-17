@@ -75,6 +75,7 @@ CREATE TABLE dbo.SaleTransactionType
     TransactionName NVARCHAR(100) NOT NULL,
     IsActive BIT NOT NULL DEFAULT 1
 );
+
 -- 5 Account master
 
 CREATE TABLE dbo.SaleAccount
@@ -120,4 +121,23 @@ CREATE TABLE dbo.SaleStatus
     StatusID INT IDENTITY(1,1) PRIMARY KEY,
     StatusName NVARCHAR(100) NOT NULL,
     IsActive BIT NOT NULL DEFAULT 1
+);
+-- 9 Sale Date Label
+
+CREATE TABLE dbo.SaleDates
+(
+    Id INT IDENTITY(1,1) PRIMARY KEY,
+    DateLabelId NVARCHAR(100) NOT NULL
+);
+
+-- 10 Sale Date Transaction
+
+CREATE TABLE dbo.SaleTransactionDates
+(
+    Id INT IDENTITY(1,1) PRIMARY KEY,
+    SaleAcctId INT NOT NULL, // FK From SaleAcct
+    DateLabelId INT NOT NULL,// FK From SaleDates
+    Date datetime NOT NULL,
+FOREIGN KEY (SaleAcctId) REFERENCES dbo.SaleAcct(Id),
+FOREIGN KEY (DateLabelId) REFERENCES dbo.SaleDates(DateLabelId),
 );
