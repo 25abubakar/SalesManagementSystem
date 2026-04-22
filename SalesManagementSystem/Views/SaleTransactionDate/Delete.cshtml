@@ -28,7 +28,7 @@
                 <input type="hidden" asp-for="SaleAcctId" />
 
                 <button class="btn btn-danger">Delete</button>
-                <a asp-controller="SaleAcct" asp-action="Edit" asp-route-id="@Model.SaleAcctId" class="btn btn-secondary">Cancel</a>
+                <a asp-action="Index" asp-route-saleId="@Model.SaleAcctId" class="btn btn-secondary">Cancel</a>
             </form>
 
         </div>
