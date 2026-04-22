@@ -3,6 +3,8 @@
     ViewData["Title"] = "Create Sale";
     var dateLabelOptions = ViewBag.DateLabels as IEnumerable<Microsoft.AspNetCore.Mvc.Rendering.SelectListItem>
         ?? Enumerable.Empty<Microsoft.AspNetCore.Mvc.Rendering.SelectListItem>();
+    var chargeTypeOptions = ViewBag.ChargeTypes as IEnumerable<Microsoft.AspNetCore.Mvc.Rendering.SelectListItem>
+        ?? Enumerable.Empty<Microsoft.AspNetCore.Mvc.Rendering.SelectListItem>();
 }
 
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
@@ -17,7 +19,7 @@
     label { font-weight: 600; font-size: 13px; color: #555; margin-bottom: 5px; }
     .sticky-actions { position: sticky; bottom: 20px; background: rgba(255,255,255,0.95); backdrop-filter: blur(10px); padding: 15px; border-radius: 14px; box-shadow: 0 10px 25px rgba(0,0,0,0.12); display: flex; justify-content: flex-end; gap: 10px; z-index: 1000; }
     .btn { border-radius: 10px; padding: 8px 18px; font-weight: 600; }
-    .transaction-row { border: 1px solid #e9ecef; border-radius: 12px; padding: 16px; background: #f8fafc; }
+    .transaction-row, .charge-row { border: 1px solid #e9ecef; border-radius: 12px; padding: 16px; background: #f8fafc; }
 </style>
 
 <div class="container mt-4">
@@ -100,10 +102,62 @@
                     <input asp-for="Discription" class="form-control" />
                 </div>
                 <div class="col-md-12 d-flex justify-content-end">
+                    <button type="button" id="addChargeRow" class="btn btn-outline-success me-2">
+                        <i class="bi bi-plus-circle"></i> Add Charge
+                    </button>
                     <button type="button" id="addTransactionDateRow" class="btn btn-outline-primary">
                         <i class="bi bi-plus-circle"></i> Add Transaction Date
                     </button>
                 </div>
+            </div>
+        </div>
+
+        <div class="card-section">
+            <div class="section-title"><i class="bi bi-journal-check"></i> Sale Charges</div>
+            <div id="chargeRows" class="d-grid gap-3">
+                @if (Model.Charges.Any())
+                {
+                    for (var i = 0; i < Model.Charges.Count; i++)
+                    {
+                        <div class="charge-row row g-3 align-items-end">
+                            <input type="hidden" name="Charges[@i].SaleChargeId" value="@Model.Charges[i].SaleChargeId" />
+                            <div class="col-md-4">
+                                <label>Charge Type</label>
+                                <select name="Charges[@i].ChargeTypeId" class="form-select">
+                                    <option value="">-- Select Charge Type --</option>
+                                    @foreach (var option in chargeTypeOptions)
+                                    {
+                                        if (option.Value == Model.Charges[i].ChargeTypeId?.ToString())
+                                        {
+                                            <option value="@option.Value" selected>@option.Text</option>
+                                        }
+                                        else
+                                        {
+                                            <option value="@option.Value">@option.Text</option>
+                                        }
+                                    }
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <label>Amount</label>
+                                <input name="Charges[@i].Amount" class="form-control" value="@Model.Charges[i].Amount" />
+                            </div>
+                            <div class="col-md-4">
+                                <label>Remarks</label>
+                                <input name="Charges[@i].Remarks" class="form-control" value="@Model.Charges[i].Remarks" />
+                            </div>
+                            <div class="col-md-1">
+                                <button type="button" class="btn btn-outline-danger w-100 remove-charge-row">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+                    }
+                }
+                else
+                {
+                    <div class="text-muted small" id="chargeEmptyState">No charge rows added yet.</div>
+                }
             </div>
         </div>
 
@@ -185,49 +239,100 @@
     </div>
 </template>
 
+<template id="chargeRowTemplate">
+    <div class="charge-row row g-3 align-items-end">
+        <input type="hidden" data-name="SaleChargeId" value="" />
+        <div class="col-md-4">
+            <label>Charge Type</label>
+            <select data-name="ChargeTypeId" class="form-select">
+                <option value="">-- Select Charge Type --</option>
+                @foreach (var option in chargeTypeOptions)
+                {
+                    <option value="@option.Value">@option.Text</option>
+                }
+            </select>
+        </div>
+        <div class="col-md-3">
+            <label>Amount</label>
+            <input data-name="Amount" class="form-control" />
+        </div>
+        <div class="col-md-4">
+            <label>Remarks</label>
+            <input data-name="Remarks" class="form-control" />
+        </div>
+        <div class="col-md-1">
+            <button type="button" class="btn btn-outline-danger w-100 remove-charge-row">
+                <i class="bi bi-trash"></i>
+            </button>
+        </div>
+    </div>
+</template>
+
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
     <script>
         (() => {
+            const chargeContainer = document.getElementById('chargeRows');
+            const addChargeButton = document.getElementById('addChargeRow');
+            const chargeTemplate = document.getElementById('chargeRowTemplate');
             const container = document.getElementById('transactionDateRows');
             const addButton = document.getElementById('addTransactionDateRow');
             const template = document.getElementById('transactionDateRowTemplate');
 
-            function updateEmptyState() {
-                const rows = container.querySelectorAll('.transaction-row');
-                const emptyState = document.getElementById('transactionDateEmptyState');
+            function updateEmptyState(targetContainer, rowClass, emptyStateId, text) {
+                const rows = targetContainer.querySelectorAll(`.${rowClass}`);
+                const emptyState = document.getElementById(emptyStateId);
 
                 if (rows.length === 0) {
                     if (!emptyState) {
                         const placeholder = document.createElement('div');
-                        placeholder.id = 'transactionDateEmptyState';
+                        placeholder.id = emptyStateId;
                         placeholder.className = 'text-muted small';
-                        placeholder.textContent = 'No transaction date rows added yet.';
-                        container.appendChild(placeholder);
+                        placeholder.textContent = text;
+                        targetContainer.appendChild(placeholder);
                     }
                 } else if (emptyState) {
                     emptyState.remove();
                 }
             }
 
-            function reindexRows() {
-                const rows = container.querySelectorAll('.transaction-row');
+            function reindexRows(targetContainer, rowClass, prefix) {
+                const rows = targetContainer.querySelectorAll(`.${rowClass}`);
                 rows.forEach((row, index) => {
                     row.querySelectorAll('[data-name], [name]').forEach((field) => {
                         const propertyName = field.dataset.name || field.name.split('.').pop();
-                        field.name = `SaleTransactionDates[${index}].${propertyName}`;
+                        field.name = `${prefix}[${index}].${propertyName}`;
                     });
                 });
             }
 
-            function addRow() {
-                const row = template.content.firstElementChild.cloneNode(true);
-                container.appendChild(row);
-                updateEmptyState();
-                reindexRows();
+            function addChargeRow() {
+                const row = chargeTemplate.content.firstElementChild.cloneNode(true);
+                chargeContainer.appendChild(row);
+                updateEmptyState(chargeContainer, 'charge-row', 'chargeEmptyState', 'No charge rows added yet.');
+                reindexRows(chargeContainer, 'charge-row', 'Charges');
             }
 
-            addButton.addEventListener('click', addRow);
+            function addTransactionRow() {
+                const row = template.content.firstElementChild.cloneNode(true);
+                container.appendChild(row);
+                updateEmptyState(container, 'transaction-row', 'transactionDateEmptyState', 'No transaction date rows added yet.');
+                reindexRows(container, 'transaction-row', 'SaleTransactionDates');
+            }
+
+            addChargeButton.addEventListener('click', addChargeRow);
+            addButton.addEventListener('click', addTransactionRow);
+
+            chargeContainer.addEventListener('click', (event) => {
+                const button = event.target.closest('.remove-charge-row');
+                if (!button) {
+                    return;
+                }
+
+                button.closest('.charge-row')?.remove();
+                updateEmptyState(chargeContainer, 'charge-row', 'chargeEmptyState', 'No charge rows added yet.');
+                reindexRows(chargeContainer, 'charge-row', 'Charges');
+            });
 
             container.addEventListener('click', (event) => {
                 const button = event.target.closest('.remove-transaction-row');
@@ -236,12 +341,14 @@
                 }
 
                 button.closest('.transaction-row')?.remove();
-                updateEmptyState();
-                reindexRows();
+                updateEmptyState(container, 'transaction-row', 'transactionDateEmptyState', 'No transaction date rows added yet.');
+                reindexRows(container, 'transaction-row', 'SaleTransactionDates');
             });
 
-            updateEmptyState();
-            reindexRows();
+            updateEmptyState(chargeContainer, 'charge-row', 'chargeEmptyState', 'No charge rows added yet.');
+            reindexRows(chargeContainer, 'charge-row', 'Charges');
+            updateEmptyState(container, 'transaction-row', 'transactionDateEmptyState', 'No transaction date rows added yet.');
+            reindexRows(container, 'transaction-row', 'SaleTransactionDates');
         })();
     </script>
 }

@@ -43,9 +43,25 @@ namespace SalesManagementSystem.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(SaleAcctCreateVM model)
         {
+            var chargeRows = (model.Charges ?? new List<SaleChargeEntryVM>())
+                .Where(x => x.ChargeTypeId.HasValue || x.Amount.HasValue || !string.IsNullOrWhiteSpace(x.Remarks))
+                .ToList();
             var transactionDates = (model.SaleTransactionDates ?? new List<SaleTransactionDateEntryVM>())
                 .Where(x => x.DateLabelId.HasValue || x.Date.HasValue)
                 .ToList();
+
+            foreach (var item in chargeRows)
+            {
+                if (!item.ChargeTypeId.HasValue)
+                {
+                    ModelState.AddModelError("", "Please select charge type for each charge row.");
+                }
+
+                if (!item.Amount.HasValue)
+                {
+                    ModelState.AddModelError("", "Please enter amount for each charge row.");
+                }
+            }
 
             foreach (var item in transactionDates)
             {
@@ -88,6 +104,15 @@ namespace SalesManagementSystem.Controllers
                         StatusID = model.StatusID,
                         Action = model.Action,
                         CreatedDate = model.CreatedDate ?? DateTime.Now,
+                        Charges = chargeRows
+                            .Where(x => x.ChargeTypeId.HasValue && x.Amount.HasValue)
+                            .Select(x => new SaleCharge
+                            {
+                                ChargeTypeId = x.ChargeTypeId!.Value,
+                                Amount = x.Amount!.Value,
+                                Remarks = x.Remarks
+                            })
+                            .ToList(),
                         SaleTransactionDates = transactionDates
                             .Where(x => x.DateLabelId.HasValue && x.Date.HasValue)
                             .Select(x => new SaleTransactionDate
@@ -110,6 +135,7 @@ namespace SalesManagementSystem.Controllers
                 }
             }
 
+            model.Charges = chargeRows;
             model.SaleTransactionDates = transactionDates;
             await PopulateDropDowns();
             return View(model);
