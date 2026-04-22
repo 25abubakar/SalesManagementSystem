@@ -45,8 +45,8 @@
                                 <td>@item.OrderID</td>
                                 <td>@item.QtySold</td>
                                 <td>@item.SoldAmount</td>
-                                <td>@item.FromAccountId</td>
-                                <td>@item.ToAccountId</td>
+                                <td>@(item.FromAccount?.AccountName ?? item.FromAccountId?.ToString())</td>
+                                <td>@(item.ToAccount?.AccountName ?? item.ToAccountId?.ToString())</td>
                                 <td>@item.CostAmount</td>
 
                                 <td class="fw-bold text-success">
@@ -57,8 +57,20 @@
                                     @(item.StatusMaster?.StatusName ?? item.Status)
                                 </td>
 
-                                <td class="text-center">
-                                    @(item.Charges?.Count ?? 0)
+                                <td style="min-width:220px;">
+                                    @if (item.Charges != null && item.Charges.Any())
+                                    {
+                                        <small>
+                                            @string.Join(", ",
+                                                item.Charges
+                                                .Select(c => c.ChargeType?.ChargeTypeName ?? c.ChargeTypeId.ToString())
+                                                .Distinct())
+                                        </small>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">No charges</span>
+                                    }
                                 </td>
 
                                 <td style="min-width:220px;">

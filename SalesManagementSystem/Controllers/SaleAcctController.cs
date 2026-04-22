@@ -25,6 +25,7 @@ namespace SalesManagementSystem.Controllers
                 .Include(s => s.ToAccount)
                 .Include(s => s.StatusMaster)
                 .Include(s => s.Charges)
+                .ThenInclude(c => c.ChargeType)
                 .Include(s => s.SaleTransactionDates!)
                 .ThenInclude(d => d.SaleDate)
                 .OrderByDescending(s => s.CreatedDate)
