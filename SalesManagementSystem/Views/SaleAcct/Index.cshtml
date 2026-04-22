@@ -58,14 +58,9 @@
                                 </td>
 
                                 <td style="min-width:220px;">
-                                    @if (item.Charges != null && item.Charges.Any())
+                                    @if (!string.IsNullOrWhiteSpace(item.ChargeTypesCsv))
                                     {
-                                        <small>
-                                            @string.Join(", ",
-                                                item.Charges
-                                                .Select(c => c.ChargeType?.ChargeTypeName ?? c.ChargeTypeId.ToString())
-                                                .Distinct())
-                                        </small>
+                                        <small>@item.ChargeTypesCsv</small>
                                     }
                                     else
                                     {
@@ -74,14 +69,9 @@
                                 </td>
 
                                 <td style="min-width:220px;">
-                                    @if (item.SaleTransactionDates != null && item.SaleTransactionDates.Any())
+                                    @if (!string.IsNullOrWhiteSpace(item.TransactionDatesCsv))
                                     {
-                                        <small>
-                                            @string.Join(", ",
-                                                item.SaleTransactionDates
-                                                .Where(x => x.SaleDate != null)
-                                                .Select(x => x.SaleDate!.DateLabel + ": " + x.Date.ToString("yyyy-MM-dd")))
-                                        </small>
+                                        <small>@item.TransactionDatesCsv</small>
                                     }
                                     else
                                     {

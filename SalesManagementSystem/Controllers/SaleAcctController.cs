@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using SalesManagementSystem.Models;
 using SalesManagementSystem.Data;
+using Microsoft.Data.SqlClient;
 
 namespace SalesManagementSystem.Controllers
 {
@@ -31,7 +32,97 @@ namespace SalesManagementSystem.Controllers
                 .OrderByDescending(s => s.CreatedDate)
                 .ToListAsync();
 
+            await PopulateSqlSummaryColumns(sales);
             return View(sales);
+        }
+
+        private async Task PopulateSqlSummaryColumns(List<SaleAcct> sales)
+        {
+            if (sales.Count == 0)
+            {
+                return;
+            }
+
+            var saleIds = sales.Select(x => x.Id).Distinct().ToList();
+            var parameters = new List<SqlParameter>();
+            var idPlaceholders = new List<string>();
+
+            for (var i = 0; i < saleIds.Count; i++)
+            {
+                var paramName = $"@p{i}";
+                parameters.Add(new SqlParameter(paramName, saleIds[i]));
+                idPlaceholders.Add(paramName);
+            }
+
+            var sql = $@"
+SELECT
+    s.Id,
+    ISNULL(ch.ChargeTypesCsv, '') AS ChargeTypesCsv,
+    ISNULL(dt.TransactionDatesCsv, '') AS TransactionDatesCsv
+FROM SaleAcct s
+OUTER APPLY (
+    SELECT STRING_AGG(x.Name, ', ') AS ChargeTypesCsv
+    FROM (
+        SELECT DISTINCT COALESCE(ct.ChargeTypeName, CAST(c.ChargeTypeId AS nvarchar(20))) AS Name
+        FROM SaleCharge c
+        LEFT JOIN SaleChargeType ct ON ct.ChargeTypeId = c.ChargeTypeId
+        WHERE c.SaleId = s.Id
+    ) x
+) ch
+OUTER APPLY (
+    SELECT STRING_AGG(x.ItemText, ', ') AS TransactionDatesCsv
+    FROM (
+        SELECT DISTINCT CONCAT(sd.DateLabel, ': ', CONVERT(varchar(10), td.[Date], 23)) AS ItemText
+        FROM SaleTransactionDates td
+        INNER JOIN SaleDates sd ON sd.Id = td.DateLabelId
+        WHERE td.SaleAcctId = s.Id
+    ) x
+) dt
+WHERE s.Id IN ({string.Join(", ", idPlaceholders)});";
+
+            var summaries = new Dictionary<long, (string Charges, string Dates)>();
+            var connection = _context.Database.GetDbConnection();
+            var closeAfterUse = connection.State != System.Data.ConnectionState.Open;
+
+            if (closeAfterUse)
+            {
+                await connection.OpenAsync();
+            }
+
+            try
+            {
+                await using var command = connection.CreateCommand();
+                command.CommandText = sql;
+                foreach (var parameter in parameters)
+                {
+                    command.Parameters.Add(parameter);
+                }
+
+                await using var reader = await command.ExecuteReaderAsync();
+                while (await reader.ReadAsync())
+                {
+                    var id = reader.GetInt64(0);
+                    var charges = reader.IsDBNull(1) ? string.Empty : reader.GetString(1);
+                    var dates = reader.IsDBNull(2) ? string.Empty : reader.GetString(2);
+                    summaries[id] = (charges, dates);
+                }
+            }
+            finally
+            {
+                if (closeAfterUse)
+                {
+                    await connection.CloseAsync();
+                }
+            }
+
+            foreach (var sale in sales)
+            {
+                if (summaries.TryGetValue(sale.Id, out var summary))
+                {
+                    sale.ChargeTypesCsv = summary.Charges;
+                    sale.TransactionDatesCsv = summary.Dates;
+                }
+            }
         }
 
         public async Task<IActionResult> Create()
