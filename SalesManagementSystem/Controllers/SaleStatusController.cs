@@ -29,6 +29,12 @@ public class SaleStatusController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Create(SaleStatus status)
     {
+        status.StatusName = status.StatusName?.Trim() ?? string.Empty;
+        if (await IsDuplicateName(status.StatusName))
+        {
+            ModelState.AddModelError(nameof(status.StatusName), "Status already exists.");
+        }
+
         if (!ModelState.IsValid) return View(status);
         _context.Add(status);
         await _context.SaveChangesAsync();
@@ -46,6 +52,12 @@ public class SaleStatusController : Controller
     public async Task<IActionResult> Edit(int id, SaleStatus status)
     {
         if (id != status.StatusID) return BadRequest();
+        status.StatusName = status.StatusName?.Trim() ?? string.Empty;
+        if (await IsDuplicateName(status.StatusName, status.StatusID))
+        {
+            ModelState.AddModelError(nameof(status.StatusName), "Status already exists.");
+        }
+
         if (!ModelState.IsValid) return View(status);
 
         _context.Update(status);
@@ -69,6 +81,14 @@ public class SaleStatusController : Controller
         _context.SaleStatuses.Remove(status);
         await _context.SaveChangesAsync();
         return RedirectToAction(nameof(Index));
+    }
+
+    private Task<bool> IsDuplicateName(string name, int? excludeId = null)
+    {
+        var normalized = name.ToLower();
+        return _context.SaleStatuses.AnyAsync(x =>
+            (!excludeId.HasValue || x.StatusID != excludeId.Value) &&
+            x.StatusName.ToLower() == normalized);
     }
 }
 

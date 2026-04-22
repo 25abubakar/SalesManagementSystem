@@ -42,6 +42,12 @@ public class SaleAccountController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Create(SaleAccount account)
     {
+        account.AccountName = account.AccountName?.Trim() ?? string.Empty;
+        if (await IsDuplicateName(account.AccountName, account.PlatformId))
+        {
+            ModelState.AddModelError(nameof(account.AccountName), "Account already exists for this platform.");
+        }
+
         if (!ModelState.IsValid)
         {
             await PopulatePlatforms(account.PlatformId);
@@ -66,6 +72,11 @@ public class SaleAccountController : Controller
     public async Task<IActionResult> Edit(int id, SaleAccount account)
     {
         if (id != account.AccountId) return BadRequest();
+        account.AccountName = account.AccountName?.Trim() ?? string.Empty;
+        if (await IsDuplicateName(account.AccountName, account.PlatformId, account.AccountId))
+        {
+            ModelState.AddModelError(nameof(account.AccountName), "Account already exists for this platform.");
+        }
 
         if (!ModelState.IsValid)
         {
@@ -104,6 +115,15 @@ public class SaleAccountController : Controller
             .OrderBy(x => x.PlatformName)
             .ToListAsync();
         ViewBag.Platforms = new SelectList(platforms, "PlatformId", "PlatformName", selectedId);
+    }
+
+    private Task<bool> IsDuplicateName(string name, int? platformId, int? excludeId = null)
+    {
+        var normalized = name.ToLower();
+        return _context.SaleAccounts.AnyAsync(x =>
+            (!excludeId.HasValue || x.AccountId != excludeId.Value) &&
+            x.PlatformId == platformId &&
+            x.AccountName.ToLower() == normalized);
     }
 }
 

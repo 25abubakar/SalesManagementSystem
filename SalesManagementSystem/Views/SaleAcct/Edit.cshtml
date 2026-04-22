@@ -214,7 +214,7 @@
         </div>
 
         <div class="mt-4">
-            <button type="submit" class="btn btn-warning">Update</button>
+            <button type="submit" class="btn btn-warning" id="updateSaleButton">Update</button>
             <a asp-action="Index" class="btn btn-secondary">Back</a>
         </div>
     </form>
@@ -301,16 +301,76 @@
                 }
             }
 
+            function refreshDateLabelSelections() {
+                const selects = transactionRows.querySelectorAll('select[name$=".DateLabelId"]');
+                const selectedValues = new Set();
+
+                selects.forEach((select) => {
+                    if (select.value) {
+                        selectedValues.add(select.value);
+                    }
+                });
+
+                selects.forEach((select) => {
+                    const currentValue = select.value;
+                    Array.from(select.options).forEach((option) => {
+                        if (!option.value) {
+                            option.disabled = false;
+                            return;
+                        }
+
+                        option.disabled = option.value !== currentValue && selectedValues.has(option.value);
+                    });
+                });
+            }
+
+            function refreshChargeTypeSelections() {
+                const selects = chargeRows.querySelectorAll('select[name$=".ChargeTypeId"]');
+                const selectedValues = new Set();
+
+                selects.forEach((select) => {
+                    if (select.value) {
+                        selectedValues.add(select.value);
+                    }
+                });
+
+                selects.forEach((select) => {
+                    const currentValue = select.value;
+                    Array.from(select.options).forEach((option) => {
+                        if (!option.value) {
+                            option.disabled = false;
+                            return;
+                        }
+
+                        option.disabled = option.value !== currentValue && selectedValues.has(option.value);
+                    });
+                });
+            }
+
             document.getElementById('addChargeRow').addEventListener('click', () => {
                 chargeRows.appendChild(chargeTemplate.content.firstElementChild.cloneNode(true));
                 reindex(chargeRows, 'charge-row', 'Charges');
                 updateEmpty(chargeRows, 'charge-row', 'chargeEmptyState', 'No charges added yet.');
+                refreshChargeTypeSelections();
             });
 
             document.getElementById('addTransactionDateRow').addEventListener('click', () => {
                 transactionRows.appendChild(transactionTemplate.content.firstElementChild.cloneNode(true));
                 reindex(transactionRows, 'transaction-row', 'SaleTransactionDates');
                 updateEmpty(transactionRows, 'transaction-row', 'transactionEmptyState', 'No transaction dates added yet.');
+                refreshDateLabelSelections();
+            });
+
+            transactionRows.addEventListener('change', (e) => {
+                if (e.target.matches('select[name$=".DateLabelId"]')) {
+                    refreshDateLabelSelections();
+                }
+            });
+
+            chargeRows.addEventListener('change', (e) => {
+                if (e.target.matches('select[name$=".ChargeTypeId"]')) {
+                    refreshChargeTypeSelections();
+                }
             });
 
             chargeRows.addEventListener('click', (e) => {
@@ -318,6 +378,7 @@
                     e.target.closest('.charge-row')?.remove();
                     reindex(chargeRows, 'charge-row', 'Charges');
                     updateEmpty(chargeRows, 'charge-row', 'chargeEmptyState', 'No charges added yet.');
+                    refreshChargeTypeSelections();
                 }
             });
 
@@ -326,6 +387,7 @@
                     e.target.closest('.transaction-row')?.remove();
                     reindex(transactionRows, 'transaction-row', 'SaleTransactionDates');
                     updateEmpty(transactionRows, 'transaction-row', 'transactionEmptyState', 'No transaction dates added yet.');
+                    refreshDateLabelSelections();
                 }
             });
 
@@ -333,6 +395,17 @@
             reindex(transactionRows, 'transaction-row', 'SaleTransactionDates');
             updateEmpty(chargeRows, 'charge-row', 'chargeEmptyState', 'No charges added yet.');
             updateEmpty(transactionRows, 'transaction-row', 'transactionEmptyState', 'No transaction dates added yet.');
+            refreshChargeTypeSelections();
+            refreshDateLabelSelections();
+
+            const form = document.querySelector('form');
+            form.addEventListener('submit', () => {
+                const updateButton = document.getElementById('updateSaleButton');
+                if (updateButton) {
+                    updateButton.disabled = true;
+                    updateButton.textContent = 'Updating...';
+                }
+            });
         })();
     </script>
 }

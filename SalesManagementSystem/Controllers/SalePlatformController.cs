@@ -29,6 +29,12 @@ public class SalePlatformController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Create(SalePlatform platform)
     {
+        platform.PlatformName = platform.PlatformName?.Trim() ?? string.Empty;
+        if (await IsDuplicateName(platform.PlatformName))
+        {
+            ModelState.AddModelError(nameof(platform.PlatformName), "Platform already exists.");
+        }
+
         if (!ModelState.IsValid) return View(platform);
         _context.Add(platform);
         await _context.SaveChangesAsync();
@@ -46,6 +52,12 @@ public class SalePlatformController : Controller
     public async Task<IActionResult> Edit(int id, SalePlatform platform)
     {
         if (id != platform.PlatformId) return BadRequest();
+        platform.PlatformName = platform.PlatformName?.Trim() ?? string.Empty;
+        if (await IsDuplicateName(platform.PlatformName, platform.PlatformId))
+        {
+            ModelState.AddModelError(nameof(platform.PlatformName), "Platform already exists.");
+        }
+
         if (!ModelState.IsValid) return View(platform);
 
         _context.Update(platform);
@@ -69,6 +81,14 @@ public class SalePlatformController : Controller
         _context.SalePlatforms.Remove(platform);
         await _context.SaveChangesAsync();
         return RedirectToAction(nameof(Index));
+    }
+
+    private Task<bool> IsDuplicateName(string name, int? excludeId = null)
+    {
+        var normalized = name.ToLower();
+        return _context.SalePlatforms.AnyAsync(x =>
+            (!excludeId.HasValue || x.PlatformId != excludeId.Value) &&
+            x.PlatformName.ToLower() == normalized);
     }
 }
 

@@ -53,6 +53,15 @@ namespace SalesManagementSystem.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(SaleTransactionDate model)
         {
+            var duplicateExists = await _context.SaleTransactionDates.AnyAsync(x =>
+                x.SaleAcctId == model.SaleAcctId &&
+                x.DateLabelId == model.DateLabelId);
+
+            if (duplicateExists)
+            {
+                ModelState.AddModelError("", "This date label is already assigned for the selected sale.");
+            }
+
             if (ModelState.IsValid)
             {
                 model.Id = 0;
@@ -90,6 +99,16 @@ namespace SalesManagementSystem.Controllers
         public async Task<IActionResult> Edit(int id, SaleTransactionDate model)
         {
             if (id != model.Id) return NotFound();
+
+            var duplicateExists = await _context.SaleTransactionDates.AnyAsync(x =>
+                x.Id != model.Id &&
+                x.SaleAcctId == model.SaleAcctId &&
+                x.DateLabelId == model.DateLabelId);
+
+            if (duplicateExists)
+            {
+                ModelState.AddModelError("", "This date label is already assigned for the selected sale.");
+            }
 
             if (ModelState.IsValid)
             {

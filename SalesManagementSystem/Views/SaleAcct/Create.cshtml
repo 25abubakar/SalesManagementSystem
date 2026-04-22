@@ -269,7 +269,7 @@
                 </i>
                 Back
             </a>
-            <button type="submit" class="btn btn-success">
+            <button type="submit" class="btn btn-success" id="saveSaleButton">
                 <i class="bi bi-check-circle">
                 </i>
                 Save Sale
@@ -377,6 +377,7 @@
                 chargeContainer.appendChild(row);
                 updateEmptyState(chargeContainer, 'charge-row', 'chargeEmptyState', 'No charge rows added yet.');
                 reindexRows(chargeContainer, 'charge-row', 'Charges');
+                refreshChargeTypeSelections();
             }
 
             function addTransactionRow() {
@@ -384,10 +385,67 @@
                 container.appendChild(row);
                 updateEmptyState(container, 'transaction-row', 'transactionDateEmptyState', 'No transaction date rows added yet.');
                 reindexRows(container, 'transaction-row', 'SaleTransactionDates');
+                refreshDateLabelSelections();
+            }
+
+            function refreshDateLabelSelections() {
+                const selects = container.querySelectorAll('select[name$=".DateLabelId"]');
+                const selectedValues = new Set();
+
+                selects.forEach((select) => {
+                    if (select.value) {
+                        selectedValues.add(select.value);
+                    }
+                });
+
+                selects.forEach((select) => {
+                    const currentValue = select.value;
+                    Array.from(select.options).forEach((option) => {
+                        if (!option.value) {
+                            option.disabled = false;
+                            return;
+                        }
+
+                        option.disabled = option.value !== currentValue && selectedValues.has(option.value);
+                    });
+                });
+            }
+
+            function refreshChargeTypeSelections() {
+                const selects = chargeContainer.querySelectorAll('select[name$=".ChargeTypeId"]');
+                const selectedValues = new Set();
+
+                selects.forEach((select) => {
+                    if (select.value) {
+                        selectedValues.add(select.value);
+                    }
+                });
+
+                selects.forEach((select) => {
+                    const currentValue = select.value;
+                    Array.from(select.options).forEach((option) => {
+                        if (!option.value) {
+                            option.disabled = false;
+                            return;
+                        }
+
+                        option.disabled = option.value !== currentValue && selectedValues.has(option.value);
+                    });
+                });
             }
 
             addChargeButton.addEventListener('click', addChargeRow);
             addButton.addEventListener('click', addTransactionRow);
+            chargeContainer.addEventListener('change', (event) => {
+                if (event.target.matches('select[name$=".ChargeTypeId"]')) {
+                    refreshChargeTypeSelections();
+                }
+            });
+            container.addEventListener('change', (event) => {
+                if (event.target.matches('select[name$=".DateLabelId"]')) {
+                    refreshDateLabelSelections();
+                }
+            });
 
             chargeContainer.addEventListener('click', (event) => {
                 const button = event.target.closest('.remove-charge-row');
@@ -398,6 +456,7 @@
                 button.closest('.charge-row')?.remove();
                 updateEmptyState(chargeContainer, 'charge-row', 'chargeEmptyState', 'No charge rows added yet.');
                 reindexRows(chargeContainer, 'charge-row', 'Charges');
+                refreshChargeTypeSelections();
             });
 
             container.addEventListener('click', (event) => {
@@ -409,12 +468,24 @@
                 button.closest('.transaction-row')?.remove();
                 updateEmptyState(container, 'transaction-row', 'transactionDateEmptyState', 'No transaction date rows added yet.');
                 reindexRows(container, 'transaction-row', 'SaleTransactionDates');
+                refreshDateLabelSelections();
             });
 
             updateEmptyState(chargeContainer, 'charge-row', 'chargeEmptyState', 'No charge rows added yet.');
             reindexRows(chargeContainer, 'charge-row', 'Charges');
             updateEmptyState(container, 'transaction-row', 'transactionDateEmptyState', 'No transaction date rows added yet.');
             reindexRows(container, 'transaction-row', 'SaleTransactionDates');
+            refreshChargeTypeSelections();
+            refreshDateLabelSelections();
+
+            const form = document.querySelector('form[asp-action="Create"], form');
+            form.addEventListener('submit', () => {
+                const saveButton = document.getElementById('saveSaleButton');
+                if (saveButton) {
+                    saveButton.disabled = true;
+                    saveButton.innerHTML = '<i class="bi bi-hourglass-split"></i> Saving...';
+                }
+            });
         })();
     </script>
 }

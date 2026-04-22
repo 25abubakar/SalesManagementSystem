@@ -44,6 +44,12 @@ public class SaleProductController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Create(SaleProduct product)
     {
+        product.ProductName = product.ProductName?.Trim() ?? string.Empty;
+        if (await IsDuplicateName(product.ProductName, product.PlatformId))
+        {
+            ModelState.AddModelError(nameof(product.ProductName), "Product already exists for this platform.");
+        }
+
         if (!ModelState.IsValid)
         {
             await PopulatePlatforms(product.PlatformId);
@@ -68,6 +74,11 @@ public class SaleProductController : Controller
     public async Task<IActionResult> Edit(int id, SaleProduct product)
     {
         if (id != product.ProductId) return BadRequest();
+        product.ProductName = product.ProductName?.Trim() ?? string.Empty;
+        if (await IsDuplicateName(product.ProductName, product.PlatformId, product.ProductId))
+        {
+            ModelState.AddModelError(nameof(product.ProductName), "Product already exists for this platform.");
+        }
 
         if (!ModelState.IsValid)
         {
@@ -107,6 +118,15 @@ public class SaleProductController : Controller
             .OrderBy(x => x.PlatformName)
             .ToListAsync();
         ViewBag.Platforms = new SelectList(platforms, "PlatformId", "PlatformName", selectedId);
+    }
+
+    private Task<bool> IsDuplicateName(string name, int? platformId, int? excludeId = null)
+    {
+        var normalized = name.ToLower();
+        return _context.SaleProducts.AnyAsync(x =>
+            (!excludeId.HasValue || x.ProductId != excludeId.Value) &&
+            x.PlatformId == platformId &&
+            x.ProductName.ToLower() == normalized);
     }
 }
 

@@ -73,5 +73,11 @@ namespace SalesManagementSystem.Models
         public virtual List<SaleCharge> Charges { get; set; } = new();
 
         public ICollection<SaleTransactionDate>? SaleTransactionDates { get; set; }
+
+        [NotMapped]
+        public string? ChargeTypesCsv { get; set; }
+
+        [NotMapped]
+        public string? TransactionDatesCsv { get; set; }
     }
 }

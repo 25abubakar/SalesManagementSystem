@@ -64,6 +64,18 @@ namespace SalesManagementSystem.Controllers
                 }
             }
 
+            var duplicateChargeTypes = chargeRows
+                .Where(x => x.ChargeTypeId.HasValue)
+                .GroupBy(x => x.ChargeTypeId!.Value)
+                .Where(g => g.Count() > 1)
+                .Select(g => g.Key)
+                .ToList();
+
+            if (duplicateChargeTypes.Count > 0)
+            {
+                ModelState.AddModelError("", "Each charge type can only be selected once.");
+            }
+
             foreach (var item in transactionDates)
             {
                 if (!item.DateLabelId.HasValue)
@@ -75,6 +87,18 @@ namespace SalesManagementSystem.Controllers
                 {
                     ModelState.AddModelError("", "Please enter a date for each sale transaction date row.");
                 }
+            }
+
+            var duplicateDateLabels = transactionDates
+                .Where(x => x.DateLabelId.HasValue)
+                .GroupBy(x => x.DateLabelId!.Value)
+                .Where(g => g.Count() > 1)
+                .Select(g => g.Key)
+                .ToList();
+
+            if (duplicateDateLabels.Count > 0)
+            {
+                ModelState.AddModelError("", "Each transaction date label can only be selected once.");
             }
 
             if (ModelState.IsValid)
@@ -275,6 +299,18 @@ namespace SalesManagementSystem.Controllers
                 }
             }
 
+            var duplicateChargeTypes = chargeRows
+                .Where(x => x.ChargeTypeId.HasValue)
+                .GroupBy(x => x.ChargeTypeId!.Value)
+                .Where(g => g.Count() > 1)
+                .Select(g => g.Key)
+                .ToList();
+
+            if (duplicateChargeTypes.Count > 0)
+            {
+                ModelState.AddModelError("", "Each charge type can only be selected once.");
+            }
+
             foreach (var row in transactionDateRows)
             {
                 if (!row.DateLabelId.HasValue)
@@ -286,6 +322,18 @@ namespace SalesManagementSystem.Controllers
                 {
                     ModelState.AddModelError("", "Please enter date for each transaction row.");
                 }
+            }
+
+            var duplicateDateLabels = transactionDateRows
+                .Where(x => x.DateLabelId.HasValue)
+                .GroupBy(x => x.DateLabelId!.Value)
+                .Where(g => g.Count() > 1)
+                .Select(g => g.Key)
+                .ToList();
+
+            if (duplicateDateLabels.Count > 0)
+            {
+                ModelState.AddModelError("", "Each transaction date label can only be selected once.");
             }
 
             if (ModelState.IsValid)

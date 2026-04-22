@@ -39,10 +39,25 @@
 
             <div class="d-flex justify-content-between">
                 <a asp-action="Index" asp-route-saleId="@saleId" class="btn btn-secondary">Back</a>
-                <button type="submit" class="btn btn-success">Save</button>
+                <button type="submit" class="btn btn-success" id="saveTxnDateButton">Save</button>
             </div>
 
         </form>
 
     </div>
 </div>
+
+@section Scripts {
+    <script>
+        (() => {
+            const form = document.querySelector('form');
+            form.addEventListener('submit', () => {
+                const button = document.getElementById('saveTxnDateButton');
+                if (button) {
+                    button.disabled = true;
+                    button.textContent = 'Saving...';
+                }
+            });
+        })();
+    </script>
+}

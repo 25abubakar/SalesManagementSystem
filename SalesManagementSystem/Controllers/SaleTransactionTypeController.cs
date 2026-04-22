@@ -29,6 +29,12 @@ public class SaleTransactionTypeController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Create(SaleTransactionType type)
     {
+        type.TransactionName = type.TransactionName?.Trim() ?? string.Empty;
+        if (await IsDuplicateName(type.TransactionName))
+        {
+            ModelState.AddModelError(nameof(type.TransactionName), "Transaction type already exists.");
+        }
+
         if (!ModelState.IsValid) return View(type);
         _context.Add(type);
         await _context.SaveChangesAsync();
@@ -46,6 +52,12 @@ public class SaleTransactionTypeController : Controller
     public async Task<IActionResult> Edit(int id, SaleTransactionType type)
     {
         if (id != type.TransactionId) return BadRequest();
+        type.TransactionName = type.TransactionName?.Trim() ?? string.Empty;
+        if (await IsDuplicateName(type.TransactionName, type.TransactionId))
+        {
+            ModelState.AddModelError(nameof(type.TransactionName), "Transaction type already exists.");
+        }
+
         if (!ModelState.IsValid) return View(type);
 
         _context.Update(type);
@@ -69,6 +81,14 @@ public class SaleTransactionTypeController : Controller
         _context.SaleTransactionTypes.Remove(type);
         await _context.SaveChangesAsync();
         return RedirectToAction(nameof(Index));
+    }
+
+    private Task<bool> IsDuplicateName(string name, int? excludeId = null)
+    {
+        var normalized = name.ToLower();
+        return _context.SaleTransactionTypes.AnyAsync(x =>
+            (!excludeId.HasValue || x.TransactionId != excludeId.Value) &&
+            x.TransactionName.ToLower() == normalized);
     }
 }
 

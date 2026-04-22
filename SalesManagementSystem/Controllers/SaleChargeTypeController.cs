@@ -29,6 +29,12 @@ public class SaleChargeTypeController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Create(SaleChargeType type)
     {
+        type.ChargeTypeName = type.ChargeTypeName?.Trim() ?? string.Empty;
+        if (await IsDuplicateName(type.ChargeTypeName))
+        {
+            ModelState.AddModelError(nameof(type.ChargeTypeName), "Charge type already exists.");
+        }
+
         if (!ModelState.IsValid) return View(type);
         _context.Add(type);
         await _context.SaveChangesAsync();
@@ -46,6 +52,12 @@ public class SaleChargeTypeController : Controller
     public async Task<IActionResult> Edit(int id, SaleChargeType type)
     {
         if (id != type.ChargeTypeId) return BadRequest();
+        type.ChargeTypeName = type.ChargeTypeName?.Trim() ?? string.Empty;
+        if (await IsDuplicateName(type.ChargeTypeName, type.ChargeTypeId))
+        {
+            ModelState.AddModelError(nameof(type.ChargeTypeName), "Charge type already exists.");
+        }
+
         if (!ModelState.IsValid) return View(type);
 
         _context.Update(type);
@@ -69,6 +81,14 @@ public class SaleChargeTypeController : Controller
         _context.SaleChargeTypes.Remove(type);
         await _context.SaveChangesAsync();
         return RedirectToAction(nameof(Index));
+    }
+
+    private Task<bool> IsDuplicateName(string name, int? excludeId = null)
+    {
+        var normalized = name.ToLower();
+        return _context.SaleChargeTypes.AnyAsync(x =>
+            (!excludeId.HasValue || x.ChargeTypeId != excludeId.Value) &&
+            x.ChargeTypeName.ToLower() == normalized);
     }
 }
 
