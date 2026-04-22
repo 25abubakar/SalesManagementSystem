@@ -23,7 +23,7 @@
                             <th>Platform</th>
                             <th>Product</th>
                             <th>Order ID</th>
-                            <th>Qty</th>
+                            @* <th>Qty</th> *@
                             <th>Sold</th>
                             <th>From Account</th>
                             <th>To Account</th>
@@ -43,7 +43,7 @@
                                 <td class="text-nowrap">@item.Platform?.PlatformName</td>
                                 <td class="text-nowrap">@item.Product?.ProductName</td>
                                 <td>@item.OrderID</td>
-                                <td>@item.QtySold</td>
+                                @* <td>@item.QtySold</td> *@
                                 <td>@item.SoldAmount</td>
                                 <td>@(item.FromAccount?.AccountName ?? item.FromAccountId?.ToString())</td>
                                 <td>@(item.ToAccount?.AccountName ?? item.ToAccountId?.ToString())</td>
