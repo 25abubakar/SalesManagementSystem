@@ -95,7 +95,7 @@ namespace SalesManagementSystem.Controllers
             {
                 _context.Update(model);
                 await _context.SaveChangesAsync();
-                return RedirectToAction("Edit", "SaleAcct", new { id = model.SaleAcctId });
+                return RedirectToAction(nameof(Index), new { saleId = model.SaleAcctId });
             }
 
             ViewBag.SaleTransactions = new SelectList(
@@ -133,7 +133,7 @@ namespace SalesManagementSystem.Controllers
 
             if (saleId.HasValue)
             {
-                return RedirectToAction("Edit", "SaleAcct", new { id = saleId.Value });
+                return RedirectToAction(nameof(Index), new { saleId = saleId.Value });
             }
 
             return RedirectToAction(nameof(Index));
