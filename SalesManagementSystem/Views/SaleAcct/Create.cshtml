@@ -35,37 +35,74 @@
         <div class="card-section">
             <div class="section-title"><i class="bi bi-info-circle"></i> Basic Information</div>
             <div class="row g-3">
-                <div class="col-md-3"><label>Company ID</label><input asp-for="CompanyId" class="form-control" /></div>
+                <div class="col-md-3">
+                    <label>Company ID</label>
+                    <input asp-for="CompanyId" class="form-control" />
+                </div>
                 <div class="col-md-3">
                     <label>Platform</label>
-                    <select asp-for="PlatformId" class="form-select" asp-items="ViewBag.Platforms"><option value="">Select Platform</option></select>
+                    <select asp-for="PlatformId" class="form-select" asp-items="ViewBag.Platforms">
+                        <option value="">Select Platform</option>
+                        </select>
                 </div>
                 <div class="col-md-3">
                     <label>Product</label>
-                    <select asp-for="ProductId" class="form-select" asp-items="ViewBag.Products"><option value="">Select Product</option></select>
+                    <select asp-for="ProductId" class="form-select" asp-items="ViewBag.Products">
+                        <option value="">Select Product</option>
+                        </select>
                 </div>
-                <div class="col-md-3"><label>Order ID</label><input asp-for="OrderID" class="form-control" /></div>
+                <div class="col-md-3">
+                    <label>Order ID</label>
+                    <input asp-for="OrderID" class="form-control" />
+                </div>
             </div>
         </div>
 
         <div class="card-section">
             <div class="section-title"><i class="bi bi-cash-coin"></i> Quantity & Amounts</div>
             <div class="row g-3">
-                <div class="col-md-3"><label>Qty Sold</label><input asp-for="QtySold" class="form-control" /></div>
-                <div class="col-md-3"><label>Qty Held</label><input asp-for="QtyHeld" class="form-control" /></div>
-                <div class="col-md-3"><label>Sold Amount</label><input asp-for="SoldAmount" class="form-control" /></div>
-                <div class="col-md-3"><label>Cost Amount</label><input asp-for="CostAmount" class="form-control" /></div>
+                <div class="col-md-3">
+                    <label>Qty Sold</label>
+                    <input asp-for="QtySold" class="form-control" />
+                </div>
+                <div class="col-md-3">
+                    <label>Qty Held</label>
+                    <input asp-for="QtyHeld" class="form-control" />
+                </div>
+                <div class="col-md-3">
+                    <label>Sold Amount</label>
+                    <input asp-for="SoldAmount" class="form-control" />
+                </div>
+                <div class="col-md-3">
+                    <label>Cost Amount</label>
+                    <input asp-for="CostAmount" class="form-control" />
+                </div>
             </div>
         </div>
 
         <div class="card-section">
             <div class="section-title"><i class="bi bi-receipt"></i> Charges & Rebates</div>
             <div class="row g-3">
-                <div class="col-md-3"><label>Pro Charges</label><input asp-for="TotalProCharges" class="form-control" /></div>
-                <div class="col-md-2"><label>Amazon Fee</label><input asp-for="AmazonFee" class="form-control" /></div>
-                <div class="col-md-2"><label>Other</label><input asp-for="OtherCharges" class="form-control" /></div>
-                <div class="col-md-2"><label>Promotion</label><input asp-for="TotalPromotion" class="form-control" /></div>
-                <div class="col-md-3"><label>RRO Rebate</label><input asp-for="TotalRroRebate" class="form-control" /></div>
+                <div class="col-md-3">
+                    <label>Pro Charges</label>
+                    <input asp-for="TotalProCharges" class="form-control" />
+                </div>
+                <div class="col-md-2">
+                    <label>Amazon Fee</label>
+                    <input asp-for="AmazonFee" class="form-control" />
+                </div>
+                <div class="col-md-2">
+                    <label>Other</label>
+                    <input asp-for="OtherCharges" class="form-control" />
+                </div>
+                <div class="col-md-2">
+                    <label>Promotion</label>
+                    <input asp-for="TotalPromotion" class="form-control" />
+                </div>
+                <div class="col-md-3">
+                    <label>RRO Rebate</label>
+                    <input asp-for="TotalRroRebate" class="form-control" />
+                </div>
             </div>
         </div>
 
@@ -74,19 +111,27 @@
             <div class="row g-3">
                 <div class="col-md-3">
                     <label>Transaction Type</label>
-                    <select asp-for="TransactionId" class="form-select" asp-items="ViewBag.TransTypes"><option value="">-- Select --</option></select>
+                    <select asp-for="TransactionId" class="form-select" asp-items="ViewBag.TransTypes">
+                        <option value="">-- Select --</option>
+                        </select>
                 </div>
                 <div class="col-md-3">
                     <label>From Account</label>
-                    <select asp-for="FromAccountId" class="form-select" asp-items="ViewBag.FromAccounts"><option value="">-- Select --</option></select>
+                    <select asp-for="FromAccountId" class="form-select" asp-items="ViewBag.FromAccounts">
+                        <option value="">-- Select --</option>
+                        </select>
                 </div>
                 <div class="col-md-3">
                     <label>To Account</label>
-                    <select asp-for="ToAccountId" class="form-select" asp-items="ViewBag.ToAccounts"><option value="">-- Select --</option></select>
+                    <select asp-for="ToAccountId" class="form-select" asp-items="ViewBag.ToAccounts">
+                        <option value="">-- Select --</option>
+                        </select>
                 </div>
                 <div class="col-md-3">
                     <label>Status</label>
-                    <select asp-for="StatusID" class="form-select" asp-items="ViewBag.Statuses"><option value="">-- Select --</option></select>
+                    <select asp-for="StatusID" class="form-select" asp-items="ViewBag.Statuses">
+                        <option value="">-- Select --</option>
+                        </select>
                 </div>
             </div>
         </div>
@@ -94,9 +139,18 @@
         <div class="card-section">
             <div class="section-title"><i class="bi bi-list-stars"></i> Additional Details</div>
             <div class="row g-3">
-                <div class="col-md-3"><label>Amz Pro Ref</label><input asp-for="AmzProRef" class="form-control" /></div>
-                <div class="col-md-3"><label>Action</label><input asp-for="Action" class="form-control" /></div>
-                <div class="col-md-3"><label>Created Date</label><input asp-for="CreatedDate" type="datetime-local" class="form-control" /></div>
+                <div class="col-md-3">
+                    <label>Amz Pro Ref</label>
+                    <input asp-for="AmzProRef" class="form-control" />
+                </div>
+                <div class="col-md-3">
+                    <label>Action</label>
+                    <input asp-for="Action" class="form-control" />
+                </div>
+                <div class="col-md-3">
+                    <label>Created Date</label>
+                    <input asp-for="CreatedDate" type="datetime-local" class="form-control" />
+                </div>
                 <div class="col-md-12">
                     <label>Description</label>
                     <input asp-for="Discription" class="form-control" />
@@ -209,8 +263,17 @@
         </div>
 
         <div class="sticky-actions">
-            <a asp-action="Index" class="btn btn-outline-secondary"><i class="bi bi-arrow-left"></i> Back</a>
-            <button type="submit" class="btn btn-success"><i class="bi bi-check-circle"></i> Save Sale</button>
+            <a asp-action="Index" class="btn btn-outline-secondary">
+                <i class="bi bi-arrow-left">
+
+                </i>
+                Back
+            </a>
+            <button type="submit" class="btn btn-success">
+                <i class="bi bi-check-circle">
+                </i>
+                Save Sale
+            </button>
         </div>
     </form>
 </div>
@@ -233,7 +296,9 @@
         </div>
         <div class="col-md-2">
             <button type="button" class="btn btn-outline-danger w-100 remove-transaction-row">
-                <i class="bi bi-trash"></i> Remove
+                <i class="bi bi-trash">
+                </i>
+                Remove
             </button>
         </div>
     </div>
