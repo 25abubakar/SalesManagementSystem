@@ -19,7 +19,7 @@ public class SaleAccountController : Controller
     {
         var accounts = await _context.SaleAccounts
             .Include(x => x.Platform)
-            .OrderByDescending(x => x.AccountId)
+            .OrderBy(x => x.AccountId)
             .ToListAsync();
         return View(accounts);
     }

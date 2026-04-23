@@ -15,9 +15,9 @@ public class SalePlatformController : Controller
     }
 
     public async Task<IActionResult> Index()
-        => View(await _context.SalePlatforms.OrderByDescending(x => x.PlatformId).ToListAsync());
+        => View(await _context.SalePlatforms.OrderBy(x => x.PlatformId).ToListAsync());
 
-    public async Task<IActionResult> Details(int id)
+    public async Task<IActionResult> Details(int id)    
     {
         var platform = await _context.SalePlatforms.FirstOrDefaultAsync(x => x.PlatformId == id);
         return platform == null ? NotFound() : View(platform);

@@ -42,8 +42,8 @@ namespace SalesManagementSystem.Controllers
                 .Include(x => x.Platform)
                 .Include(x => x.Product)
                 .Include(x => x.StatusMaster)
-                .OrderByDescending(x => x.CreatedDate)
-                .ThenByDescending(x => x.Id)
+                .OrderBy(x => x.CreatedDate)
+                .ThenBy(x => x.Id)
                 .Take(8)
                 .ToListAsync();
 

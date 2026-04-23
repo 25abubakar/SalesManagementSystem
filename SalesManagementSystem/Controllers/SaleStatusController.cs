@@ -15,7 +15,7 @@ public class SaleStatusController : Controller
     }
 
     public async Task<IActionResult> Index()
-        => View(await _context.SaleStatuses.OrderByDescending(x => x.StatusID).ToListAsync());
+        => View(await _context.SaleStatuses.OrderBy(x => x.StatusID).ToListAsync());
 
     public async Task<IActionResult> Details(int id)
     {

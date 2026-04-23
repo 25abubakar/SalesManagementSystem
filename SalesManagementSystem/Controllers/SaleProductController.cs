@@ -19,7 +19,7 @@ public class SaleProductController : Controller
     {
         var products = await _context.SaleProducts
             .Include(x => x.Platform)
-            .OrderByDescending(x => x.ProductId)
+            .OrderBy(x => x.ProductId)
             .ToListAsync();
 
         return View(products);

@@ -26,7 +26,7 @@ namespace SalesManagementSystem.Controllers
             }
 
             var data = await query
-                .OrderByDescending(x => x.SaleAcctId)
+                .OrderBy(x => x.SaleAcctId)
                 .ToListAsync();
 
             ViewBag.SaleId = saleId;

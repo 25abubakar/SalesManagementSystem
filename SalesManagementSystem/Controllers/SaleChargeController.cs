@@ -27,7 +27,7 @@ public class SaleChargeController : Controller
             query = query.Where(x => x.SaleId == saleId.Value);
 
         var charges = await query
-            .OrderByDescending(x => x.SaleChargeId)
+            .OrderBy(x => x.SaleChargeId)
             .ToListAsync();
 
         ViewBag.SaleId = saleId;
@@ -119,7 +119,7 @@ public class SaleChargeController : Controller
     {
         var sales = await _context.SaleAccts
             .Include(x => x.Product)
-            .OrderByDescending(x => x.Id)
+            .OrderBy(x => x.Id)
             .Select(x => new
             {
                 x.Id,
