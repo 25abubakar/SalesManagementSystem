@@ -192,6 +192,8 @@ WHERE s.Id IN ({string.Join(", ", idPlaceholders)});";
                 ModelState.AddModelError("", "Each transaction date label can only be selected once.");
             }
 
+            await ValidateDuplicateSaleAsync(model);
+
             if (ModelState.IsValid)
             {
                 try
@@ -427,6 +429,8 @@ WHERE s.Id IN ({string.Join(", ", idPlaceholders)});";
                 ModelState.AddModelError("", "Each transaction date label can only be selected once.");
             }
 
+            await ValidateDuplicateSaleAsync(model, id);
+
             if (ModelState.IsValid)
             {
                 try
@@ -517,6 +521,27 @@ WHERE s.Id IN ({string.Join(", ", idPlaceholders)});";
             model.SaleTransactionDates = transactionDateRows;
             await PopulateDropDowns();
             return View(model);
+        }
+
+        private async Task ValidateDuplicateSaleAsync(SaleAcctCreateVM model, long? currentSaleId = null)
+        {
+            if (string.IsNullOrWhiteSpace(model.OrderID))
+            {
+                return;
+            }
+
+            var normalizedOrderId = model.OrderID.Trim();
+            var duplicateExists = await _context.SaleAccts.AnyAsync(x =>
+                x.OrderID != null &&
+                x.OrderID.Trim() == normalizedOrderId &&
+                x.PlatformId == model.PlatformId &&
+                x.ProductId == model.ProductId &&
+                (!currentSaleId.HasValue || x.Id != currentSaleId.Value));
+
+            if (duplicateExists)
+            {
+                ModelState.AddModelError("", "A sale with the same platform, product and order ID already exists.");
+            }
         }
 
         public async Task<IActionResult> Delete(long id)

@@ -39,6 +39,11 @@ namespace SalesManagementSystem.Data
                     "ISNULL(SoldAmount,0) - ISNULL(CostAmount,0) - ISNULL(TotalProCharges,0) - ISNULL(AmazonFee,0) - ISNULL(OtherCharges,0) + ISNULL(TotalRroRebate,0)",
                     stored: true);
 
+            modelBuilder.Entity<SaleAcct>()
+                .HasIndex(x => new { x.PlatformId, x.ProductId, x.OrderID })
+                .IsUnique()
+                .HasFilter("[OrderID] IS NOT NULL");
+
             modelBuilder.Entity<SaleProduct>()
                 .HasOne(p => p.Platform)
                 .WithMany(p => p.Products)
