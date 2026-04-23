@@ -7,82 +7,10 @@
         : 0m;
 }
 
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
-
-<style>
-    body { background: #f5f7fb; }
-    .hero-section {
-        background: linear-gradient(120deg,#0d6efd,#4e73df);
-        color: white;
-        padding: 40px;
-        border-radius: 18px;
-        box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-    }
-    .dashboard-card, .summary-card {
-        border: none;
-        border-radius: 16px;
-        box-shadow: 0 6px 18px rgba(0,0,0,0.08);
-    }
-    .summary-card .metric-value {
-        font-size: 1.8rem;
-        font-weight: 700;
-    }
-    .icon-circle {
-        width: 60px;
-        height: 60px;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 26px;
-        color: white;
-    }
-    .bg-sales { background: #0d6efd; }
-    .bg-profit { background: #198754; }
-    .bg-average { background: #6f42c1; }
-    .bg-master { background: #fd7e14; }
-    .bg-charges { background: #20c997; }
-    .btn-dashboard {
-        border-radius: 30px;
-        padding: 8px 20px;
-    }
-    .chart-row {
-        display: grid;
-        grid-template-columns: 90px 1fr;
-        gap: 12px;
-        align-items: center;
-        margin-bottom: 14px;
-    }
-    .chart-bars {
-        display: grid;
-        gap: 8px;
-    }
-    .chart-bar {
-        height: 14px;
-        border-radius: 999px;
-        min-width: 6px;
-    }
-    .chart-bar.sales { background: #0d6efd; }
-    .chart-bar.profit { background: #198754; }
-    .chart-legend {
-        display: flex;
-        gap: 18px;
-        flex-wrap: wrap;
-        font-size: 0.9rem;
-    }
-    .legend-dot {
-        width: 12px;
-        height: 12px;
-        border-radius: 50%;
-        display: inline-block;
-        margin-right: 6px;
-    }
-</style>
-
-<div class="container mt-4">
+<div class="dashboard-page">
     <div class="hero-section text-center mb-4">
         <h1 class="fw-bold">Sales Management Dashboard</h1>
-        <p class="mb-0">Total sales, total profit aur recent activity aik hi screen par.</p>
+        <p class="mb-0">Total sales, profit, and recent activity in one clean workspace.</p>
     </div>
 
     <div class="row g-4 mb-4">
@@ -92,7 +20,7 @@
                     <div class="d-flex align-items-center justify-content-between">
                         <div>
                             <div class="text-muted">Total Sales</div>
-                            <div class="metric-value">@Model.TotalSales</div>
+                            <div class="metric-value">@Model.TotalSales.ToString("N0", CultureInfo.InvariantCulture)</div>
                         </div>
                         <div class="icon-circle bg-sales"><i class="bi bi-cart-check"></i></div>
                     </div>
@@ -143,7 +71,7 @@
     <div class="row g-4 mb-4">
         <div class="col-lg-7">
             <div class="card dashboard-card h-100">
-                <div class="card-body p-4">
+                <div class="card-body p-4 dashboard-chart-area">
                     <div class="d-flex justify-content-between align-items-center mb-3">
                         <h4 class="fw-bold mb-0">Monthly Sales / Profit</h4>
                         <div class="chart-legend">
@@ -169,7 +97,7 @@
                     }
                     else
                     {
-                        <div class="text-muted">Abhi dashboard graph ke liye sale data available nahi hai.</div>
+                        <div class="text-muted">No monthly data available to render chart.</div>
                     }
                 </div>
             </div>
@@ -206,7 +134,7 @@
                 <h4 class="fw-bold mb-0">Recent Sales</h4>
                 <a asp-controller="SaleAcct" asp-action="Index" class="btn btn-outline-primary btn-sm">View All</a>
             </div>
-            <div class="table-responsive">
+            <div class="table-responsive dashboard-table-wrap">
                 <table class="table table-hover align-middle mb-0">
                     <thead class="table-light">
                         <tr>
@@ -236,7 +164,7 @@
                         else
                         {
                             <tr>
-                                <td colspan="6" class="text-center text-muted">No sales found.</td>
+                                <td colspan="6" class="text-center text-muted">No recent sales found.</td>
                             </tr>
                         }
                     </tbody>

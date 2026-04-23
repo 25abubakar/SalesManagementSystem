@@ -1,31 +1,239 @@
 html {
-  font-size: 14px;
+    font-size: 14px;
+    min-height: 100%;
+    scrollbar-width: thin;
+    scrollbar-color: #8ea6ff #e9eefc;
 }
 
 @media (min-width: 768px) {
-  html {
-    font-size: 16px;
-  }
+    html {
+        font-size: 16px;
+    }
 }
 
 .btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+    box-shadow: 0 0 0 0.1rem #ffffff, 0 0 0 0.25rem #6f94ff66;
 }
 
-html {
-  position: relative;
-  min-height: 100%;
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
 }
 
-body {
-  margin-bottom: 60px;
+body.app-shell {
+    margin: 0;
+    min-height: 100vh;
+    background: linear-gradient(180deg, #f4f7ff 0%, #eef3ff 100%);
+    color: #1f2a44;
+    display: flex;
+    flex-direction: column;
+    padding-top: 72px;
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body.app-shell ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+}
+
+body.app-shell ::-webkit-scrollbar-track {
+    background: #e9eefc;
+    border-radius: 999px;
+}
+
+body.app-shell ::-webkit-scrollbar-thumb {
+    background: linear-gradient(180deg, #89a6ff, #5a7ef5);
+    border-radius: 999px;
+    border: 2px solid #e9eefc;
+}
+
+body.app-shell ::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(180deg, #6f94ff, #4468e1);
+}
+
+.app-navbar {
+    background: linear-gradient(110deg, #0d57d9 0%, #355fda 55%, #5b7cf2 100%);
+    padding: 10px 20px;
+    z-index: 1000;
+}
+
+.navbar-brand {
+    font-weight: 700;
+    font-size: 1.2rem;
+    color: #ffffff !important;
+}
+
+.nav-link {
+    color: #f7f9ff !important;
+    font-weight: 500;
+    border-radius: 8px;
+    transition: background-color 0.2s ease;
+}
+
+.nav-link:hover,
+.nav-link:focus {
+    background: #ffffff1a;
+}
+
+.dropdown-menu {
+    border-radius: 12px;
+    border: 1px solid #e5eaf7;
+    box-shadow: 0 12px 30px #1a2a570f;
+}
+
+.main-wrapper {
+    flex: 1;
+}
+
+.app-content {
+    max-width: 1240px;
+    margin-top: 1.25rem;
+    margin-bottom: 1.25rem;
+}
+
+.card {
+    border: 1px solid #e7ecfa;
+    border-radius: 14px;
+    box-shadow: 0 10px 24px #202d4e0f;
+}
+
+.table thead th {
+    border-bottom: 0;
+    color: black;
+    font-weight: 600;
+}
+
+.table tbody tr:hover {
+    background-color: #ffffff;
+}
+
+.app-footer {
+    margin-top: auto;
+    background: #ffffff;
+    border-top: 1px solid #e7ecfa;
+    padding: 14px;
+    text-align: center;
+    box-shadow: 0 -3px 10px #0f1d3d08;
+}
+
+.app-footer img {
+    margin-left: 8px;
+    transition: transform 0.2s ease;
+}
+
+.app-footer img:hover {
+    transform: translateY(-1px) scale(1.1);
+}
+
+.dashboard-page .hero-section {
+    background: linear-gradient(120deg, #0f5de2 0%, #3f73e7 55%, #648bf2 100%);
+    color: #ffffff;
+    padding: 2.2rem;
+    border-radius: 18px;
+    box-shadow: 0 16px 34px #2349a82b;
+}
+
+.dashboard-card,
+.summary-card {
+    border: 0;
+    border-radius: 16px;
+    box-shadow: 0 10px 26px #1c2f5d12;
+}
+
+.summary-card .metric-value {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: #16284d;
+}
+
+.icon-circle {
+    width: 58px;
+    height: 58px;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    color: #ffffff;
+}
+
+.bg-sales {
+    background: #0d6efd;
+}
+
+.bg-profit {
+    background: #198754;
+}
+
+.bg-average {
+    background: #6f42c1;
+}
+
+.btn-dashboard {
+    border-radius: 999px;
+    padding: 0.55rem 1.2rem;
+    font-weight: 600;
+}
+
+.dashboard-chart-area {
+    max-height: 460px;
+    overflow: auto;
+    padding-right: 0.25rem;
+}
+
+.chart-row {
+    display: grid;
+    grid-template-columns: 90px 1fr;
+    gap: 12px;
+    align-items: center;
+    margin-bottom: 14px;
+}
+
+.chart-bars {
+    display: grid;
+    gap: 8px;
+}
+
+.chart-bar {
+    height: 14px;
+    border-radius: 999px;
+    min-width: 6px;
+}
+
+.chart-bar.sales {
+    background: #0d6efd;
+}
+
+.chart-bar.profit {
+    background: #198754;
+}
+
+.chart-legend {
+    display: flex;
+    gap: 18px;
+    flex-wrap: wrap;
+    font-size: 0.9rem;
+}
+
+.legend-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    display: inline-block;
+    margin-right: 6px;
+}
+
+.dashboard-table-wrap {
+    max-height: 380px;
+    overflow: auto;
 }
 
 .form-floating > .form-control-plaintext::placeholder, .form-floating > .form-control::placeholder {
-  color: var(--bs-secondary-color);
-  text-align: end;
+    color: var(--bs-secondary-color);
+    text-align: end;
 }
 
 .form-floating > .form-control-plaintext:focus::placeholder, .form-floating > .form-control:focus::placeholder {
-  text-align: start;
+    text-align: start;
 }
