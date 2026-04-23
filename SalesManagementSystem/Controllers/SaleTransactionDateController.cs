@@ -17,9 +17,7 @@ namespace SalesManagementSystem.Controllers
 
         public async Task<IActionResult> Index(long? saleId = null)
         {
-            var query = _context.SaleTransactionDates
-                .Include(x => x.SaleAcct)
-                .Include(x => x.SaleDate)
+            var query = _context.SaleTransactionDatePivots
                 .AsQueryable();
 
             if (saleId.HasValue)
@@ -28,7 +26,7 @@ namespace SalesManagementSystem.Controllers
             }
 
             var data = await query
-                .OrderByDescending(x => x.Id)
+                .OrderByDescending(x => x.SaleAcctId)
                 .ToListAsync();
 
             ViewBag.SaleId = saleId;

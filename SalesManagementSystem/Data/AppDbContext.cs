@@ -113,7 +113,7 @@ namespace SalesManagementSystem.Data
 
             modelBuilder.Entity<SaleTransactionDatePivot>()
                 .HasNoKey()
-                .ToView("vwSaleTransactionDatesPivot");
+                .ToView("SaleTransactionDatesPivot");
         }
 
     }

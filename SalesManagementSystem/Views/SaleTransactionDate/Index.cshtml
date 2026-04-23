@@ -1,4 +1,4 @@
-﻿@model IEnumerable<SalesManagementSystem.Models.SaleTransactionDate>
+﻿@model IEnumerable<SalesManagementSystem.Models.SaleTransactionDatePivot>
 @{
     long? saleId = ViewBag.SaleId;
 }
@@ -25,30 +25,25 @@
             <table class="table table-bordered table-hover">
                 <thead class="table-Default">
                     <tr>
-                        <th>Id</th>
-                        <th>Sale</th>
-                        <th>Date Label</th>
-                        <th>Date</th>
-                        <th style="width:200px">Actions</th>
+                        <th>Sale Id</th>
+                        <th>Transaction</th>
+                        <th>Payment</th>
+                        <th>Order</th>
+                        <th>Process</th>
+                        <th>Sold</th>
                     </tr>
                 </thead>
 
                 <tbody>
-                    @foreach (var item in Model)
+                    @foreach (var item in Model)    
                     {
                         <tr>
-                            <td>@item.Id</td>
-                            <td>@(item.SaleAcct?.OrderID ?? ("Sale#" + item.SaleAcctId))</td>
-                            <td><strong>@item.SaleDate?.DateLabel</strong></td>
-                            <td>@item.Date.ToString("yyyy-MM-dd")</td>
-
-                            <td>
-                                <a asp-action="Edit" asp-route-id="@item.Id"
-                                   class="btn btn-sm btn-warning">Edit</a>
-
-                                <a asp-action="Delete" asp-route-id="@item.Id"
-                                   class="btn btn-sm btn-danger">Delete</a>
-                            </td>
+                            <td>@item.SaleAcctId</td>
+                            <td>@(item.TransactionDate?.ToString("yyyy-MM-dd") ?? "-")</td>
+                            <td>@(item.PaymentDate?.ToString("yyyy-MM-dd") ?? "-")</td>
+                            <td>@(item.OrderDate?.ToString("yyyy-MM-dd") ?? "-")</td>
+                            <td>@(item.ProcessDate?.ToString("yyyy-MM-dd") ?? "-")</td>
+                            <td>@(item.SoldDate?.ToString("yyyy-MM-dd") ?? "-")</td>
                         </tr>
                     }
                 </tbody>
