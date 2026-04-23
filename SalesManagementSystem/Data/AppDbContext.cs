@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using SalesManagementSystem.Models;
 
 namespace SalesManagementSystem.Data
@@ -20,6 +20,7 @@ namespace SalesManagementSystem.Data
         public DbSet<SaleCharge> SaleCharges { get; set; }
         public DbSet<SaleDate> SaleDates { get; set; }
         public DbSet<SaleTransactionDate> SaleTransactionDates { get; set; }
+        public DbSet<SaleTransactionDatePivot> SaleTransactionDatePivots { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -109,6 +110,10 @@ namespace SalesManagementSystem.Data
                  new SaleDate { Id = 4, DateLabel = "ProcessDate" },
                  new SaleDate { Id = 5, DateLabel = "SoldDate" }
 );
+
+            modelBuilder.Entity<SaleTransactionDatePivot>()
+                .HasNoKey()
+                .ToView("vwSaleTransactionDatesPivot");
         }
 
     }
