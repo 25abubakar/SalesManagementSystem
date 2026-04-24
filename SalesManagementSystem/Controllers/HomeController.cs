@@ -26,12 +26,13 @@ namespace SalesManagementSystem.Controllers
 
             var monthlySales = await salesQuery
                 .Where(x => x.CreatedDate.HasValue)
-                .GroupBy(x => new { x.CreatedDate!.Value.Year, x.CreatedDate!.Value.Month })
-                .OrderBy(g => g.Key.Year)
-                .ThenBy(g => g.Key.Month)
+                .GroupBy(x => new {  x.CreatedDate!.Value.Month, x.CreatedDate!.Value.Year,})
+                .OrderBy(g => g.Key.Month)
+                .ThenBy(g => g.Key.Year)
+                
                 .Select(g => new DashboardChartPoint
                 {
-                    Label = $"{g.Key.Year}-{g.Key.Month:00}",
+                    Label = $"{g.Key.Month:00}-{g.Key.Year}",
                     SoldAmount = g.Sum(x => x.SoldAmount ?? 0m),
                     ProfitAmount = g.Sum(x => x.ProfitAmount ?? 0m)
                 })
