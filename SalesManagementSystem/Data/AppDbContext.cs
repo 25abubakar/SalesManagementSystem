@@ -33,6 +33,7 @@ namespace SalesManagementSystem.Data
             modelBuilder.Entity<SaleStatus>().ToTable("SaleStatus");
             modelBuilder.Entity<SaleChargeType>().ToTable("SaleChargeType");
             modelBuilder.Entity<SaleCharge>().ToTable("SaleCharge");
+            modelBuilder.Entity<SaleAcct>().ToTable(tb => tb.HasTrigger("TR_SaleAcct_Audit"));
 
             modelBuilder.Entity<SaleAcct>()
                 .Property(p => p.ProfitAmount)
@@ -114,6 +115,15 @@ namespace SalesManagementSystem.Data
             modelBuilder.Entity<SaleTransactionDatePivot>()
                 .HasNoKey()
                 .ToView("SaleTransactionDatesPivot");
+
+            modelBuilder.Entity<SaleCharge>()
+                .ToTable(tb => tb.HasTrigger("TR_SaleCharge_Audit"));
+
+            modelBuilder.Entity<SaleAccount>()
+                .ToTable(tb => tb.HasTrigger("TR_SaleAccount_Audit"));
+
+            modelBuilder.Entity<SaleProduct>()
+                .ToTable(tb => tb.HasTrigger("TR_SaleProduct_Audit"));
         }
 
     }
