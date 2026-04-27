@@ -4,7 +4,6 @@ namespace SalesManagementSystem.Models
 {
     public class SaleAcctCreateVM
     {
-        [Required(ErrorMessage = "Company is required.")]
         public int? CompanyId { get; set; }
 
         [Required(ErrorMessage = "Platform is required.")]

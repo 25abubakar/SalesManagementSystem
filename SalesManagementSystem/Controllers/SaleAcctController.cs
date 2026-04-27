@@ -145,7 +145,9 @@ namespace SalesManagementSystem.Controllers
                 ModelState.AddModelError("", "Each transaction date label can only be selected once.");
             }
 
+            await AssignCompanyFromPlatformAsync(model);
             await ValidateDuplicateSaleAsync(model);
+            await ValidateProductPlatformMappingAsync(model);
             await ValidateToAccountPlatformMappingAsync(model);
 
             if (ModelState.IsValid)
@@ -216,8 +218,12 @@ namespace SalesManagementSystem.Controllers
 
         private async Task PopulateDropDowns(SaleAcct? sale = null)
         {
-            ViewBag.Platforms = new SelectList(await _context.SalePlatforms.ToListAsync(), "PlatformId", "PlatformName", sale?.PlatformId);
-            ViewBag.Products = new SelectList(await _context.SaleProducts.ToListAsync(), "ProductId", "ProductName", sale?.ProductId);
+            var platforms = await _context.SalePlatforms.ToListAsync();
+            ViewBag.Platforms = new SelectList(platforms, "PlatformId", "PlatformName", sale?.PlatformId);
+            ViewBag.PlatformOptions = platforms;
+            var products = await _context.SaleProducts.ToListAsync();
+            ViewBag.Products = new SelectList(products, "ProductId", "ProductName", sale?.ProductId);
+            ViewBag.ProductOptions = products;
             ViewBag.TransTypes = new SelectList(await _context.SaleTransactionTypes.ToListAsync(), "TransactionId", "TransactionName", sale?.TransactionId);
 
             var accounts = await _context.SaleAccounts.ToListAsync();
@@ -385,7 +391,9 @@ namespace SalesManagementSystem.Controllers
                 ModelState.AddModelError("", "Each transaction date label can only be selected once.");
             }
 
+            await AssignCompanyFromPlatformAsync(model);
             await ValidateDuplicateSaleAsync(model, id);
+            await ValidateProductPlatformMappingAsync(model);
             await ValidateToAccountPlatformMappingAsync(model);
 
             if (ModelState.IsValid)
@@ -501,6 +509,33 @@ namespace SalesManagementSystem.Controllers
             }
         }
 
+        private async Task AssignCompanyFromPlatformAsync(SaleAcctCreateVM model)
+        {
+            if (!model.PlatformId.HasValue)
+            {
+                return;
+            }
+
+            var platform = await _context.SalePlatforms
+                .AsNoTracking()
+                .FirstOrDefaultAsync(x => x.PlatformId == model.PlatformId.Value);
+
+            if (platform == null)
+            {
+                ModelState.AddModelError(nameof(model.PlatformId), "Selected platform does not exist.");
+                return;
+            }
+
+            if (!platform.CompanyId.HasValue)
+            {
+                ModelState.AddModelError(nameof(model.CompanyId), "Selected platform has no Company ID.");
+                return;
+            }
+
+            model.CompanyId = platform.CompanyId.Value;
+            ModelState.Remove(nameof(model.CompanyId));
+        }
+
         private async Task ValidateToAccountPlatformMappingAsync(SaleAcctCreateVM model)
         {
             if (!model.PlatformId.HasValue || !model.ToAccountId.HasValue)
@@ -521,6 +556,29 @@ namespace SalesManagementSystem.Controllers
             if (toAccount.PlatformId.HasValue && toAccount.PlatformId.Value != model.PlatformId.Value)
             {
                 ModelState.AddModelError(nameof(model.ToAccountId), "Selected To Account does not belong to the selected platform.");
+            }
+        }
+
+        private async Task ValidateProductPlatformMappingAsync(SaleAcctCreateVM model)
+        {
+            if (!model.PlatformId.HasValue || !model.ProductId.HasValue)
+            {
+                return;
+            }
+
+            var product = await _context.SaleProducts
+                .AsNoTracking()
+                .FirstOrDefaultAsync(x => x.ProductId == model.ProductId.Value);
+
+            if (product == null)
+            {
+                ModelState.AddModelError(nameof(model.ProductId), "Selected product does not exist.");
+                return;
+            }
+
+            if (product.PlatformId.HasValue && product.PlatformId.Value != model.PlatformId.Value)
+            {
+                ModelState.AddModelError(nameof(model.ProductId), "Selected product does not belong to the selected platform.");
             }
         }
 

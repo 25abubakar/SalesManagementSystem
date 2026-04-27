@@ -5,6 +5,10 @@
         ?? Enumerable.Empty<Microsoft.AspNetCore.Mvc.Rendering.SelectListItem>();
     var chargeTypeOptions = ViewBag.ChargeTypes as IEnumerable<Microsoft.AspNetCore.Mvc.Rendering.SelectListItem>
         ?? Enumerable.Empty<Microsoft.AspNetCore.Mvc.Rendering.SelectListItem>();
+    var platformOptions = ViewBag.PlatformOptions as IEnumerable<SalesManagementSystem.Models.SalePlatform>
+        ?? Enumerable.Empty<SalesManagementSystem.Models.SalePlatform>();
+    var productOptions = ViewBag.ProductOptions as IEnumerable<SalesManagementSystem.Models.SaleProduct>
+        ?? Enumerable.Empty<SalesManagementSystem.Models.SaleProduct>();
 }
 
 <div class="container mt-4">
@@ -18,18 +22,40 @@
         <div class="row">
             <div class="col-md-4">
                 <label>Company ID</label>
-                <input asp-for="CompanyId" class="form-control" />
+                <input asp-for="CompanyId" class="form-control" id="companyIdInput" readonly />
             </div>
             <div class="col-md-4">
                 <label>Platform</label>
-                <select asp-for="PlatformId" class="form-select" asp-items="ViewBag.Platforms">
+                <select asp-for="PlatformId" class="form-select" id="platformSelect">
                     <option value="">-- Select Platform --</option>
+                    @foreach (var platform in platformOptions)
+                    {
+                        if (Model.PlatformId == platform.PlatformId)
+                        {
+                            <option value="@platform.PlatformId" data-company-id="@platform.CompanyId" selected>@platform.PlatformName</option>
+                        }
+                        else
+                        {
+                            <option value="@platform.PlatformId" data-company-id="@platform.CompanyId">@platform.PlatformName</option>
+                        }
+                    }
                 </select>
             </div>
             <div class="col-md-4">
                 <label>Product</label>
-                <select asp-for="ProductId" class="form-select" asp-items="ViewBag.Products">
+                <select asp-for="ProductId" class="form-select" id="productSelect">
                     <option value="">-- Select Product --</option>
+                    @foreach (var product in productOptions)
+                    {
+                        if (Model.ProductId == product.ProductId)
+                        {
+                            <option value="@product.ProductId" data-platform-id="@product.PlatformId" selected>@product.ProductName</option>
+                        }
+                        else
+                        {
+                            <option value="@product.ProductId" data-platform-id="@product.PlatformId">@product.ProductName</option>
+                        }
+                    }
                 </select>
             </div>
             <div class="col-md-4">
@@ -277,6 +303,42 @@
             const transactionRows = document.getElementById('transactionDateRows');
             const chargeTemplate = document.getElementById('chargeRowTemplate');
             const transactionTemplate = document.getElementById('transactionRowTemplate');
+            const platformSelect = document.getElementById('platformSelect');
+            const companyIdInput = document.getElementById('companyIdInput');
+            const productSelect = document.getElementById('productSelect');
+
+            function syncCompanyFromPlatform() {
+                if (!platformSelect || !companyIdInput) {
+                    return;
+                }
+
+                const selectedOption = platformSelect.options[platformSelect.selectedIndex];
+                companyIdInput.value = selectedOption?.dataset.companyId ?? '';
+            }
+
+            function syncProductsByPlatform() {
+                if (!platformSelect || !productSelect) {
+                    return;
+                }
+
+                const selectedPlatform = platformSelect.value;
+                Array.from(productSelect.options).forEach((option) => {
+                    if (!option.value) {
+                        option.hidden = false;
+                        option.disabled = false;
+                        return;
+                    }
+
+                    const matchesPlatform = !selectedPlatform || option.dataset.platformId === selectedPlatform;
+                    option.hidden = !matchesPlatform;
+                    option.disabled = !matchesPlatform;
+                });
+
+                const currentSelection = productSelect.options[productSelect.selectedIndex];
+                if (currentSelection && currentSelection.value && currentSelection.disabled) {
+                    productSelect.value = '';
+                }
+            }
 
             function reindex(container, rowClass, prefix) {
                 const rows = container.querySelectorAll(`.${rowClass}`);
@@ -397,6 +459,10 @@
             updateEmpty(transactionRows, 'transaction-row', 'transactionEmptyState', 'No transaction dates added yet.');
             refreshChargeTypeSelections();
             refreshDateLabelSelections();
+            platformSelect?.addEventListener('change', syncCompanyFromPlatform);
+            platformSelect?.addEventListener('change', syncProductsByPlatform);
+            syncCompanyFromPlatform();
+            syncProductsByPlatform();
 
             const form = document.querySelector('form');
             form.addEventListener('submit', () => {

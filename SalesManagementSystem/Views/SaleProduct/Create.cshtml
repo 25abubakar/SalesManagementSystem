@@ -2,6 +2,8 @@
 
 @{
     ViewData["Title"] = "Create Product";
+    var platformOptions = ViewBag.PlatformOptions as IEnumerable<SalesManagementSystem.Models.SalePlatform>
+        ?? Enumerable.Empty<SalesManagementSystem.Models.SalePlatform>();
 }
 
 <div class="container mt-4">
@@ -19,14 +21,25 @@
 
             <div class="col-md-6">
                 <label class="form-label">Platform</label>
-                <select asp-for="PlatformId" class="form-select" asp-items="ViewBag.Platforms">
+                <select asp-for="PlatformId" class="form-select" id="platformSelect">
                     <option value="">-- Select Platform --</option>
+                    @foreach (var platform in platformOptions)
+                    {
+                        if (Model.PlatformId == platform.PlatformId)
+                        {
+                            <option value="@platform.PlatformId" data-company-id="@platform.CompanyId" selected>@platform.PlatformName</option>
+                        }
+                        else
+                        {
+                            <option value="@platform.PlatformId" data-company-id="@platform.CompanyId">@platform.PlatformName</option>
+                        }
+                    }
                 </select>
             </div>
 
             <div class="col-md-3 mt-3">
                 <label class="form-label">CompanyId</label>
-                <input asp-for="CompanyId" class="form-control" />
+                <input asp-for="CompanyId" class="form-control" id="companyIdInput" readonly />
             </div>
 
             <div class="col-md-3 mt-3">
@@ -44,4 +57,26 @@
         </div>
     </form>
 </div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        (() => {
+            const platformSelect = document.getElementById('platformSelect');
+            const companyIdInput = document.getElementById('companyIdInput');
+
+            function syncCompanyFromPlatform() {
+                if (!platformSelect || !companyIdInput) {
+                    return;
+                }
+
+                const selectedOption = platformSelect.options[platformSelect.selectedIndex];
+                companyIdInput.value = selectedOption?.dataset.companyId ?? '';
+            }
+
+            platformSelect?.addEventListener('change', syncCompanyFromPlatform);
+            syncCompanyFromPlatform();
+        })();
+    </script>
+}
 

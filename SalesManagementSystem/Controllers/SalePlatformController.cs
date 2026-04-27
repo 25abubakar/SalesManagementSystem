@@ -30,6 +30,11 @@ public class SalePlatformController : Controller
     public async Task<IActionResult> Create(SalePlatform platform)
     {
         platform.PlatformName = platform.PlatformName?.Trim() ?? string.Empty;
+        if (!platform.CompanyId.HasValue)
+        {
+            ModelState.AddModelError(nameof(platform.CompanyId), "Company ID is required.");
+        }
+
         if (await IsDuplicateName(platform.PlatformName))
         {
             ModelState.AddModelError(nameof(platform.PlatformName), "Platform already exists.");
@@ -53,6 +58,11 @@ public class SalePlatformController : Controller
     {
         if (id != platform.PlatformId) return BadRequest();
         platform.PlatformName = platform.PlatformName?.Trim() ?? string.Empty;
+        if (!platform.CompanyId.HasValue)
+        {
+            ModelState.AddModelError(nameof(platform.CompanyId), "Company ID is required.");
+        }
+
         if (await IsDuplicateName(platform.PlatformName, platform.PlatformId))
         {
             ModelState.AddModelError(nameof(platform.PlatformName), "Platform already exists.");

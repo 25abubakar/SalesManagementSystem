@@ -44,6 +44,7 @@ public class SaleProductController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Create(SaleProduct product)
     {
+        await AssignCompanyFromPlatformAsync(product);
         product.ProductName = product.ProductName?.Trim() ?? string.Empty;
         if (await IsDuplicateName(product.ProductName, product.PlatformId))
         {
@@ -74,6 +75,7 @@ public class SaleProductController : Controller
     public async Task<IActionResult> Edit(int id, SaleProduct product)
     {
         if (id != product.ProductId) return BadRequest();
+        await AssignCompanyFromPlatformAsync(product);
         product.ProductName = product.ProductName?.Trim() ?? string.Empty;
         if (await IsDuplicateName(product.ProductName, product.PlatformId, product.ProductId))
         {
@@ -118,6 +120,33 @@ public class SaleProductController : Controller
             .OrderBy(x => x.PlatformName)
             .ToListAsync();
         ViewBag.Platforms = new SelectList(platforms, "PlatformId", "PlatformName", selectedId);
+        ViewBag.PlatformOptions = platforms;
+    }
+
+    private async Task AssignCompanyFromPlatformAsync(SaleProduct product)
+    {
+        if (!product.PlatformId.HasValue)
+        {
+            return;
+        }
+
+        var platform = await _context.SalePlatforms
+            .AsNoTracking()
+            .FirstOrDefaultAsync(x => x.PlatformId == product.PlatformId.Value);
+
+        if (platform == null)
+        {
+            ModelState.AddModelError(nameof(product.PlatformId), "Selected platform does not exist.");
+            return;
+        }
+
+        if (!platform.CompanyId.HasValue)
+        {
+            ModelState.AddModelError(nameof(product.CompanyId), "Selected platform has no Company ID.");
+            return;
+        }
+
+        product.CompanyId = platform.CompanyId.Value;
     }
 
     private Task<bool> IsDuplicateName(string name, int? platformId, int? excludeId = null)

@@ -7,6 +7,10 @@
         ?? Enumerable.Empty<Microsoft.AspNetCore.Mvc.Rendering.SelectListItem>();
     var toAccountOptions = ViewBag.ToAccountOptions as IEnumerable<SalesManagementSystem.Models.SaleAccount>
         ?? Enumerable.Empty<SalesManagementSystem.Models.SaleAccount>();
+    var platformOptions = ViewBag.PlatformOptions as IEnumerable<SalesManagementSystem.Models.SalePlatform>
+        ?? Enumerable.Empty<SalesManagementSystem.Models.SalePlatform>();
+    var productOptions = ViewBag.ProductOptions as IEnumerable<SalesManagementSystem.Models.SaleProduct>
+        ?? Enumerable.Empty<SalesManagementSystem.Models.SaleProduct>();
 }
 
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
@@ -38,23 +42,45 @@
             <div class="section-title"><i class="bi bi-info-circle"></i> Basic Information</div>
             <div class="row g-3">
                 <div class="col-md-3">
-                    <label>Company ID</label>
-                    <input asp-for="CompanyId" class="form-control" />
-                    <span asp-validation-for="CompanyId" class="text-danger"></span>
-                </div>
-                <div class="col-md-3">
                     <label>Platform</label>
-                    <select asp-for="PlatformId" class="form-select" asp-items="ViewBag.Platforms" id="platformSelect">
+                    <select asp-for="PlatformId" class="form-select" id="platformSelect">
                         <option value="">Select Platform</option>
+                        @foreach (var platform in platformOptions)
+                        {
+                            if (Model.PlatformId == platform.PlatformId)
+                            {
+                                <option value="@platform.PlatformId" data-company-id="@platform.CompanyId" selected>@platform.PlatformName</option>
+                            }
+                            else
+                            {
+                                <option value="@platform.PlatformId" data-company-id="@platform.CompanyId">@platform.PlatformName</option>
+                            }
+                        }
                         </select>
                     <span asp-validation-for="PlatformId" class="text-danger"></span>
                 </div>
                 <div class="col-md-3">
                     <label>Product</label>
-                    <select asp-for="ProductId" class="form-select" asp-items="ViewBag.Products">
+                    <select asp-for="ProductId" class="form-select" id="productSelect">
                         <option value="">Select Product</option>
+                        @foreach (var product in productOptions)
+                        {
+                            if (Model.ProductId == product.ProductId)
+                            {
+                                <option value="@product.ProductId" data-platform-id="@product.PlatformId" selected>@product.ProductName</option>
+                            }
+                            else
+                            {
+                                <option value="@product.ProductId" data-platform-id="@product.PlatformId">@product.ProductName</option>
+                            }
+                        }
                         </select>
                     <span asp-validation-for="ProductId" class="text-danger"></span>
+                </div>
+                <div class="col-md-3">
+                    <label>Company ID</label>
+                    <input asp-for="CompanyId" class="form-control" id="companyIdInput" readonly />
+                    <span asp-validation-for="CompanyId" class="text-danger"></span>
                 </div>
                 <div class="col-md-3">
                     <label>Order ID</label>
@@ -370,6 +396,18 @@
             const template = document.getElementById('transactionDateRowTemplate');
             const platformSelect = document.getElementById('platformSelect');
             const toAccountSelect = document.getElementById('toAccountSelect');
+            const companyIdInput = document.getElementById('companyIdInput');
+            const productSelect = document.getElementById('productSelect');
+
+            function syncCompanyFromPlatform() {
+                if (!platformSelect || !companyIdInput) {
+                    return;
+                }
+
+                const selectedOption = platformSelect.options[platformSelect.selectedIndex];
+                const companyId = selectedOption?.dataset.companyId ?? '';
+                companyIdInput.value = companyId;
+            }
 
             function syncToAccountWithPlatform() {
                 if (!platformSelect || !toAccountSelect) {
@@ -387,6 +425,30 @@
                 if (matchingOption) {
                     toAccountSelect.value = matchingOption.value;
                     toAccountSelect.dispatchEvent(new Event('change', { bubbles: true }));
+                }
+            }
+
+            function syncProductsByPlatform() {
+                if (!platformSelect || !productSelect) {
+                    return;
+                }
+
+                const selectedPlatform = platformSelect.value;
+                Array.from(productSelect.options).forEach((option) => {
+                    if (!option.value) {
+                        option.hidden = false;
+                        option.disabled = false;
+                        return;
+                    }
+
+                    const matchesPlatform = !selectedPlatform || option.dataset.platformId === selectedPlatform;
+                    option.hidden = !matchesPlatform;
+                    option.disabled = !matchesPlatform;
+                });
+
+                const currentSelection = productSelect.options[productSelect.selectedIndex];
+                if (currentSelection && currentSelection.value && currentSelection.disabled) {
+                    productSelect.value = '';
                 }
             }
 
@@ -481,7 +543,11 @@
 
             addChargeButton.addEventListener('click', addChargeRow);
             addButton.addEventListener('click', addTransactionRow);
-            platformSelect?.addEventListener('change', syncToAccountWithPlatform);
+            platformSelect?.addEventListener('change', () => {
+                syncCompanyFromPlatform();
+                syncProductsByPlatform();
+                syncToAccountWithPlatform();
+            });
             chargeContainer.addEventListener('change', (event) => {
                 if (event.target.matches('select[name$=".ChargeTypeId"]')) {
                     refreshChargeTypeSelections();
@@ -523,6 +589,8 @@
             reindexRows(container, 'transaction-row', 'SaleTransactionDates');
             refreshChargeTypeSelections();
             refreshDateLabelSelections();
+            syncCompanyFromPlatform();
+            syncProductsByPlatform();
             syncToAccountWithPlatform();
 
             const form = document.querySelector('form[asp-action="Create"], form');
