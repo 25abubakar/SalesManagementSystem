@@ -8,6 +8,7 @@
 
     <div class="d-flex flex-wrap justify-content-between align-items-center mb-3">
         <h2 class="mb-2 mb-md-0">Sales Management</h2>
+        <span id="realtimeStatus" class="badge text-bg-success ms-2">Real-time: Connected</span>
         <a asp-action="Create" class="btn btn-primary">
             + Add New Sale
         </a>
@@ -115,3 +116,34 @@
 
 
 
+@section Scripts {
+    <script src="~/lib/microsoft/signalr/dist/browser/signalr.min.js"></script>
+    <script>
+        (() => {
+            const statusBadge = document.getElementById("realtimeStatus");
+
+            const connection = new signalR.HubConnectionBuilder()
+                .withUrl("/hubs/sales")
+                .withAutomaticReconnect()
+                .build();
+
+            const setStatus = (isConnected) => {
+                if (!statusBadge) return;
+                statusBadge.className = isConnected ? "badge text-bg-success ms-2" : "badge text-bg-warning ms-2";
+                statusBadge.textContent = isConnected ? "Real-time: Connected" : "Real-time: Reconnecting";
+            };
+
+            connection.on("SalesUpdated", () => {
+                window.location.reload();
+            });
+
+            connection.onreconnecting(() => setStatus(false));
+            connection.onreconnected(() => setStatus(true));
+            connection.onclose(() => setStatus(false));
+
+            connection.start()
+                .then(() => setStatus(true))
+                .catch(() => setStatus(false));
+        })();
+    </script>
+}

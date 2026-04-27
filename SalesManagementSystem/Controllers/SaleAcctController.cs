@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
+using SalesManagementSystem.Hubs;
 using SalesManagementSystem.Models;
 using SalesManagementSystem.Data;
 
@@ -9,10 +11,12 @@ namespace SalesManagementSystem.Controllers
     public class SaleAcctController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly IHubContext<SalesHub> _salesHub;
 
-        public SaleAcctController(ApplicationDbContext context)
+        public SaleAcctController(ApplicationDbContext context, IHubContext<SalesHub> salesHub)
         {
             _context = context;
+            _salesHub = salesHub;
         }
 
         public async Task<IActionResult> Index()
@@ -192,6 +196,7 @@ namespace SalesManagementSystem.Controllers
 
                     _context.Add(sale);
                     await _context.SaveChangesAsync();
+                    await _salesHub.Clients.All.SendAsync("SalesUpdated", "created", sale.Id);
 
                     TempData["Success"] = "Sale record saved successfully!";
                     return RedirectToAction(nameof(Index));
@@ -452,6 +457,7 @@ namespace SalesManagementSystem.Controllers
                         }).ToList();
 
                     await _context.SaveChangesAsync();
+                    await _salesHub.Clients.All.SendAsync("SalesUpdated", "updated", existingSale.Id);
                     TempData["Success"] = "Sale record updated successfully!";
                     return RedirectToAction(nameof(Index));
                 }
@@ -513,6 +519,7 @@ namespace SalesManagementSystem.Controllers
 
             _context.SaleAccts.Remove(sale);
             await _context.SaveChangesAsync();
+            await _salesHub.Clients.All.SendAsync("SalesUpdated", "deleted", id);
             TempData["Success"] = "Sale record deleted successfully!";
             return RedirectToAction(nameof(Index));
         }

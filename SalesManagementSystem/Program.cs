@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using SalesManagementSystem.Data;
+using SalesManagementSystem.Hubs;
 using SalesManagementSystem.Repository;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -10,6 +11,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 
 builder.Services.AddSession();
 builder.Services.AddControllersWithViews();
+builder.Services.AddSignalR();
 builder.Services.AddSingleton<DapperContext>();
 builder.Services.AddScoped<ISaleRepository, SaleRepository>();
 
@@ -29,5 +31,6 @@ app.UseSession();
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
+app.MapHub<SalesHub>("/hubs/sales");
 
 app.Run();
