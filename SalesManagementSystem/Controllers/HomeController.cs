@@ -1,3 +1,4 @@
+using Hangfire;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 //using SalesManagementSystem.Filters;
@@ -58,6 +59,18 @@ namespace SalesManagementSystem.Controllers
             };
 
             return View(model);
+        }
+
+        public IActionResult NewJob()
+        {
+            var JobId = BackgroundJob.Schedule(() => SendNotification("Welcome HangFire"), TimeSpan.FromSeconds(15));
+            return View();
+        }
+
+
+        public void SendNotification(string v)
+        {
+            Console.WriteLine(v);
         }
 
         public IActionResult Privacy()
