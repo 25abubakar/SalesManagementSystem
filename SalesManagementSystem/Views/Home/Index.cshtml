@@ -173,3 +173,22 @@
         </div>
     </div>
 </div>
+
+@section Scripts {
+    <script src="~/lib/microsoft/signalr/dist/browser/signalr.min.js"></script>
+    <script>
+        (() => {
+            const connection = new signalR.HubConnectionBuilder()
+                .withUrl("/hubs/sales")
+                .withAutomaticReconnect()
+                .build();
+
+            connection.on("SalesUpdated", () => {
+                window.location.reload();
+            });
+
+            connection.start().catch(() => {
+            });
+        })();
+    </script>
+}
