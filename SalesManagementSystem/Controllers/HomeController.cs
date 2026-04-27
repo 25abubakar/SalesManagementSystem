@@ -27,8 +27,8 @@ namespace SalesManagementSystem.Controllers
             var monthlySales = await salesQuery
                 .Where(x => x.CreatedDate.HasValue)
                 .GroupBy(x => new {  x.CreatedDate!.Value.Month, x.CreatedDate!.Value.Year,})
-                .OrderBy(g => g.Key.Month)
-                .ThenBy(g => g.Key.Year)
+                .OrderBy(g => g.Key.Year)
+                .ThenBy(g => g.Key.Month)
                 
                 .Select(g => new DashboardChartPoint
                 {
@@ -43,9 +43,8 @@ namespace SalesManagementSystem.Controllers
                 .Include(x => x.Platform)
                 .Include(x => x.Product)
                 .Include(x => x.StatusMaster)
-                .OrderBy(x => x.CreatedDate)
-                .ThenBy(x => x.Id)
-                .Take(8)
+                .OrderByDescending(x => x.CreatedDate ?? DateTime.MinValue)
+                .ThenByDescending(x => x.Id)
                 .ToListAsync();
 
             var model = new DashboardViewModel

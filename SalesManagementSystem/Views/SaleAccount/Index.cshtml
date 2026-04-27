@@ -10,36 +10,38 @@
         <a asp-action="Create" class="btn btn-primary">Add Account</a>
     </div>
 
-    <table class="table table-bordered table-striped">
-        <thead class="table-Default">
-            <tr>
-                <th>Id</th>
-                <th>Name</th>
-                <th>Type</th>
-                <th>Platform</th>
-                <th>CompanyId</th>
-                <th>Active</th>
-                <th style="width: 220px;">Action</th>
-            </tr>
-        </thead>
-        <tbody>
-        @foreach (var item in Model)
-        {
-            <tr>
-                <td>@item.AccountId</td>
-                <td>@item.AccountName</td>
-                <td>@item.AccountType</td>
-                <td>@item.Platform?.PlatformName</td>
-                <td>@item.CompanyId</td>
-                <td>@item.IsActive</td>
-                <td>
-                    <a asp-action="Details" asp-route-id="@item.AccountId" class="btn btn-info btn-sm">Details</a>
-                    <a asp-action="Edit" asp-route-id="@item.AccountId" class="btn btn-warning btn-sm">Edit</a>
-                    <a asp-action="Delete" asp-route-id="@item.AccountId" class="btn btn-danger btn-sm">Delete</a>
-                </td>
-            </tr>
-        }
-        </tbody>
-    </table>
+    <div class="table-responsive master-table-wrap">
+        <table class="table table-bordered table-striped">
+            <thead class="table-Default">
+                <tr>
+                    <th>Id</th>
+                    <th>Name</th>
+                    <th>Type</th>
+                    <th>Platform</th>
+                    <th>CompanyId</th>
+                    <th>Active</th>
+                    <th style="width: 220px;">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.AccountId</td>
+                    <td>@item.AccountName</td>
+                    <td>@item.AccountType</td>
+                    <td>@item.Platform?.PlatformName</td>
+                    <td>@item.CompanyId</td>
+                    <td>@item.IsActive</td>
+                    <td>
+                        <a asp-action="Details" asp-route-id="@item.AccountId" class="btn btn-info btn-sm">Details</a>
+                        <a asp-action="Edit" asp-route-id="@item.AccountId" class="btn btn-warning btn-sm">Edit</a>
+                        <a asp-action="Delete" asp-route-id="@item.AccountId" class="btn btn-danger btn-sm">Delete</a>
+                    </td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    </div>
 </div>
 

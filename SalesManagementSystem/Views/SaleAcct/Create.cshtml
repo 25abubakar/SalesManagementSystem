@@ -5,6 +5,8 @@
         ?? Enumerable.Empty<Microsoft.AspNetCore.Mvc.Rendering.SelectListItem>();
     var chargeTypeOptions = ViewBag.ChargeTypes as IEnumerable<Microsoft.AspNetCore.Mvc.Rendering.SelectListItem>
         ?? Enumerable.Empty<Microsoft.AspNetCore.Mvc.Rendering.SelectListItem>();
+    var toAccountOptions = ViewBag.ToAccountOptions as IEnumerable<SalesManagementSystem.Models.SaleAccount>
+        ?? Enumerable.Empty<SalesManagementSystem.Models.SaleAccount>();
 }
 
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
@@ -38,22 +40,26 @@
                 <div class="col-md-3">
                     <label>Company ID</label>
                     <input asp-for="CompanyId" class="form-control" />
+                    <span asp-validation-for="CompanyId" class="text-danger"></span>
                 </div>
                 <div class="col-md-3">
                     <label>Platform</label>
-                    <select asp-for="PlatformId" class="form-select" asp-items="ViewBag.Platforms">
+                    <select asp-for="PlatformId" class="form-select" asp-items="ViewBag.Platforms" id="platformSelect">
                         <option value="">Select Platform</option>
                         </select>
+                    <span asp-validation-for="PlatformId" class="text-danger"></span>
                 </div>
                 <div class="col-md-3">
                     <label>Product</label>
                     <select asp-for="ProductId" class="form-select" asp-items="ViewBag.Products">
                         <option value="">Select Product</option>
                         </select>
+                    <span asp-validation-for="ProductId" class="text-danger"></span>
                 </div>
                 <div class="col-md-3">
                     <label>Order ID</label>
                     <input asp-for="OrderID" class="form-control" />
+                    <span asp-validation-for="OrderID" class="text-danger"></span>
                 </div>
             </div>
         </div>
@@ -64,6 +70,7 @@
                 <div class="col-md-3">
                     <label>Qty Sold</label>
                     <input asp-for="QtySold" class="form-control" />
+                    <span asp-validation-for="QtySold" class="text-danger"></span>
                 </div>
                 <div class="col-md-3">
                     <label>Qty Held</label>
@@ -72,10 +79,12 @@
                 <div class="col-md-3">
                     <label>Sold Amount</label>
                     <input asp-for="SoldAmount" class="form-control" />
+                    <span asp-validation-for="SoldAmount" class="text-danger"></span>
                 </div>
                 <div class="col-md-3">
                     <label>Cost Amount</label>
                     <input asp-for="CostAmount" class="form-control" />
+                    <span asp-validation-for="CostAmount" class="text-danger"></span>
                 </div>
             </div>
         </div>
@@ -114,24 +123,39 @@
                     <select asp-for="TransactionId" class="form-select" asp-items="ViewBag.TransTypes">
                         <option value="">-- Select --</option>
                         </select>
+                    <span asp-validation-for="TransactionId" class="text-danger"></span>
                 </div>
                 <div class="col-md-3">
                     <label>From Account</label>
                     <select asp-for="FromAccountId" class="form-select" asp-items="ViewBag.FromAccounts">
                         <option value="">-- Select --</option>
                         </select>
+                    <span asp-validation-for="FromAccountId" class="text-danger"></span>
                 </div>
                 <div class="col-md-3">
                     <label>To Account</label>
-                    <select asp-for="ToAccountId" class="form-select" asp-items="ViewBag.ToAccounts">
+                    <select asp-for="ToAccountId" class="form-select" id="toAccountSelect">
                         <option value="">-- Select --</option>
+                        @foreach (var account in toAccountOptions)
+                        {
+                            if (Model.ToAccountId == account.AccountId)
+                            {
+                                <option value="@account.AccountId" data-platform-id="@account.PlatformId" selected>@account.AccountName</option>
+                            }
+                            else
+                            {
+                                <option value="@account.AccountId" data-platform-id="@account.PlatformId">@account.AccountName</option>
+                            }
+                        }
                         </select>
+                    <span asp-validation-for="ToAccountId" class="text-danger"></span>
                 </div>
                 <div class="col-md-3">
                     <label>Status</label>
                     <select asp-for="StatusID" class="form-select" asp-items="ViewBag.Statuses">
                         <option value="">-- Select --</option>
                         </select>
+                    <span asp-validation-for="StatusID" class="text-danger"></span>
                 </div>
             </div>
         </div>
@@ -344,6 +368,27 @@
             const container = document.getElementById('transactionDateRows');
             const addButton = document.getElementById('addTransactionDateRow');
             const template = document.getElementById('transactionDateRowTemplate');
+            const platformSelect = document.getElementById('platformSelect');
+            const toAccountSelect = document.getElementById('toAccountSelect');
+
+            function syncToAccountWithPlatform() {
+                if (!platformSelect || !toAccountSelect) {
+                    return;
+                }
+
+                const selectedPlatform = platformSelect.value;
+                if (!selectedPlatform) {
+                    return;
+                }
+
+                const matchingOption = Array.from(toAccountSelect.options).find((option) =>
+                    option.value && option.dataset.platformId === selectedPlatform);
+
+                if (matchingOption) {
+                    toAccountSelect.value = matchingOption.value;
+                    toAccountSelect.dispatchEvent(new Event('change', { bubbles: true }));
+                }
+            }
 
             function updateEmptyState(targetContainer, rowClass, emptyStateId, text) {
                 const rows = targetContainer.querySelectorAll(`.${rowClass}`);
@@ -436,6 +481,7 @@
 
             addChargeButton.addEventListener('click', addChargeRow);
             addButton.addEventListener('click', addTransactionRow);
+            platformSelect?.addEventListener('change', syncToAccountWithPlatform);
             chargeContainer.addEventListener('change', (event) => {
                 if (event.target.matches('select[name$=".ChargeTypeId"]')) {
                     refreshChargeTypeSelections();
@@ -477,9 +523,18 @@
             reindexRows(container, 'transaction-row', 'SaleTransactionDates');
             refreshChargeTypeSelections();
             refreshDateLabelSelections();
+            syncToAccountWithPlatform();
 
             const form = document.querySelector('form[asp-action="Create"], form');
-            form.addEventListener('submit', () => {
+            form.addEventListener('submit', (event) => {
+                const isClientValid =
+                    (!window.jQuery || !window.jQuery(form).valid || window.jQuery(form).valid()) &&
+                    form.checkValidity();
+
+                if (!isClientValid) {
+                    return;
+                }
+
                 const saveButton = document.getElementById('saveSaleButton');
                 if (saveButton) {
                     saveButton.disabled = true;

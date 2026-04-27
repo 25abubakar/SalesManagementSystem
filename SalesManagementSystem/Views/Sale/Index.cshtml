@@ -9,38 +9,40 @@
 
     <a asp-action="Create" class="btn btn-primary mb-3">Add New Sale</a>
 
-    <table class="table table-bordered table-striped">
-        <thead class="table-Default">
-            <tr>
-                <th>Platform</th>
-                <th>Product</th>
-                <th>Order ID</th>
-                <th>Qty Sold</th>
-                <th>Sold Amount</th>
-                <th>Cost</th>
-                <th>Profit</th>
-                <th>Status</th>
-                <th width="180">Action</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var item in Model)
-            {
+    <div class="table-responsive master-table-wrap">
+        <table class="table table-bordered table-striped">
+            <thead class="table-Default">
                 <tr>
-                    <td>@item.Platform</td>
-                    <td>@item.Product</td>
-                    <td>@item.OrderID</td>
-                    <td>@item.QtySold</td>
-                    <td>@item.SoldAmount</td>
-                    <td>@item.CostAmount</td>
-                    <td class="text-success fw-bold">@item.ProfitAmount</td>
-                    <td>@item.Status</td>
-                    <td>
-                        <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-warning btn-sm">Edit</a>
-                        <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-danger btn-sm">Delete</a>
-                    </td>
+                    <th>Platform</th>
+                    <th>Product</th>
+                    <th>Order ID</th>
+                    <th>Qty Sold</th>
+                    <th>Sold Amount</th>
+                    <th>Cost</th>
+                    <th>Profit</th>
+                    <th>Status</th>
+                    <th width="180">Action</th>
                 </tr>
-            }
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@item.Platform</td>
+                        <td>@item.Product</td>
+                        <td>@item.OrderID</td>
+                        <td>@item.QtySold</td>
+                        <td>@item.SoldAmount</td>
+                        <td>@item.CostAmount</td>
+                        <td class="text-success fw-bold">@item.ProfitAmount</td>
+                        <td>@item.Status</td>
+                        <td>
+                            <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-warning btn-sm">Edit</a>
+                            <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-danger btn-sm">Delete</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
 </div>

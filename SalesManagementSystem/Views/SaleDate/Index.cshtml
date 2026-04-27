@@ -15,33 +15,35 @@
     <div class="card shadow-sm">
         <div class="card-body">
 
-            <table class="table table-bordered table-hover">
-                <thead class="table-Default">
-                    <tr>
-                        <th style="width:100px">Id</th>
-                        <th>Date Label</th>
-                        @* <th style="width:200px">Actions</th> *@
-                    </tr>
-                </thead>
-
-                <tbody>
-                    @foreach (var item in Model)
-                    {
+            <div class="table-responsive master-table-wrap">
+                <table class="table table-bordered table-hover">
+                    <thead class="table-Default">
                         <tr>
-                            <td>@item.Id</td>
-                            <td><strong>@item.DateLabel</strong></td>
-
-                            @* <td>
-                                <a asp-action="Edit" asp-route-id="@item.Id"
-                                   class="btn btn-sm btn-warning">Edit</a>
-
-                                <a asp-action="Delete" asp-route-id="@item.Id"
-                                   class="btn btn-sm btn-danger">Delete</a>
-                            </td> *@
+                            <th style="width:100px">Id</th>
+                            <th>Date Label</th>
+                            @* <th style="width:200px">Actions</th> *@
                         </tr>
-                    }
-                </tbody>
-            </table>
+                    </thead>
+
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>@item.Id</td>
+                                <td><strong>@item.DateLabel</strong></td>
+
+                                @* <td>
+                                    <a asp-action="Edit" asp-route-id="@item.Id"
+                                       class="btn btn-sm btn-warning">Edit</a>
+
+                                    <a asp-action="Delete" asp-route-id="@item.Id"
+                                       class="btn btn-sm btn-danger">Delete</a>
+                                </td> *@
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
 
         </div>
     </div>

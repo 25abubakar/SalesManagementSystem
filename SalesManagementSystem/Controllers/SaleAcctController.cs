@@ -146,6 +146,7 @@ namespace SalesManagementSystem.Controllers
             }
 
             await ValidateDuplicateSaleAsync(model);
+            await ValidateToAccountPlatformMappingAsync(model);
 
             if (ModelState.IsValid)
             {
@@ -222,6 +223,7 @@ namespace SalesManagementSystem.Controllers
             var accounts = await _context.SaleAccounts.ToListAsync();
             ViewBag.FromAccounts = new SelectList(accounts, "AccountId", "AccountName", sale?.FromAccountId);
             ViewBag.ToAccounts = new SelectList(accounts, "AccountId", "AccountName", sale?.ToAccountId);
+            ViewBag.ToAccountOptions = accounts;
 
             ViewBag.Statuses = new SelectList(await _context.SaleStatuses.ToListAsync(), "StatusID", "StatusName", sale?.StatusID);
             ViewBag.DateLabels = new SelectList(await _context.SaleDates.ToListAsync(), "Id", "DateLabel");
@@ -384,6 +386,7 @@ namespace SalesManagementSystem.Controllers
             }
 
             await ValidateDuplicateSaleAsync(model, id);
+            await ValidateToAccountPlatformMappingAsync(model);
 
             if (ModelState.IsValid)
             {
@@ -485,17 +488,39 @@ namespace SalesManagementSystem.Controllers
                 return;
             }
 
-            var normalizedOrderId = model.OrderID.Trim();
+            var normalizedOrderId = model.OrderID.Trim().ToLower();
+            model.OrderID = model.OrderID.Trim();
             var duplicateExists = await _context.SaleAccts.AnyAsync(x =>
                 x.OrderID != null &&
-                x.OrderID.Trim() == normalizedOrderId &&
-                x.PlatformId == model.PlatformId &&
-                x.ProductId == model.ProductId &&
+                x.OrderID.Trim().ToLower() == normalizedOrderId &&
                 (!currentSaleId.HasValue || x.Id != currentSaleId.Value));
 
             if (duplicateExists)
             {
-                ModelState.AddModelError("", "A sale with the same platform, product and order ID already exists.");
+                ModelState.AddModelError(nameof(model.OrderID), "This Order ID already exists. Please enter a unique Order ID.");
+            }
+        }
+
+        private async Task ValidateToAccountPlatformMappingAsync(SaleAcctCreateVM model)
+        {
+            if (!model.PlatformId.HasValue || !model.ToAccountId.HasValue)
+            {
+                return;
+            }
+
+            var toAccount = await _context.SaleAccounts
+                .AsNoTracking()
+                .FirstOrDefaultAsync(x => x.AccountId == model.ToAccountId.Value);
+
+            if (toAccount == null)
+            {
+                ModelState.AddModelError(nameof(model.ToAccountId), "Selected To Account does not exist.");
+                return;
+            }
+
+            if (toAccount.PlatformId.HasValue && toAccount.PlatformId.Value != model.PlatformId.Value)
+            {
+                ModelState.AddModelError(nameof(model.ToAccountId), "Selected To Account does not belong to the selected platform.");
             }
         }
 

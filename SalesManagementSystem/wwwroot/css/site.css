@@ -229,6 +229,16 @@ body.app-shell ::-webkit-scrollbar-thumb:hover {
     overflow: auto;
 }
 
+.sales-table-wrap {
+    max-height: 70vh;
+    overflow: auto;
+}
+
+.master-table-wrap {
+    max-height: 70vh;
+    overflow: auto;
+}
+
 .form-floating > .form-control-plaintext::placeholder, .form-floating > .form-control::placeholder {
     color: var(--bs-secondary-color);
     text-align: end;
