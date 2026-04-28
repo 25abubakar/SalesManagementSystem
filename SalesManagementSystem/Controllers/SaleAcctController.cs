@@ -39,7 +39,7 @@ namespace SalesManagementSystem.Controllers
                 .ThenInclude(c => c.ChargeType)
                 .Include(s => s.SaleTransactionDates!)
                 .ThenInclude(d => d.SaleDate)
-                .OrderBy(s => s.CreatedDate)
+                .OrderByDescending(s => s.CreatedDate)
                 .ToListAsync();
 
             await PopulateSqlSummaryColumns(sales);
