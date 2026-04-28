@@ -20,6 +20,12 @@ public class SaleChargeJob : ISaleChargeJob
         _context = context;
     }
 
+    /// <summary>
+    /// Auto-creates a charge row if the sale has no charges.
+    /// ChargeType name will match the sale's TransactionType name.
+    /// If no matching ChargeType exists, it gets created automatically.
+    /// Falls back to first available ChargeType if sale has no TransactionType.
+    /// </summary>
     public async Task CreateAutoChargeIfMissingAsync(long saleId)
     {
         var sale = await _context.SaleAccts
