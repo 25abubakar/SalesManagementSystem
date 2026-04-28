@@ -664,11 +664,6 @@ Navigate to `/hangfire` to monitor background jobs.
 | `SaleController.cs` exists | There is a `SaleController.cs` alongside `SaleAcctController.cs` — likely a legacy file |
 | `SaleAcct.cs` vs `SaleAccount.cs` | Two similarly named models — `SaleAcct` is the main transaction, `SaleAccount` is the account master |
 
-### Planned Improvements (from README)
-
-- Invoice generation (PDF export)
-- Dashboard analytics enhancements
-- REST API integration
 - Role-based authentication
 - Reporting system
 
