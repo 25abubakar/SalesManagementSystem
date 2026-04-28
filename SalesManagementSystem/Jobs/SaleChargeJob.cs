@@ -48,7 +48,15 @@ public class SaleChargeJob : ISaleChargeJob
 
         if (defaultChargeType == null)
         {
-            return;
+            var createdChargeType = new SaleChargeType
+            {
+                ChargeTypeName = "Auto Charge",
+                IsActive = true
+            };
+
+            _context.SaleChargeTypes.Add(createdChargeType);
+            await _context.SaveChangesAsync();
+            defaultChargeType = createdChargeType;
         }
 
         _context.SaleCharges.Add(new SaleCharge

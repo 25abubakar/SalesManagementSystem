@@ -417,7 +417,12 @@
             });
 
             document.getElementById('addTransactionDateRow').addEventListener('click', () => {
-                transactionRows.appendChild(transactionTemplate.content.firstElementChild.cloneNode(true));
+                const row = transactionTemplate.content.firstElementChild.cloneNode(true);
+                const dateInput = row.querySelector('input[data-name="Date"]');
+                if (dateInput) {
+                    dateInput.value = new Date().toISOString().slice(0, 10);
+                }
+                transactionRows.appendChild(row);
                 reindex(transactionRows, 'transaction-row', 'SaleTransactionDates');
                 updateEmpty(transactionRows, 'transaction-row', 'transactionEmptyState', 'No transaction dates added yet.');
                 refreshDateLabelSelections();
