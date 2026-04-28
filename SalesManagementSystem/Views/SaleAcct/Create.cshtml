@@ -489,6 +489,10 @@
 
             function addTransactionRow() {
                 const row = template.content.firstElementChild.cloneNode(true);
+                const dateInput = row.querySelector('input[data-name="Date"]');
+                if (dateInput) {
+                    dateInput.value = new Date().toISOString().slice(0, 10);
+                }
                 container.appendChild(row);
                 updateEmptyState(container, 'transaction-row', 'transactionDateEmptyState', 'No transaction date rows added yet.');
                 reindexRows(container, 'transaction-row', 'SaleTransactionDates');

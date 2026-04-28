@@ -15,6 +15,8 @@ builder.Services.AddSignalR();
 builder.Services.AddSingleton<DapperContext>();
 builder.Services.AddScoped<ISaleRepository, SaleRepository>();
 builder.Services.AddHangfire(x => x.UseSqlServerStorage(builder.Configuration.GetConnectionString("DefaultConnection")));
+builder.Services.AddHangfireServer();
+builder.Services.AddScoped<SalesManagementSystem.Jobs.ISaleChargeJob, SalesManagementSystem.Jobs.SaleChargeJob>();
     
 var app = builder.Build();
 

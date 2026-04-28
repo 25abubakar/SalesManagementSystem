@@ -2,21 +2,30 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
+using Hangfire;
 using SalesManagementSystem.Hubs;
 using SalesManagementSystem.Models;
 using SalesManagementSystem.Data;
+using SalesManagementSystem.Jobs;
 
 namespace SalesManagementSystem.Controllers
 {
     public class SaleAcctController : Controller
     {
+        private static readonly TimeSpan ChargeAddWindow = TimeSpan.FromMinutes(10);
+        private static readonly TimeSpan TransactionDateAddWindow = TimeSpan.FromMinutes(5);
         private readonly ApplicationDbContext _context;
         private readonly IHubContext<SalesHub> _salesHub;
+        private readonly IBackgroundJobClient _backgroundJobs;
 
-        public SaleAcctController(ApplicationDbContext context, IHubContext<SalesHub> salesHub)
+        public SaleAcctController(
+            ApplicationDbContext context,
+            IHubContext<SalesHub> salesHub,
+            IBackgroundJobClient backgroundJobs)
         {
             _context = context;
             _salesHub = salesHub;
+            _backgroundJobs = backgroundJobs;
         }
 
         public async Task<IActionResult> Index()
@@ -95,6 +104,8 @@ namespace SalesManagementSystem.Controllers
                 .Where(x => x.DateLabelId.HasValue || x.Date.HasValue)
                 .ToList();
 
+            EnsureTransactionDateDefaultsToToday(transactionDates);
+
             foreach (var item in chargeRows)
             {
                 if (!item.ChargeTypeId.HasValue)
@@ -149,6 +160,7 @@ namespace SalesManagementSystem.Controllers
             await ValidateDuplicateSaleAsync(model);
             await ValidateProductPlatformMappingAsync(model);
             await ValidateToAccountPlatformMappingAsync(model);
+            await ValidateTransactionTypeAgainstCompanyAccountTypesAsync(model);
 
             if (ModelState.IsValid)
             {
@@ -199,6 +211,14 @@ namespace SalesManagementSystem.Controllers
 
                     _context.Add(sale);
                     await _context.SaveChangesAsync();
+
+                    if (!sale.Charges.Any())
+                    {
+                        _backgroundJobs.Schedule<ISaleChargeJob>(
+                            x => x.CreateAutoChargeIfMissingAsync(sale.Id),
+                            TimeSpan.FromMinutes(1));
+                    }
+
                     await _salesHub.Clients.All.SendAsync("SalesUpdated", "created", sale.Id);
 
                     TempData["Success"] = "Sale record saved successfully!";
@@ -234,6 +254,9 @@ namespace SalesManagementSystem.Controllers
             ViewBag.Statuses = new SelectList(await _context.SaleStatuses.ToListAsync(), "StatusID", "StatusName", sale?.StatusID);
             ViewBag.DateLabels = new SelectList(await _context.SaleDates.ToListAsync(), "Id", "DateLabel");
             ViewBag.ChargeTypes = new SelectList(await _context.SaleChargeTypes.ToListAsync(), "ChargeTypeId", "ChargeTypeName");
+            ViewBag.TransactionTypeOptions = await _context.SaleTransactionTypes
+                .OrderBy(x => x.TransactionName)
+                .ToListAsync();
         }
 
         public async Task<IActionResult> Edit(long id)
@@ -245,6 +268,9 @@ namespace SalesManagementSystem.Controllers
                 .ThenInclude(d => d.SaleDate)
                 .FirstOrDefaultAsync(s => s.Id == id);
             if (sale == null) return NotFound();
+
+            ViewBag.CanAddCharge = CanAddWithinWindow(sale.CreatedDate, ChargeAddWindow);
+            ViewBag.CanAddTransactionDate = CanAddWithinWindow(sale.CreatedDate, TransactionDateAddWindow);
 
             await PopulateDropDowns(sale);
             var model = new SaleAcctCreateVM
@@ -395,6 +421,7 @@ namespace SalesManagementSystem.Controllers
             await ValidateDuplicateSaleAsync(model, id);
             await ValidateProductPlatformMappingAsync(model);
             await ValidateToAccountPlatformMappingAsync(model);
+            await ValidateTransactionTypeAgainstCompanyAccountTypesAsync(model);
 
             if (ModelState.IsValid)
             {
@@ -405,6 +432,42 @@ namespace SalesManagementSystem.Controllers
                         .Include(x => x.SaleTransactionDates)
                         .FirstOrDefaultAsync(x => x.Id == id);
                     if (existingSale == null) return NotFound();
+
+                    if (!CanAddWithinWindow(existingSale.CreatedDate, ChargeAddWindow))
+                    {
+                        var hasNewChargeRows = chargeRows.Any(x => !x.SaleChargeId.HasValue);
+                        if (hasNewChargeRows)
+                        {
+                            ModelState.AddModelError("", "You cannot add new charges after 10 minutes.");
+                        }
+                    }
+
+                    if (!CanAddWithinWindow(existingSale.CreatedDate, TransactionDateAddWindow))
+                    {
+                        var existingDateLabels = existingSale.SaleTransactionDates?
+                            .Select(x => x.DateLabelId)
+                            .ToHashSet() ?? new HashSet<int>();
+                        var incomingDateLabels = transactionDateRows
+                            .Where(x => x.DateLabelId.HasValue)
+                            .Select(x => x.DateLabelId!.Value)
+                            .ToHashSet();
+
+                        var hasNewTransactionDateRows = incomingDateLabels.Any(x => !existingDateLabels.Contains(x));
+                        if (hasNewTransactionDateRows)
+                        {
+                            ModelState.AddModelError("", "You cannot add new transaction dates after 5 minutes.");
+                        }
+                    }
+
+                    if (!ModelState.IsValid)
+                    {
+                        model.Charges = chargeRows;
+                        model.SaleTransactionDates = transactionDateRows;
+                        ViewBag.CanAddCharge = CanAddWithinWindow(existingSale.CreatedDate, ChargeAddWindow);
+                        ViewBag.CanAddTransactionDate = CanAddWithinWindow(existingSale.CreatedDate, TransactionDateAddWindow);
+                        await PopulateDropDowns(existingSale);
+                        return View(model);
+                    }
 
                     existingSale.CompanyId = model.CompanyId;
                     existingSale.PlatformId = model.PlatformId;
@@ -580,6 +643,90 @@ namespace SalesManagementSystem.Controllers
             {
                 ModelState.AddModelError(nameof(model.ProductId), "Selected product does not belong to the selected platform.");
             }
+        }
+
+        private static void EnsureTransactionDateDefaultsToToday(List<SaleTransactionDateEntryVM> transactionDates)
+        {
+            var transactionDate = transactionDates.FirstOrDefault(x => x.DateLabelId == 1);
+            if (transactionDate == null)
+            {
+                transactionDates.Add(new SaleTransactionDateEntryVM
+                {
+                    DateLabelId = 1,
+                    Date = DateTime.Today
+                });
+                return;
+            }
+
+            if (!transactionDate.Date.HasValue)
+            {
+                transactionDate.Date = DateTime.Today;
+            }
+        }
+
+        private static bool CanAddWithinWindow(DateTime? createdDate, TimeSpan window)
+        {
+            if (!createdDate.HasValue)
+            {
+                return true;
+            }
+
+            return DateTime.Now - createdDate.Value <= window;
+        }
+
+        private async Task ValidateTransactionTypeAgainstCompanyAccountTypesAsync(SaleAcctCreateVM model)
+        {
+            if (!model.CompanyId.HasValue || !model.TransactionId.HasValue)
+            {
+                return;
+            }
+
+            var selectedTransactionType = await _context.SaleTransactionTypes
+                .AsNoTracking()
+                .FirstOrDefaultAsync(x => x.TransactionId == model.TransactionId.Value);
+
+            if (selectedTransactionType == null)
+            {
+                return;
+            }
+
+            var allowedTypes = await _context.SaleAccounts
+                .AsNoTracking()
+                .Where(x => x.CompanyId == model.CompanyId.Value && x.IsActive && !string.IsNullOrWhiteSpace(x.AccountType))
+                .Select(x => x.AccountType!)
+                .Distinct()
+                .ToListAsync();
+
+            if (allowedTypes.Count == 0)
+            {
+                return;
+            }
+
+            var normalizedAllowed = allowedTypes
+                .Select(NormalizePaymentType)
+                .Where(x => !string.IsNullOrWhiteSpace(x))
+                .ToHashSet();
+
+            var normalizedTransactionType = NormalizePaymentType(selectedTransactionType.TransactionName);
+            if (!string.IsNullOrWhiteSpace(normalizedTransactionType) && !normalizedAllowed.Contains(normalizedTransactionType))
+            {
+                ModelState.AddModelError(nameof(model.TransactionId), "Selected transaction type is not allowed for this company.");
+            }
+        }
+
+        private static string NormalizePaymentType(string? value)
+        {
+            var normalized = (value ?? string.Empty).Trim().ToLowerInvariant();
+            normalized = normalized.Replace("-", "").Replace(" ", "");
+
+            return normalized switch
+            {
+                "cashondelivery" or "cod" => "cod",
+                "card" => "card",
+                "online" => "online",
+                "bank" or "banktransfer" => "bank",
+                _ => normalized
+            };
         }
 
         public async Task<IActionResult> Delete(long id)
