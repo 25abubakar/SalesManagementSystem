@@ -4,7 +4,7 @@ A complete ASP.NET Core MVC + Entity Framework Core based Sales Management Syste
 
 📸 Screenshots
 <img width="727" height="589" alt="image" src="https://github.com/user-attachments/assets/b0b21d30-8531-430c-8651-03072bbffac6" />
- <img width="1438" height="668" alt="image" src="https://github.com/user-attachments/assets/a8ab5ab9-6dfc-4dc8-9ee8-6a4b0c35c7d9" />
+<img width="458" height="590" alt="image" src="https://github.com/user-attachments/assets/68968c54-79ba-4d2c-8b71-10e52c05c2cc" />
 <img width="1439" height="734" alt="image" src="https://github.com/user-attachments/assets/a6bbecf3-e0eb-4593-904d-2df1f077313a" />
 
 🚀 Features:
