@@ -1,5 +1,7 @@
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using SalesManagementSystem.Data;
+using SalesManagementSystem.Hubs;
 using SalesManagementSystem.Models;
 
 namespace SalesManagementSystem.Jobs;
@@ -14,18 +16,14 @@ public interface ISaleChargeJob
 public class SaleChargeJob : ISaleChargeJob
 {
     private readonly ApplicationDbContext _context;
+    private readonly IHubContext<SalesHub> _salesHub;
 
-    public SaleChargeJob(ApplicationDbContext context)
+    public SaleChargeJob(ApplicationDbContext context, IHubContext<SalesHub> salesHub)
     {
         _context = context;
+        _salesHub = salesHub;
     }
 
-    /// <summary>
-    /// Auto-creates a charge row if the sale has no charges.
-    /// ChargeType name will match the sale's TransactionType name.
-    /// If no matching ChargeType exists, it gets created automatically.
-    /// Falls back to first available ChargeType if sale has no TransactionType.
-    /// </summary>
     public async Task CreateAutoChargeIfMissingAsync(long saleId)
     {
         var sale = await _context.SaleAccts
@@ -86,7 +84,10 @@ public class SaleChargeJob : ISaleChargeJob
     {
         await CreateAutoChargeIfMissingAsync(saleId);
         await CreateAutoTransactionDateIfMissingAsync(saleId);
+
+        await _salesHub.Clients.All.SendAsync("SalesAutoFilled", saleId);
     }
+
 
     private async Task<SaleChargeType?> GetOrCreateChargeTypeMatchingTransactionAsync(string? transactionName)
     {

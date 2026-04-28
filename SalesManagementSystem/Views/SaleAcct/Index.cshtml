@@ -118,9 +118,17 @@
 
 @section Scripts {
     <script src="~/lib/microsoft/signalr/dist/browser/signalr.min.js"></script>
+
+    <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 9999">
+        <div id="autoFillToast" aria-live="assertive" aria-atomic="true">
+        </div>
+    </div>
+
     <script>
         (() => {
             const statusBadge = document.getElementById("realtimeStatus");
+            const toastEl = document.getElementById("autoFillToast");
+            const toast = new bootstrap.Toast(toastEl, { delay: 2500 });
 
             const connection = new signalR.HubConnectionBuilder()
                 .withUrl("/hubs/sales")
@@ -129,12 +137,21 @@
 
             const setStatus = (isConnected) => {
                 if (!statusBadge) return;
-                statusBadge.className = isConnected ? "badge text-bg-success ms-2" : "badge text-bg-warning ms-2";
-                statusBadge.textContent = isConnected ? "Real-time: Connected" : "Real-time: Reconnecting";
+                statusBadge.className = isConnected
+                    ? "badge text-bg-success ms-2"
+                    : "badge text-bg-warning ms-2";
+                statusBadge.textContent = isConnected
+                    ? "Real-time: Connected"
+                    : "Real-time: Reconnecting";
             };
 
             connection.on("SalesUpdated", () => {
                 window.location.reload();
+            });
+
+            connection.on("SalesAutoFilled", (saleId) => {
+                toast.show();
+                setTimeout(() => window.location.reload(), 2600);
             });
 
             connection.onreconnecting(() => setStatus(false));
