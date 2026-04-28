@@ -206,10 +206,14 @@ namespace SalesManagementSystem.Controllers
                     _context.Add(sale);
                     await _context.SaveChangesAsync();
 
-                    if (!sale.Charges.Any())
+                    // Schedule auto-fill job if the user skipped charges, transaction dates, or both
+                    bool missingCharges = !sale.Charges.Any();
+                    bool missingDates = sale.SaleTransactionDates == null || !sale.SaleTransactionDates.Any();
+
+                    if (missingCharges || missingDates)
                     {
                         _backgroundJobs.Schedule<ISaleChargeJob>(
-                            x => x.CreateAutoChargeIfMissingAsync(sale.Id),
+                            x => x.CreateAutoChargeAndDateIfMissingAsync(sale.Id),
                             TimeSpan.FromMinutes(1));
                     }
 
